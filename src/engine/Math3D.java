@@ -5,10 +5,14 @@ public class Math3D {
 	public static final double EPSILON = 0.00001;
 	public static final int RIGHT = 1, BACK = 1, TOP = 1, LEFT = 0, FRONT = 0, BOTTOM = 0, NONE = -1;
 	
-	public static final double sqrt2 = Math.sqrt(2), sqrt2Div3 = Math.sqrt(2.0 / 3), sqrt1Div2 = 1 / sqrt2;
+	public static final double sqrt2 = Math.sqrt(2), sqrt2Div3 = Math.sqrt(2.0 / 3), sqrt1Div2 = 1 / sqrt2, sqrt1Div5 = 1 / Math.sqrt(5);
 	
 	public static double magnitude(double x, double y, double z) {
 		return Math.sqrt(x * x + y * y + z * z);
+	}
+	
+	public static double magnitudeSqrd(double x, double y, double z) {
+		return x * x + y * y + z * z;
 	}
 	
 	public static double magnitude(double dx, double dy) {

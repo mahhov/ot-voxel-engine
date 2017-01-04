@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import static engine.Camera.MIN_LIGHT;
 
 public class Painter extends JFrame {
+	public static String[] debugString = new String[0];
 	
 	private final int FRAME_SIZE, IMAGE_SIZE;
 	private static int borderSize = 0;
@@ -42,6 +43,9 @@ public class Painter extends JFrame {
 	
 	public void paint(Graphics graphics) {
 		// graphics.drawImage(canvas, 0, borderSize, FRAME_SIZE, FRAME_SIZE, null);
+		brush.setColor(Color.WHITE);
+		for (int i = 0; i < debugString.length; i++)
+			brush.drawString(debugString[i], 50, 50 + 50 * i);
 		graphics.drawImage(canvas, 0, borderSize, null);
 	}
 	

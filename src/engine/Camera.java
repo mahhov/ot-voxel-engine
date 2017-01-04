@@ -1,7 +1,5 @@
 package engine;
 
-import static engine.Math3D.sqrt1Div2;
-
 public class Camera {
 	static final double MOVE_SPEED = 1.2, ANGLE_SPEED = .04, MOUSE_DAMP_SPEED = 0.1;
 	public static final double FOG = 0.987;
@@ -10,9 +8,9 @@ public class Camera {
 	public double x, y, z;
 	double angle, angleZ;
 	public double angleSin, angleCos, angleZSin, angleZCos;
-	double angleView, angleViewCos, angleViewSin, angleViewTan;
+	private double viewCos, viewSin;
 	double[] normal;
-	int maxCull;
+	int maxCull, maxCullSqrd;
 	
 	boolean dirtyAngles;
 	
@@ -21,21 +19,16 @@ public class Camera {
 		System.out.println("maxCull set to " + maxCull);
 		if (maxCull > 200)
 			maxCull = 200;
+		maxCullSqrd = maxCull * maxCull;
 		
-		angleViewCos = 1;
-		angleViewSin = 2;
-		double viewMag = Math3D.magnitude(angleViewCos, angleViewSin);
-		angleViewCos /= viewMag;
-		angleViewSin /= viewMag;
-		angleViewTan = angleViewSin / angleViewCos;
-		angleView = Math.atan2(angleViewSin, angleViewCos);
-		//		System.out.println(angleView);
+		viewCos = 2 * Math3D.sqrt1Div5;
+		viewSin = 1 * Math3D.sqrt1Div5;
 		
 		normal = new double[3];
 		
-		x = 5.5;
-		y = 5.5;
-		z = 55;
+		x = 50.5;
+		y = 50.5;
+		z = 25;
 		
 		computeAngles();
 	}
@@ -146,95 +139,127 @@ public class Camera {
 	}
 	
 	public boolean inView(double[][] coord) {
-		for (double[] c : coord)
-			if (Math3D.dotProduct(c[0] - x, c[1] - y, c[2] - z, normal[0], normal[1], normal[2]) > Math3D.sqrt2Div3)
+		double dx, dy, dz;
+		for (double[] c : coord) {
+			dx = c[0] - x;
+			dy = c[1] - y;
+			dz = c[2] - z;
+			if (Math3D.magnitudeSqrd(dx, dy, dz) < maxCullSqrd && Math3D.dotProduct(dx, dy, dz, normal[0], normal[1], normal[2]) > Math3D.sqrt2Div3)
 				return true;
+		}
 		return false;
 	}
 	
-	private int cull() {
-		// farthest reaching ray
-		double angleZTopPlane = angleZ - angleView;
-		double angleZTopPlaneSin = Math3D.xsin(angleZTopPlane);
-		
-		// if horizon in view (infinite vision)
-		if (angleZTopPlaneSin <= 0)
-			return maxCull;
-		
-		// how far away ray hits 0-z-plane
-		double angleZTopPlaneCos = Math3D.xcos(angleZTopPlane);
-		double distance = z * angleZTopPlaneCos / angleZTopPlaneSin;
-		
-		// expand to see corners
-		//		distance *= Math3D.sqrt2;
-		distance *= angleViewTan;
-		
-		// no need to see farther than fog's extent
-		return Math3D.min((int) distance, maxCull);
-	}
-	
 	public int[] cullBoundaries2() {
-		double left;
-		double right;
-		double front;
-		double back;
-		double bottom;
-		double top;
-		
-		// view angles
-		double leftCos = (angleCos - angleSin) * sqrt1Div2;
-		double leftSin = (angleCos + angleSin) * sqrt1Div2;
-		double rightCos = (angleCos + angleSin) * sqrt1Div2;
-		double rightSin = (angleCos - angleSin) * sqrt1Div2;
-		
-		// angle
-		if (angleSin > angleCos) // 45 to 225
-			if (angleSin > -angleCos) { // 45 to 135 TOP
-				left = x + leftCos * maxCull;
-				right = x + rightCos * maxCull;
-				front = y;
-				back = y + maxCull;
-			} else {// 135 to 225 LEFT
-				left = x - maxCull;
-				right = x;
-				front = y + leftSin * maxCull;
-				back = y + rightSin * maxCull;
-			}
-		else if (angleSin > -angleCos) { // 45 to -45 RIGHT
-			left = x;
-			right = x + maxCull;
-			front = y + rightSin * maxCull;
-			back = y + leftSin * maxCull;
-		} else { // 225 to -45 BOTTOM
-			left = x + rightCos * maxCull;
-			right = x + leftCos * maxCull;
-			front = y - maxCull;
-			back = y;
-		}
-		
-		// zangle
-		
-		bottom = (int) z - maxCull;
-		top = (int) z + maxCull + 1;
-		return new int[] {(int) left, (int) right + 1, (int) front, (int) back + 1, (int) bottom, (int) top};
-	}
-	
-	public int[] cullBoundaries() {
-		int c = cull();
+		int c = maxCull;
 		int left = (int) x - c;
 		int right = (int) x + c + 1;
 		int front = (int) y - c;
 		int back = (int) y + c + 1;
 		int bottom = (int) z - c;
 		int top = (int) z + c + 1;
+		if (Math.random() > .9)
+			System.out.println("voluem: " + ((right - left) * (back - front) * (top - bottom)) / 100000);
 		return new int[] {left, right, front, back, bottom, top};
-		// TODO: use min/max of c.x, c - viewAngle.x, c + viewAngle.x and y and z
 	}
 	
-	// TODO: dot product to check if given x and y within viewAngle range
-	
-	// TODO: get z range visible given x and y coordinate
-	// TODO: keep camera coordinates bounded to world
-	
-	// todo: better boundaries, in view dot product, facing dot product
+	public int[] cullBoundaries() {
+		double left, right, front, back, bottom, top;
+		double forwardMult, backwardMult;
+		
+		// vertical view angle
+		double topCos = angleZCos * viewCos - angleZSin * viewSin;
+		double topSin = angleZCos * viewSin + angleZSin * viewCos;
+		double bottomCos = angleZCos * viewCos + angleZSin * viewSin;
+		double bottomSin = -angleZCos * viewSin + angleZSin * viewCos;
+		
+		// zangle
+		if (topCos < 0) { // up - vertical axis visible
+			forwardMult = bottomCos * maxCull;
+			backwardMult = topCos * maxCull;
+			top = z + maxCull;
+			bottom = z;
+		} else if (bottomCos < 0) { // down - vertical axis visible
+			forwardMult = topCos * maxCull;
+			backwardMult = bottomCos * maxCull;
+			top = z;
+			bottom = z - maxCull;
+		} else if (bottomSin > 0) { // up - no axis visible
+			forwardMult = bottomCos * maxCull;
+			backwardMult = 0;
+			top = z + topSin * maxCull;
+			bottom = z;
+		} else if (topSin < 0) { // down - no axis visible
+			forwardMult = topCos * maxCull;
+			backwardMult = 0;
+			top = z;
+			bottom = z + bottomSin * maxCull;
+		} else { // straight - horizontal plane visible
+			forwardMult = maxCull;
+			backwardMult = 0;
+			top = z + topSin * maxCull;
+			bottom = z + bottomSin * maxCull;
+		}
+		
+		// horizontal view angles
+		double leftCos = angleCos * viewCos - angleSin * viewSin;
+		double leftSin = angleCos * viewSin + angleSin * viewCos;
+		double rightCos = angleCos * viewCos + angleSin * viewSin;
+		double rightSin = -angleCos * viewSin + angleSin * viewCos;
+		
+		// angle
+		if (rightCos > 0)
+			if (leftCos < 0) { // top
+				left = x + leftCos * forwardMult;
+				right = x + rightCos * forwardMult;
+				front = y + backwardMult; // backwardMult is always <= 0
+				back = y + forwardMult;
+			} else if (rightSin > 0) { // top right
+				left = x + rightCos * backwardMult;
+				right = x + rightCos * forwardMult;
+				front = y + leftSin * backwardMult;
+				back = y + leftSin * forwardMult;
+			} else if (leftSin > 0) { // right
+				left = x + backwardMult;
+				right = x + forwardMult;
+				front = y + rightSin * forwardMult;
+				back = y + leftSin * forwardMult;
+			} else { // bottom right
+				left = x + leftCos * backwardMult;
+				right = x + leftCos * forwardMult;
+				front = y + rightSin * forwardMult;
+				back = y + rightSin * backwardMult;
+			}
+		else if (leftCos > 0) { // bottom
+			left = x + rightCos * forwardMult;
+			right = x + leftCos * forwardMult;
+			front = y - forwardMult;
+			back = y - backwardMult;
+		} else if (rightSin < 0) { // bottom left
+			left = x + rightCos * forwardMult;
+			right = x + rightCos * backwardMult;
+			front = y + leftSin * forwardMult;
+			back = y + leftSin * backwardMult;
+		} else if (leftSin < 0) { // left
+			left = x - forwardMult;
+			right = x - backwardMult;
+			front = y + leftSin * forwardMult;
+			back = y + rightSin * forwardMult;
+		} else { // top left
+			left = x + leftCos * forwardMult;
+			right = x + leftCos * backwardMult;
+			front = y + rightSin * backwardMult;
+			back = y + rightSin * forwardMult;
+		}
+		
+		//		Painter.debugString = new String[4];
+		//		Painter.debugString[0] = (left - x) / maxCull + " " + (right - x) / maxCull;
+		//		Painter.debugString[1] = (front - y) / maxCull + " " + (back - y) / maxCull;
+		//		Painter.debugString[2] = (forwardMult) / maxCull + " " + backwardMult / maxCull;
+		//		Painter.debugString[3] = Math.round(leftCos * 100) / 100. + " " + Math.round(leftSin * 100) / 100. + " " + Math.round(rightCos * 100) / 100. + " " + Math.round(rightSin * 100) / 100.;
+		
+		// TODO : horizontal view rotation incorrect when zangle isn't 0
+		
+		return new int[] {(int) (left), (int) (right) + 1, (int) (front), (int) (back) + 1, (int) (bottom), (int) (top) + 1};
+	}
 }

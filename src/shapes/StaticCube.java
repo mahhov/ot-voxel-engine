@@ -1,5 +1,7 @@
 package shapes;
 
+import engine.Math3D;
+
 import java.awt.*;
 
 public class StaticCube extends Shape {
@@ -14,12 +16,6 @@ public class StaticCube extends Shape {
 		initSurfaces();
 	}
 	
-	// TODO: only send sides needed according to parameters
-	public Surface[] draw(int xSide, int ySide, int zSide) {
-		return new Surface[] {top, bottom, left, right, front, back};
-	}
-	
-	// TODO: re-do this code
 	private void initSurfaces() {
 		// dimensions
 		double size = 0.5;
@@ -63,5 +59,12 @@ public class StaticCube extends Shape {
 		front.setLight(1);
 		right.setLight(1);
 		left.setLight(1);
+	}
+	
+	public Surface[] draw(int xSide, int ySide, int zSide) {
+		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
+		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
+		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);
+		return new Surface[] {top, bottom, left, right, front, back};
 	}
 }

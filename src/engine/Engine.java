@@ -15,7 +15,10 @@ class Engine {
 		camera = new Camera();
 		controller = new Controller(frame / 2, frame / 2);
 		painter = new Painter(frame, image, controller);
-		world = new World(100, 100, 100, 50);
+		int numChunks = 50;
+		int eachChunkSize = 10;
+		int worldFill = 5;
+		world = new World(numChunks, numChunks, numChunks, eachChunkSize, worldFill);
 	}
 	
 	private void begin() {
@@ -30,7 +33,7 @@ class Engine {
 			wait(10);
 			endTime = System.nanoTime() + 1;
 			if (endTime - beginTime > 1000000000l) {
-				System.out.println("fps: " + frame + " ; paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount);
+				painter.debugString = new String[] {("fps: " + frame + " ; paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount)};
 				frame = 0;
 				beginTime = endTime;
 			}

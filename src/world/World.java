@@ -16,7 +16,7 @@ public class World {
 	private Projectile[] projectile;
 	private Particle[] particle;
 	
-	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize) {
+	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize, int densityMult) {
 		width = chunkWidth * chunkSize;
 		height = chunkLength * chunkSize;
 		length = chunkHeight * chunkSize;
@@ -28,9 +28,9 @@ public class World {
 					chunk[x][y][z] = new Chunk();
 		System.out.println("done creating chunks");
 		
-		for (int cx = 0; cx < 10; cx++)
-			for (int cy = 0; cy < 10; cy++)
-				for (int cz = 0; cz < 1; cz++) {
+		for (int cx = 0; cx < 3 * densityMult; cx++)
+			for (int cy = 0; cy < 3 * densityMult; cy++)
+				for (int cz = 0; cz < densityMult; cz++) {
 					chunk[cx][cy][cz].init(chunkSize);
 					for (int x = 0; x < chunkSize; x++)
 						for (int y = 0; y < chunkSize; y++)
@@ -43,8 +43,7 @@ public class World {
 	}
 	
 	public void drawChunks(Painter painter, Camera c) {
-		int boundaries[] = c.cullBoundaries2();
-		//		int boundaries[] = c.cullBoundaries();
+		int boundaries[] = c.cullBoundaries();
 		boundaries[0] = Math3D.max(boundaries[0], 0);
 		boundaries[1] = Math3D.min(boundaries[1], width - 1);
 		boundaries[2] = Math3D.max(boundaries[2], 0);
@@ -154,52 +153,4 @@ public class World {
 		z -= cz * chunkSize;
 		return new int[] {cx, cy, cz, x, y, z};
 	}
-	
-	//	public void draw(Painter painter, Camera c) {
-	//		int boundaries[] = c.cullBoundaries();
-	//		boundaries[0] = Math3D.max(boundaries[0], 0);
-	//		boundaries[1] = Math3D.min(boundaries[1], width - 1);
-	//		boundaries[2] = Math3D.max(boundaries[2], 0);
-	//		boundaries[3] = Math3D.min(boundaries[3], length - 1);
-	//		boundaries[4] = Math3D.max(boundaries[4], 0);
-	//		boundaries[5] = Math3D.min(boundaries[5], height - 1);
-	//
-	//		for (int x = boundaries[0]; x < (int) c.x; x++)
-	//			drawRow(painter, c, boundaries, x, Math3D.RIGHT);
-	//		for (int x = boundaries[1]; x > c.x; x--)
-	//			drawRow(painter, c, boundaries, x, Math3D.LEFT);
-	//		drawRow(painter, c, boundaries, (int) c.x, Math3D.NONE);
-	//	}
-	//
-	//
-	//	private void drawRow(Painter painter, Camera c, int[] boundaries, int x, int xSide) {
-	//		for (int y = boundaries[2]; y < (int) c.y; y++)
-	//			drawColumn(painter, c, boundaries, x, y, xSide, Math3D.BACK);
-	//		for (int y = boundaries[3]; y > c.y; y--)
-	//			drawColumn(painter, c, boundaries, x, y, xSide, Math3D.FRONT);
-	//		drawColumn(painter, c, boundaries, x, (int) c.y, xSide, Math3D.NONE);
-	//	}
-	//
-	//	private void drawColumn(Painter painter, Camera c, int[] boundaries, int x, int y, int xSide, int ySide) {
-	//		for (int z = boundaries[4]; z < (int) c.z; z++)
-	//			drawCell(painter, c, x, y, z, xSide, ySide, Math3D.TOP);
-	//		for (int z = boundaries[5]; z > c.z; z--)
-	//			drawCell(painter, c, x, y, z, xSide, ySide, Math3D.BOTTOM);
-	//		drawCell(painter, c, x, y, (int) c.z, xSide, ySide, Math3D.NONE);
-	//	}
-	//
-	//	private void drawCell(Painter painter, Camera c, int x, int y, int z, int xSide, int ySide, int zSide) {
-	//		//		int cx = x / chunkSize;
-	//		//		int cy = y / chunkSize;
-	//		//		int cz = z / chunkSize;
-	//		//		if (chunk[cx][cy][cz].isEmpty())
-	//		//			return;
-	//		//		x -= cx * chunkSize;
-	//		//		y -= cy * chunkSize;
-	//		//		z -= cz * chunkSize;
-	//
-	//		int[] chunkCoord = getChunkCoord(x, y, z);
-	//		if (!chunk[chunkCoord[0]][chunkCoord[1]][chunkCoord[2]].isEmpty())
-	//			chunk[chunkCoord[0]][chunkCoord[1]][chunkCoord[2]].draw(chunkCoord[3], chunkCoord[4], chunkCoord[5], painter, c, xSide, ySide, zSide);
-	//	}
 }

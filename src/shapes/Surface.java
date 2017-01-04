@@ -8,7 +8,6 @@ import java.awt.*;
 public class Surface {
 	double[][] coord;
 	double[] normal;
-	static int surfaces;
 	double light;
 	public double tempDistanceLight;
 	public Color color;
@@ -77,10 +76,8 @@ public class Surface {
 	}
 	
 	public double[][] toCamera(Camera camera) {
-		// TODO: no need to check inView.
-		// only the surfaces with normals pointing towards camera
+		// only the surfaces with normals pointing towards camera and within camera view
 		if (camera.facingTowards(normal, coord[0]) && camera.inView(coord)) {
-			surfaces++;
 			double[] x = new double[coord.length], y = new double[coord.length];
 			double ox, oy = 0, oz;
 			for (int i = 0; i < coord.length; i++) {
@@ -110,10 +107,4 @@ public class Surface {
 		return null;
 	}
 	
-	// TODO: is this needed?
-	static int getSurfaces() {
-		int t = surfaces;
-		surfaces = 0;
-		return t;
-	}
 }
