@@ -29,6 +29,59 @@ public class Math3D {
 		return x * x2 + y * y2 + z * z2;
 	}
 	
+	public static double[] crossProductNormalized(double x, double y, double z, double x2, double y2, double z2) {
+		double[] cross = crossProductUnormalized(x, y, z, x2, y2, z2);
+		double mag = magnitude(cross[0], cross[1], cross[2]);
+		cross[0] /= mag;
+		cross[1] /= mag;
+		cross[2] /= mag;
+		return cross;
+	}
+	
+	public static double[] crossProductUnormalized(double x, double y, double z, double x2, double y2, double z2) {
+		return new double[] {y * z2 - z * y2, z * x2 - x * z2, x * y2 - y * x2};
+	}
+	
+	public static double[] halfAxisVectors(double x, double y, double z) {
+		if (x == 0 && y == 0)
+			x = EPSILON;
+		
+		double rightMag = magnitude(y, -x, 0) * 2;
+		double rightx = y / rightMag;
+		double righty = -x / rightMag;
+		
+		double upx = z * x;
+		double upy = z * y;
+		double upz = -(x * x + y * y);
+		double mag = magnitude(upx, upy, upz) * 2;
+		
+		return new double[] {rightx, righty, 0, upx / mag, upy / mag, upz / mag};
+	}
+	
+	public static double[] upVector(double x, double y, double z) {
+		double upx = z * x;
+		double upy = z * y;
+		double upz = -(x * x + y * y);
+		double mag = magnitude(upx, upy, upz);
+		return new double[] {upx / mag, upy / mag, upz / mag};
+	}
+	
+	// rotates point x,y,z around axis u,v,w by angle cos,sin and by angle cos,-sin
+	public static double[] rotation(double[] xyz, double[] uvw, double cos, double sin) {
+		double temp1 = uvw[0] * xyz[0] + uvw[1] * xyz[1] + uvw[2] * xyz[2];
+		double oneCos = 1 - cos;
+		
+		double rotxBase = uvw[0] * temp1 * oneCos + xyz[0] * cos;
+		double rotyBase = uvw[1] * temp1 * oneCos + xyz[1] * cos;
+		double rotzBase = uvw[2] * temp1 * oneCos + xyz[2] * cos;
+		
+		double rotxDelta = (uvw[2] * xyz[1] + uvw[1] * xyz[2]) * sin;
+		double rotyDelta = (uvw[2] * xyz[0] + uvw[0] * xyz[2]) * sin;
+		double rotzDelta = (uvw[1] * xyz[0] + uvw[0] * xyz[1]) * sin;
+		
+		return new double[] {rotxBase + rotxDelta, rotyBase + rotyDelta, rotzBase + rotzDelta, rotxBase - rotxDelta, rotyBase - rotyDelta, rotzBase - rotzDelta};
+	}
+	
 	public static double maxMin(double value, double max, double min) {
 		if (value > max)
 			return max;

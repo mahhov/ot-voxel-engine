@@ -150,116 +150,43 @@ public class Camera {
 		return false;
 	}
 	
-	public int[] cullBoundaries2() {
-		int c = maxCull;
-		int left = (int) x - c;
-		int right = (int) x + c + 1;
-		int front = (int) y - c;
-		int back = (int) y + c + 1;
-		int bottom = (int) z - c;
-		int top = (int) z + c + 1;
-		if (Math.random() > .9)
-			System.out.println("voluem: " + ((right - left) * (back - front) * (top - bottom)) / 100000);
-		return new int[] {left, right, front, back, bottom, top};
-	}
-	
 	public int[] cullBoundaries() {
-		double left, right, front, back, bottom, top;
-		double forwardMult, backwardMult;
+		// right & up axis vectors
+		double[] axis = Math3D.halfAxisVectors(normal[0], normal[1], normal[2]);
 		
-		// vertical view angle
-		double topCos = angleZCos * viewCos - angleZSin * viewSin;
-		double topSin = angleZCos * viewSin + angleZSin * viewCos;
-		double bottomCos = angleZCos * viewCos + angleZSin * viewSin;
-		double bottomSin = -angleZCos * viewSin + angleZSin * viewCos;
+		// top & bottom vectors
+		double[] topVector = new double[] {normal[0] + axis[3], normal[1] + axis[4], normal[2] + axis[5]};
+		double[] bottomVector = new double[] {normal[0] - axis[3], normal[1] - axis[4], normal[2] - axis[5]};
 		
-		// zangle
-		if (topCos < 0) { // up - vertical axis visible
-			forwardMult = bottomCos * maxCull;
-			backwardMult = topCos * maxCull;
-			top = z + maxCull;
-			bottom = z;
-		} else if (bottomCos < 0) { // down - vertical axis visible
-			forwardMult = topCos * maxCull;
-			backwardMult = bottomCos * maxCull;
-			top = z;
-			bottom = z - maxCull;
-		} else if (bottomSin > 0) { // up - no axis visible
-			forwardMult = bottomCos * maxCull;
-			backwardMult = 0;
-			top = z + topSin * maxCull;
-			bottom = z;
-		} else if (topSin < 0) { // down - no axis visible
-			forwardMult = topCos * maxCull;
-			backwardMult = 0;
-			top = z;
-			bottom = z + bottomSin * maxCull;
-		} else { // straight - horizontal plane visible
-			forwardMult = maxCull;
-			backwardMult = 0;
-			top = z + topSin * maxCull;
-			bottom = z + bottomSin * maxCull;
+		// corner points
+		double[][] points = new double[4][3]; // top right, top left, bottom right, bottom left;
+		points[0] = new double[] {topVector[0] + axis[0], topVector[1] + axis[1], topVector[2] + axis[2]};
+		points[1] = new double[] {topVector[0] - axis[0], topVector[1] - axis[1], topVector[2] - axis[2]};
+		points[2] = new double[] {bottomVector[0] + axis[0], bottomVector[1] + axis[1], bottomVector[2] + axis[2]};
+		points[3] = new double[] {bottomVector[0] - axis[0], bottomVector[1] - axis[1], bottomVector[2] - axis[2]};
+		
+		// find min & max
+		double left = 0, right = 0, front = 0, back = 0, bottom = 0, top = 0;
+		for (double[] p : points) {
+			if (p[0] < left)
+				left = p[0];
+			else if (p[0] > right)
+				right = p[0];
+			if (p[1] < front)
+				front = p[1];
+			else if (p[1] > back)
+				back = p[1];
+			if (p[2] < bottom)
+				bottom = p[2];
+			else if (p[2] > top)
+				top = p[2];
 		}
 		
-		// horizontal view angles
-		double leftCos = angleCos * viewCos - angleSin * viewSin;
-		double leftSin = angleCos * viewSin + angleSin * viewCos;
-		double rightCos = angleCos * viewCos + angleSin * viewSin;
-		double rightSin = -angleCos * viewSin + angleSin * viewCos;
+//		Painter.debugString = new String[3];
+//		Painter.debugString[0] = left + " " + right;
+//		Painter.debugString[1] = front + " " + back;
+//		Painter.debugString[2] = bottom + " " + top;
 		
-		// angle
-		if (rightCos > 0)
-			if (leftCos < 0) { // top
-				left = x + leftCos * forwardMult;
-				right = x + rightCos * forwardMult;
-				front = y + backwardMult; // backwardMult is always <= 0
-				back = y + forwardMult;
-			} else if (rightSin > 0) { // top right
-				left = x + rightCos * backwardMult;
-				right = x + rightCos * forwardMult;
-				front = y + leftSin * backwardMult;
-				back = y + leftSin * forwardMult;
-			} else if (leftSin > 0) { // right
-				left = x + backwardMult;
-				right = x + forwardMult;
-				front = y + rightSin * forwardMult;
-				back = y + leftSin * forwardMult;
-			} else { // bottom right
-				left = x + leftCos * backwardMult;
-				right = x + leftCos * forwardMult;
-				front = y + rightSin * forwardMult;
-				back = y + rightSin * backwardMult;
-			}
-		else if (leftCos > 0) { // bottom
-			left = x + rightCos * forwardMult;
-			right = x + leftCos * forwardMult;
-			front = y - forwardMult;
-			back = y - backwardMult;
-		} else if (rightSin < 0) { // bottom left
-			left = x + rightCos * forwardMult;
-			right = x + rightCos * backwardMult;
-			front = y + leftSin * forwardMult;
-			back = y + leftSin * backwardMult;
-		} else if (leftSin < 0) { // left
-			left = x - forwardMult;
-			right = x - backwardMult;
-			front = y + leftSin * forwardMult;
-			back = y + rightSin * forwardMult;
-		} else { // top left
-			left = x + leftCos * forwardMult;
-			right = x + leftCos * backwardMult;
-			front = y + rightSin * backwardMult;
-			back = y + rightSin * forwardMult;
-		}
-		
-		//		Painter.debugString = new String[4];
-		//		Painter.debugString[0] = (left - x) / maxCull + " " + (right - x) / maxCull;
-		//		Painter.debugString[1] = (front - y) / maxCull + " " + (back - y) / maxCull;
-		//		Painter.debugString[2] = (forwardMult) / maxCull + " " + backwardMult / maxCull;
-		//		Painter.debugString[3] = Math.round(leftCos * 100) / 100. + " " + Math.round(leftSin * 100) / 100. + " " + Math.round(rightCos * 100) / 100. + " " + Math.round(rightSin * 100) / 100.;
-		
-		// TODO : horizontal view rotation incorrect when zangle isn't 0
-		
-		return new int[] {(int) (left), (int) (right) + 1, (int) (front), (int) (back) + 1, (int) (bottom), (int) (top) + 1};
+		return new int[] {(int) (left * maxCull + x), (int) (right * maxCull + x) + 1, (int) (front * maxCull + y), (int) (back * maxCull + y) + 1, (int) (bottom * maxCull + z), (int) (top * maxCull + z) + 1};
 	}
 }
