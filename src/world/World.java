@@ -16,7 +16,7 @@ public class World {
 	private Projectile[] projectile;
 	private Particle[] particle;
 	
-	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize, int densityMult) {
+	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize, int chunksFill) {
 		width = chunkWidth * chunkSize;
 		height = chunkLength * chunkSize;
 		length = chunkHeight * chunkSize;
@@ -28,9 +28,9 @@ public class World {
 					chunk[x][y][z] = new Chunk();
 		System.out.println("done creating chunks");
 		
-		for (int cx = 0; cx < 3 * densityMult; cx++)
-			for (int cy = 0; cy < 3 * densityMult; cy++)
-				for (int cz = 0; cz < densityMult; cz++) {
+		for (int cx = 0; cx < 3 * chunksFill; cx++)
+			for (int cy = 0; cy < 3 * chunksFill; cy++)
+				for (int cz = 0; cz < chunksFill; cz++) {
 					chunk[cx][cy][cz].init(chunkSize);
 					for (int x = 0; x < chunkSize; x++)
 						for (int y = 0; y < chunkSize; y++)
@@ -44,16 +44,23 @@ public class World {
 	
 	public void drawChunks(Painter painter, Camera c) {
 		int boundaries[] = c.cullBoundaries();
+		int volumeRaw = (boundaries[1] - boundaries[0]) * (boundaries[3] - boundaries[2]) * (boundaries[5] - boundaries[4]) / 100000;
+		
 		boundaries[0] = Math3D.max(boundaries[0], 0);
 		boundaries[1] = Math3D.min(boundaries[1], width - 1);
 		boundaries[2] = Math3D.max(boundaries[2], 0);
 		boundaries[3] = Math3D.min(boundaries[3], length - 1);
 		boundaries[4] = Math3D.max(boundaries[4], 0);
 		boundaries[5] = Math3D.min(boundaries[5], height - 1);
+		int volumeBound = (boundaries[1] - boundaries[0]) * (boundaries[3] - boundaries[2]) * (boundaries[5] - boundaries[4]) / 100000;
+		
 		
 		int[] fromChunkCoord = getChunkCoord(boundaries[0], boundaries[2], boundaries[4]);
 		int[] toChunkCoord = getChunkCoord(boundaries[1], boundaries[3], boundaries[5]);
 		int[] cameraChunkCoord = getChunkCoord((int) c.x, (int) c.y, (int) c.z);
+		int volumeChunk = (fromChunkCoord[0] - toChunkCoord[0]) * (fromChunkCoord[1] - toChunkCoord[1]) * (fromChunkCoord[2] - toChunkCoord[2]) / -1;
+		
+		Painter.debugString[1] = "(unit 100,000) volume raw " + volumeRaw + " ; (unit 100,000) volume bound " + volumeBound + " ; volume chunk " + volumeChunk;
 		
 		for (int x = fromChunkCoord[0]; x < cameraChunkCoord[0]; x++)
 			drawChunksRow(painter, c, fromChunkCoord, toChunkCoord, cameraChunkCoord, x, Math3D.RIGHT);
@@ -87,7 +94,7 @@ public class World {
 				drawRow(painter, c, fromChunkCoord, toChunkCoord, cameraChunkCoord, cx, cy, cz, xSide, ySide, zSide, x);
 		} else if (xSide == Math3D.LEFT) {
 			int endx = cx == toChunkCoord[0] ? toChunkCoord[3] : chunkSize - 1;
-			for (int x = endx; x > 0; x--)
+			for (int x = endx; x >= 0; x--)
 				drawRow(painter, c, fromChunkCoord, toChunkCoord, cameraChunkCoord, cx, cy, cz, xSide, ySide, zSide, x);
 		} else {
 			int startx = cx == fromChunkCoord[0] ? fromChunkCoord[3] : 0;
@@ -107,7 +114,7 @@ public class World {
 				drawColumn(painter, c, fromChunkCoord, toChunkCoord, cameraChunkCoord, cx, cy, cz, xSide, ySide, zSide, x, y);
 		} else if (ySide == Math3D.FRONT) {
 			int endy = cy == toChunkCoord[1] ? toChunkCoord[4] : chunkSize - 1;
-			for (int y = endy; y > 0; y--)
+			for (int y = endy; y >= 0; y--)
 				drawColumn(painter, c, fromChunkCoord, toChunkCoord, cameraChunkCoord, cx, cy, cz, xSide, ySide, zSide, x, y);
 		} else {
 			int starty = cy == fromChunkCoord[1] ? fromChunkCoord[4] : 0;
@@ -127,7 +134,7 @@ public class World {
 				drawCell(painter, c, cx, cy, cz, xSide, ySide, zSide, x, y, z);
 		} else if (zSide == Math3D.BOTTOM) {
 			int endz = cz == toChunkCoord[2] ? toChunkCoord[5] : chunkSize - 1;
-			for (int z = endz; z > 0; z--)
+			for (int z = endz; z >= 0; z--)
 				drawCell(painter, c, cx, cy, cz, xSide, ySide, zSide, x, y, z);
 		} else {
 			int startz = cz == fromChunkCoord[2] ? fromChunkCoord[5] : 0;

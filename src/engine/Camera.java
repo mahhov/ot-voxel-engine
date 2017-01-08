@@ -182,11 +182,6 @@ public class Camera {
 				top = p[2];
 		}
 		
-//		Painter.debugString = new String[3];
-//		Painter.debugString[0] = left + " " + right;
-//		Painter.debugString[1] = front + " " + back;
-//		Painter.debugString[2] = bottom + " " + top;
-		
-		return new int[] {(int) (left * maxCull + x), (int) (right * maxCull + x) + 1, (int) (front * maxCull + y), (int) (back * maxCull + y) + 1, (int) (bottom * maxCull + z), (int) (top * maxCull + z) + 1};
+		return new int[] {(int) (left * maxCull + x), (int) (right * maxCull + x), (int) (front * maxCull + y), (int) (back * maxCull + y), (int) (bottom * maxCull + z), (int) (top * maxCull + z)};
 	}
 }
