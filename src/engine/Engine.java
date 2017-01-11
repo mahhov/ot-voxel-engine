@@ -4,12 +4,12 @@ import world.World;
 
 class Engine {
 	
-	Camera camera;
-	Controller controller;
-	Painter painter;
-	World world;
+	private Camera camera;
+	private Controller controller;
+	private Painter painter;
+	private World world;
 	
-	Engine() {
+	private Engine() {
 		int frame = 600, image = 600;
 		Math3D.loadTrig(1000);
 		camera = new Camera();
@@ -30,10 +30,10 @@ class Engine {
 			camera.update(world.width, world.length, world.height);
 			world.drawChunks(painter, camera);
 			painter.repaint();
-			wait(5);
+			wait(10);
 			endTime = System.nanoTime() + 1;
-			if (endTime - beginTime > 1000000000l) {
-				painter.debugString[0] = "fps: " + frame + " ; paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount;
+			if (endTime - beginTime > 1000000000L) {
+				Painter.debugString[0] = "fps: " + frame + " ; paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount;
 				frame = 0;
 				beginTime = endTime;
 			}

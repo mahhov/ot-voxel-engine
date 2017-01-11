@@ -17,18 +17,24 @@ class Chunk {
 		count = 0;
 	}
 	
+	
+	void safeInit(int size) {
+		if (cell == null)
+			init(size);
+	}
+	
 	boolean isEmpty() {
 		return count == 0;
 	}
 	
-	void add(int x, int y, int z, Shape shape) {
-		cell[x][y][z].add(shape);
+	Cell.LinkedShapes add(int x, int y, int z, Shape shape) {
 		count++;
+		return cell[x][y][z].add(shape);
 	}
 	
-	void remove(int x, int y, int z, Cell.LinkedShapes shape) {
-		cell[x][y][z].remove(shape);
+	Shape remove(int x, int y, int z, Cell.LinkedShapes shape) {
 		count--;
+		return cell[x][y][z].remove(shape);
 	}
 	
 	void draw(int x, int y, int z, Painter painter, Camera c, int xSide, int ySide, int zSide) {

@@ -5,8 +5,8 @@ import engine.Math3D;
 import java.awt.*;
 
 public class StaticCube extends Shape {
-	double x, y, z;
-	Surface top, bottom, left, right, front, back;
+	private double x, y, z;
+	private Surface top, bottom, left, right, front, back;
 	
 	public StaticCube(double x, double y, double z) {
 		this.x = x;

@@ -5,6 +5,8 @@ import engine.Math3D;
 import engine.Painter;
 import particles.Particle;
 import projectiles.Projectile;
+import shapes.Cube;
+import shapes.Shape;
 import shapes.StaticCube;
 import ships.Ship;
 
@@ -28,19 +30,60 @@ public class World {
 					chunk[x][y][z] = new Chunk();
 		System.out.println("done creating chunks");
 		
-		for (int cx = 0; cx < 3 * chunksFill; cx++)
-			for (int cy = 0; cy < 3 * chunksFill; cy++)
-				for (int cz = 0; cz < chunksFill; cz++) {
+		fillWorldRand(chunksFill);
+		
+		System.out.println("done loading world");
+	}
+	
+	// FILLING
+	
+	private void fillWorldRand(int scale) {
+		for (int cx = 0; cx < 3 * scale; cx++)
+			for (int cy = 0; cy < 3 * scale; cy++)
+				for (int cz = 0; cz < scale; cz++) {
 					chunk[cx][cy][cz].init(chunkSize);
 					for (int x = 0; x < chunkSize; x++)
 						for (int y = 0; y < chunkSize; y++)
 							for (int z = 0; z < chunkSize; z++)
-								if (Math.random() > 0.98)
-									chunk[cx][cy][cz].add(x, y, z, new StaticCube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5));
+								if (Math.random() > 0.9995) {
+									double angle = Math.random() * Math.PI * 2;
+									double angleZ = Math.random() * Math.PI * 2;
+									double size = Math.random() * 2 + .25;
+									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, size));
+								}
 				}
-		
-		System.out.println("done loading world");
 	}
+	
+	private void fillWorldGround(int scale) {
+		int border = scale * 10;
+		for (int x = 0; x < border; x++)
+			for (int y = 0; y < border; y++)
+				addStaticCube(x, y, 0);
+		for (int z = 1; z < 2; z++)
+			for (int x = 0; x < border; x++) {
+				addStaticCube(x, 0, z);
+				addStaticCube(x, border - 1, z);
+				addStaticCube(0, x, z);
+				addStaticCube(border - 1, x, z);
+			}
+	}
+	
+	private void addStaticCube(int x, int y, int z) {
+		addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5));
+	}
+	
+	public Cell.LinkedShapes addShape(int x, int y, int z, Shape shape) {
+		int cx = x / chunkSize;
+		int cy = y / chunkSize;
+		int cz = z / chunkSize;
+		int sx = x - cx * chunkSize;
+		int sy = y - cy * chunkSize;
+		int sz = z - cz * chunkSize;
+		chunk[cx][cy][cz].safeInit(chunkSize);
+		return chunk[cx][cy][cz].add(sx, sy, sz, shape);
+	}
+	
+	// DRAWING
 	
 	public void drawChunks(Painter painter, Camera c) {
 		int boundaries[] = c.cullBoundaries();
@@ -150,6 +193,8 @@ public class World {
 	private void drawCell(Painter painter, Camera c, int cx, int cy, int cz, int xSide, int ySide, int zSide, int x, int y, int z) {
 		chunk[cx][cy][cz].draw(x, y, z, painter, c, xSide, ySide, zSide);
 	}
+	
+	// UITL
 	
 	private int[] getChunkCoord(int x, int y, int z) {
 		int cx = x / chunkSize;

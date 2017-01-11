@@ -10,6 +10,7 @@ public class Cell {
 	int count;
 	
 	public LinkedShapes add(Shape shape) {
+		count++;
 		if (shapes == null) {
 			shapes = new LinkedShapes(null, null, shape);
 			return shapes;
@@ -21,6 +22,7 @@ public class Cell {
 	}
 	
 	public Shape remove(LinkedShapes lShape) {
+		count--;
 		if (lShape.prev != null)
 			lShape.prev.next = lShape.next;
 		if (lShape.next != null)
@@ -49,7 +51,7 @@ public class Cell {
 		}
 	}
 	
-	class LinkedShapes {
+	public class LinkedShapes {
 		private LinkedShapes next, prev;
 		private Shape shape;
 		

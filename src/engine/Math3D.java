@@ -42,20 +42,24 @@ public class Math3D {
 		return new double[] {y * z2 - z * y2, z * x2 - x * z2, x * y2 - y * x2};
 	}
 	
-	public static double[] halfAxisVectors(double x, double y, double z) {
-		if (x == 0 && y == 0)
-			x = EPSILON;
+	public static double[] halfAxisVectors(double[] norm) {
+		return axisVectors(norm, .5);
+	}
+	
+	public static double[] axisVectors(double[] norm, double mag) {
+		if (norm[0] == 0 && norm[1] == 0)
+			norm[0] = EPSILON;
 		
-		double rightMag = magnitude(y, -x, 0) * 2;
-		double rightx = y / rightMag;
-		double righty = -x / rightMag;
+		double rightMag = magnitude(norm[1], -norm[0], 0);
+		double rightx = norm[1] / rightMag * mag;
+		double righty = -norm[0] / rightMag * mag;
 		
-		double upx = z * x;
-		double upy = z * y;
-		double upz = -(x * x + y * y);
-		double mag = magnitude(upx, upy, upz) * 2;
+		double upx = norm[2] * norm[0];
+		double upy = norm[2] * norm[1];
+		double upz = -(norm[0] * norm[0] + norm[1] * norm[1]);
+		double upMag = magnitude(upx, upy, upz);
 		
-		return new double[] {rightx, righty, 0, upx / mag, upy / mag, upz / mag};
+		return new double[] {rightx, righty, 0, upx / upMag * mag, upy / upMag * mag, upz / upMag * mag};
 	}
 	
 	public static double[] upVector(double x, double y, double z) {
@@ -64,6 +68,14 @@ public class Math3D {
 		double upz = -(x * x + y * y);
 		double mag = magnitude(upx, upy, upz);
 		return new double[] {upx / mag, upy / mag, upz / mag};
+	}
+	
+	public static double[] norm(double angleSin, double angleCos, double angleZSin, double angleZCos) {
+		double[] normal = new double[3];
+		normal[0] = angleCos * angleZCos;
+		normal[1] = angleSin * angleZCos;
+		normal[2] = angleZSin;
+		return normal;
 	}
 	
 	// rotates point x,y,z around axis u,v,w by angle cos,sin and by angle cos,-sin

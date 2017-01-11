@@ -44,6 +44,11 @@ public class Surface {
 		setNormal(flipNormal);
 	}
 	
+	Surface(double[] p1, double[] p2, double[] p3, double[] p4, boolean flipNormal) {
+		coord = new double[][] {p1, p2, p3, p4};
+		setNormal(flipNormal);
+	}
+	
 	void setNormal(boolean flipNormal) {
 		// uses first 3 coordinates
 		// when flipNormal is false, normal points toward right hand rule
@@ -108,3 +113,6 @@ public class Surface {
 	}
 	
 }
+
+// TODO: move camera.inview check to prior to cube/shape logic
+// TODO: make sure facingTowards checks smaller than 180 degrees

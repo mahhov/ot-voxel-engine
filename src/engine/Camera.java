@@ -6,11 +6,10 @@ public class Camera {
 	static final double MIN_LIGHT = .12;
 	
 	public double x, y, z;
-	double angle, angleZ;
+	private double angle, angleZ;
 	public double angleSin, angleCos, angleZSin, angleZCos;
-	private double viewCos, viewSin;
-	double[] normal;
-	int maxCull, maxCullSqrd;
+	private double[] normal;
+	private int maxCull, maxCullSqrd;
 	
 	boolean dirtyAngles;
 	
@@ -20,9 +19,6 @@ public class Camera {
 		if (maxCull > 200)
 			maxCull = 200;
 		maxCullSqrd = maxCull * maxCull;
-		
-		viewCos = 2 * Math3D.sqrt1Div5;
-		viewSin = 1 * Math3D.sqrt1Div5;
 		
 		normal = new double[3];
 		
@@ -129,9 +125,7 @@ public class Camera {
 		angleZCos = Math3D.xcos(angleZ);
 		
 		// norm
-		normal[0] = angleCos * angleZCos;
-		normal[1] = angleSin * angleZCos;
-		normal[2] = angleZSin;
+		normal = Math3D.norm(angleSin, angleCos, angleZSin, angleZCos);
 	}
 	
 	public boolean facingTowards(double[] normal, double[] position) {
@@ -152,7 +146,7 @@ public class Camera {
 	
 	public int[] cullBoundaries() {
 		// right & up axis vectors
-		double[] axis = Math3D.halfAxisVectors(normal[0], normal[1], normal[2]);
+		double[] axis = Math3D.halfAxisVectors(normal);
 		
 		// top & bottom vectors
 		double[] topVector = new double[] {normal[0] + axis[3], normal[1] + axis[4], normal[2] + axis[5]};
