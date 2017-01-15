@@ -2,19 +2,22 @@ package shapes;
 
 import ships.Ship;
 
-public class ShipCube extends Cube {
+public class ShipTrigger extends Shape {
 	Ship ship;
+	private double x, y, z;
 	private long drawCounter;
 	
-	public ShipCube(double x, double y, double z, double angle, double angleZ, double size, Ship ship) {
-		super(x, y, z, angle, angleZ, size);
+	public ShipTrigger(double x, double y, double z, Ship ship) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
 		this.ship = ship;
 		drawCounter = ship.drawCounter;
 	}
 	
 	public Surface[] draw(int xSide, int ySide, int zSide) {
 		if (drawCounter == ship.drawCounter)
-			return super.draw(xSide, ySide, zSide);
+			ship.visible = true;
 		return null;
 	}
 	

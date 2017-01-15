@@ -92,13 +92,13 @@ public class Surface {
 				oz = coord[i][2] - camera.z;
 				
 				// camera angle
-				double ox2 = ox * camera.angleSin - oy * camera.angleCos;
-				oy = ox * camera.angleCos + oy * camera.angleSin;
+				double ox2 = ox * camera.angle.sin() - oy * camera.angle.cos();
+				oy = ox * camera.angle.cos() + oy * camera.angle.sin();
 				ox = ox2;
 				
 				// camera z angle
-				double oz2 = -oz * camera.angleZCos + oy * camera.angleZSin;
-				oy = oz * camera.angleZSin + oy * camera.angleZCos;
+				double oz2 = -oz * camera.angleZ.cos() + oy * camera.angleZ.sin();
+				oy = oz * camera.angleZ.sin() + oy * camera.angleZ.cos();
 				oz = oz2;
 				
 				// projection

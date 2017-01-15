@@ -70,11 +70,19 @@ public class Math3D {
 		return new double[] {upx / mag, upy / mag, upz / mag};
 	}
 	
-	public static double[] norm(double angleSin, double angleCos, double angleZSin, double angleZCos) {
+	public static double[] norm(Angle angle, Angle angleZ) {
 		double[] normal = new double[3];
-		normal[0] = angleCos * angleZCos;
-		normal[1] = angleSin * angleZCos;
-		normal[2] = angleZSin;
+		normal[0] = angle.cos() * angleZ.cos();
+		normal[1] = angle.sin() * angleZ.cos();
+		normal[2] = angleZ.sin();
+		return normal;
+	}
+	
+	public static double[] norm(Angle angle, Angle angleZ, double size) {
+		double[] normal = new double[3];
+		normal[0] = angle.cos() * angleZ.cos() * size;
+		normal[1] = angle.sin() * angleZ.cos() * size;
+		normal[2] = angleZ.sin() * size;
 		return normal;
 	}
 	
@@ -211,5 +219,43 @@ public class Math3D {
 			p = p >>> 1;
 		}
 		return result;
+	}
+	
+	public static class Angle {
+		private double angle;
+		private double angleCos, angleSin;
+		private boolean updated;
+		
+		public Angle(double angle) {
+			this.angle = angle;
+		}
+		
+		private void update() {
+			angleCos = xcos(angle);
+			angleSin = xsin(angle);
+			updated = true;
+		}
+		
+		public double get() {
+			return angle;
+		}
+		
+		public void set(double angle) {
+			this.angle = angle;
+			updated = false;
+		}
+		
+		public double sin() {
+			if (!updated)
+				update();
+			return angleSin;
+		}
+		
+		public double cos() {
+			if (!updated)
+				update();
+			return angleCos;
+		}
+		
 	}
 }

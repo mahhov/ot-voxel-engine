@@ -28,9 +28,10 @@ class Engine {
 			painter.clear();
 			camera.move(controller);
 			camera.update(world.width, world.length, world.height);
+			world.update();
 			world.drawChunks(painter, camera);
 			painter.repaint();
-			wait(10);
+			wait(30);
 			endTime = System.nanoTime() + 1;
 			if (endTime - beginTime > 1000000000L) {
 				Painter.debugString[0] = "fps: " + frame + " ; paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount;

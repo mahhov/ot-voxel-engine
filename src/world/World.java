@@ -31,8 +31,10 @@ public class World {
 		System.out.println("done creating chunks");
 		
 		fillWorldRand(chunksFill);
-		
 		System.out.println("done loading world");
+		
+		ship = new Ship[1];
+		ship[0] = new Ship(50, 50, 25, 0, this);
 	}
 	
 	// FILLING
@@ -192,6 +194,13 @@ public class World {
 	
 	private void drawCell(Painter painter, Camera c, int cx, int cy, int cz, int xSide, int ySide, int zSide, int x, int y, int z) {
 		chunk[cx][cy][cz].draw(x, y, z, painter, c, xSide, ySide, zSide);
+	}
+	
+	// UPDATE
+	
+	public void update() {
+		for (Ship s : ship)
+			s.update(this);
 	}
 	
 	// UITL

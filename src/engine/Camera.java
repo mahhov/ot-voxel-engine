@@ -6,12 +6,11 @@ public class Camera {
 	static final double MIN_LIGHT = .12;
 	
 	public double x, y, z;
-	private double angle, angleZ;
-	public double angleSin, angleCos, angleZSin, angleZCos;
+	public Math3D.Angle angle, angleZ;
 	private double[] normal;
 	private int maxCull, maxCullSqrd;
 	
-	boolean dirtyAngles;
+	boolean dirtyNorm;
 	
 	Camera() {
 		maxCull = (int) (Math.log(MIN_LIGHT) / Math.log(FOG)) + 1;
@@ -26,7 +25,9 @@ public class Camera {
 		y = 50.5;
 		z = 25;
 		
-		computeAngles();
+		angle = new Math3D.Angle(0);
+		angleZ = new Math3D.Angle(0);
+		computeNorm();
 	}
 	
 	void move(Controller c) {
@@ -65,8 +66,8 @@ public class Camera {
 	}
 	
 	private void moveRelative(double dx, double dy, double dz) {
-		x += dy * angleCos * MOVE_SPEED + dx * angleSin * MOVE_SPEED;
-		y += dy * angleSin * MOVE_SPEED - dx * angleCos * MOVE_SPEED;
+		x += dy * angle.cos() * MOVE_SPEED + dx * angle.sin() * MOVE_SPEED;
+		y += dy * angle.sin() * MOVE_SPEED - dx * angle.cos() * MOVE_SPEED;
 		z += dz * MOVE_SPEED;
 	}
 	
@@ -78,22 +79,22 @@ public class Camera {
 		double dy = -toY + y;
 		double dx = toX - x;
 		double dz = -toZ + z;
-		angle = Math.atan2(dy, dx);
-		angleZ = Math.atan2(dz, Math3D.magnitude(dx, dy));
-		dirtyAngles = true;
+		angle.set(Math.atan2(dy, dx));
+		angleZ.set(Math.atan2(dz, Math3D.magnitude(dx, dy)));
+		dirtyNorm = true;
 	}
 	
 	private void rotate(double dangle, double dangleZ) {
-		angle += dangle * ANGLE_SPEED;
-		angleZ += dangleZ * ANGLE_SPEED;
-		dirtyAngles = true;
+		angle.set(angle.get() + dangle * ANGLE_SPEED);
+		angleZ.set(angleZ.get() + dangleZ * ANGLE_SPEED);
+		dirtyNorm = true;
 	}
 	
 	void update(int width, int length, int height) {
 		boundCoordinates(width, length, height);
-		if (dirtyAngles) {
-			dirtyAngles = false;
-			computeAngles();
+		if (dirtyNorm) {
+			dirtyNorm = false;
+			computeNorm();
 		}
 	}
 	
@@ -111,21 +112,14 @@ public class Camera {
 		if (z > height - Math3D.EPSILON)
 			z = height - Math3D.EPSILON;
 		
-		if (angleZ < -Math.PI / 2)
-			angleZ = -Math.PI / 2;
-		if (angleZ > Math.PI / 2)
-			angleZ = Math.PI / 2;
+		if (angleZ.get() < -Math.PI / 2)
+			angleZ.set(-Math.PI / 2);
+		if (angleZ.get() > Math.PI / 2)
+			angleZ.set(Math.PI / 2);
 	}
 	
-	private void computeAngles() {
-		// sin/cos
-		angleSin = Math3D.xsin(angle);
-		angleCos = Math3D.xcos(angle);
-		angleZSin = Math3D.xsin(angleZ);
-		angleZCos = Math3D.xcos(angleZ);
-		
-		// norm
-		normal = Math3D.norm(angleSin, angleCos, angleZSin, angleZCos);
+	private void computeNorm() {
+		normal = Math3D.norm(angle, angleZ);
 	}
 	
 	public boolean facingTowards(double[] normal, double[] position) {

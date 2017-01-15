@@ -8,7 +8,7 @@ import static engine.Math3D.axisVectors;
 
 public class Cube extends Shape {
 	private double x, y, z;
-	private double angle, angleZ;
+	private Math3D.Angle angle, angleZ;
 	private double[] norm;
 	private double size;
 	private boolean surfacesDirty;
@@ -18,21 +18,15 @@ public class Cube extends Shape {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.angle = angle;
-		this.angleZ = angleZ;
+		this.angle = new Math3D.Angle(angle);
+		this.angleZ = new Math3D.Angle(angleZ);
 		this.size = size;
 		surfacesDirty = true;
 	}
 	
 	private void initSurfaces() {
-		// angles
-		double angleSin = Math3D.xsin(angle);
-		double angleCos = Math3D.xcos(angle);
-		double angleZSin = Math3D.xsin(angleZ);
-		double angleZCos = Math3D.xcos(angleZ);
-		
 		// axis  vectors
-		norm = Math3D.norm(angleSin, angleCos, angleZSin * size, angleZCos * size);
+		norm = Math3D.norm(angle, angleZ, size);
 		double[] rightUp = axisVectors(norm, size);
 		
 		// corner coordinates

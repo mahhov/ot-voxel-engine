@@ -6,28 +6,33 @@ import shapes.Shape;
 import shapes.Surface;
 
 public class Cell {
-	LinkedShapes shapes;
-	int count;
+	Chunk chunk;
+	private LinkedShapes shapes;
+	
+	Cell(Chunk chunk) {
+		this.chunk = chunk;
+	}
 	
 	public LinkedShapes add(Shape shape) {
-		count++;
+		chunk.count++;
 		if (shapes == null) {
 			shapes = new LinkedShapes(null, null, shape);
 			return shapes;
 		}
-		shapes = new LinkedShapes(null, shapes, shape);
-		if (shapes.next != null)
-			shapes.next.prev = shapes;
+		LinkedShapes first = new LinkedShapes(shapes, null, shape);
+		shapes.prev = first;
+		shapes = first;
 		return shapes;
 	}
 	
-	public Shape remove(LinkedShapes lShape) {
-		count--;
+	public void remove(LinkedShapes lShape) {
+		chunk.count--;
 		if (lShape.prev != null)
 			lShape.prev.next = lShape.next;
 		if (lShape.next != null)
 			lShape.next.prev = lShape.prev;
-		return lShape.shape;
+		if (shapes == lShape)
+			shapes = shapes.next;
 	}
 	
 	public void drawAll(Painter painter, Camera c, int xSide, int ySide, int zSide) {
@@ -35,9 +40,12 @@ public class Cell {
 		Surface surfaces[];
 		while (lShape != null) {
 			surfaces = lShape.shape.draw(xSide, ySide, zSide);
-			for (Surface s : surfaces)
-				if (s != null)
-					painter.polygon(s.toCamera(c), s.tempDistanceLight, s.color);
+			if (surfaces == null)
+				remove(lShape);
+			else
+				for (Surface s : surfaces)
+					if (s != null)
+						painter.polygon(s.toCamera(c), s.tempDistanceLight, s.color);
 			lShape = lShape.next;
 		}
 	}
