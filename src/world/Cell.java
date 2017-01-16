@@ -13,16 +13,14 @@ public class Cell {
 		this.chunk = chunk;
 	}
 	
-	public LinkedShapes add(Shape shape) {
+	public void add(Shape shape) {
 		chunk.count++;
 		if (shapes == null) {
 			shapes = new LinkedShapes(null, null, shape);
-			return shapes;
+			return;
 		}
-		LinkedShapes first = new LinkedShapes(shapes, null, shape);
-		shapes.prev = first;
-		shapes = first;
-		return shapes;
+		shapes = new LinkedShapes(shapes, null, shape);
+		shapes.next.prev = shapes;
 	}
 	
 	public void remove(LinkedShapes lShape) {

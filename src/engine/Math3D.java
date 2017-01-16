@@ -3,7 +3,7 @@ package engine;
 
 public class Math3D {
 	public static final double EPSILON = 0.00001;
-	public static final int RIGHT = 1, BACK = 1, TOP = 1, LEFT = 0, FRONT = 0, BOTTOM = 0, NONE = -1;
+	public static final int LEFT = 0, RIGHT = 1, FRONT = 2, BACK = 3, BOTTOM = 4, TOP = 5, NONE = -1;
 	
 	public static final double sqrt2 = Math.sqrt(2), sqrt2Div3 = Math.sqrt(2.0 / 3), sqrt1Div2 = 1 / sqrt2, sqrt1Div5 = 1 / Math.sqrt(5);
 	
@@ -54,18 +54,18 @@ public class Math3D {
 		double rightx = norm[1] / rightMag * mag;
 		double righty = -norm[0] / rightMag * mag;
 		
-		double upx = norm[2] * norm[0];
-		double upy = norm[2] * norm[1];
-		double upz = -(norm[0] * norm[0] + norm[1] * norm[1]);
+		double upx = -norm[2] * norm[0];
+		double upy = -norm[2] * norm[1];
+		double upz = (norm[0] * norm[0] + norm[1] * norm[1]);
 		double upMag = magnitude(upx, upy, upz);
 		
 		return new double[] {rightx, righty, 0, upx / upMag * mag, upy / upMag * mag, upz / upMag * mag};
 	}
 	
 	public static double[] upVector(double x, double y, double z) {
-		double upx = z * x;
-		double upy = z * y;
-		double upz = -(x * x + y * y);
+		double upx = -z * x;
+		double upy = -z * y;
+		double upz = (x * x + y * y);
 		double mag = magnitude(upx, upy, upz);
 		return new double[] {upx / mag, upy / mag, upz / mag};
 	}

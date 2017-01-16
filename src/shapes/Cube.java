@@ -13,8 +13,13 @@ public class Cube extends Shape {
 	private double size;
 	private boolean surfacesDirty;
 	private Surface top, bottom, left, right, front, back;
+	private boolean[] sides;
 	
 	public Cube(double x, double y, double z, double angle, double angleZ, double size) {
+		this(x, y, z, angle, angleZ, size, new boolean[] {true, true, true, true, true, true});
+	}
+	
+	public Cube(double x, double y, double z, double angle, double angleZ, double size, boolean[] sides) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -22,6 +27,7 @@ public class Cube extends Shape {
 		this.angleZ = new Math3D.Angle(angleZ);
 		this.size = size;
 		surfacesDirty = true;
+		this.sides = sides;
 	}
 	
 	private void initSurfaces() {
@@ -40,32 +46,46 @@ public class Cube extends Shape {
 		double[] rightBackTop = new double[] {x + norm[0] + rightUp[0] + rightUp[3], y + norm[1] + rightUp[1] + rightUp[4], z + norm[2] + rightUp[2] + rightUp[5]};
 		
 		// from back/left -> back/right -> front/right -> front/left
-		top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, false);
-		bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, true);
+		if (sides[Math3D.TOP]) {
+			top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, true);
+			top.setColor(Color.red);
+			top.setLight(1);
+		}
+		
+		// from back/left -> back/right -> front/right -> front/left
+		if (sides[Math3D.BOTTOM]) {
+			bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, false);
+			bottom.setColor(Color.green);
+			bottom.setLight(1);
+		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, false);
-		right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, true);
+		if (sides[Math3D.LEFT]) {
+			left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, true);
+			left.setColor(Color.cyan);
+			left.setLight(1);
+		}
+		
+		// from bottom/back -> top/back -> top/front -> bottom/front
+		if (sides[Math3D.RIGHT]) {
+			right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, false);
+			right.setColor(Color.gray);
+			right.setLight(1);
+		}
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, false);
-		back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, true);
+		if (sides[Math3D.FRONT]) {
+			front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, true);
+			front.setColor(Color.blue);
+			front.setLight(1);
+		}
 		
-		// set color
-		top.setColor(Color.red);
-		bottom.setColor(Color.green);
-		back.setColor(Color.yellow);
-		front.setColor(Color.blue);
-		right.setColor(Color.gray);
-		left.setColor(Color.cyan);
-		
-		// set light
-		top.setLight(1);
-		bottom.setLight(1);
-		back.setLight(1);
-		front.setLight(1);
-		right.setLight(1);
-		left.setLight(1);
+		// from left/bottom -> left/top -> right/top -> right/bottom
+		if (sides[Math3D.BACK]) {
+			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false);
+			back.setColor(Color.yellow);
+			back.setLight(1);
+		}
 		
 		surfacesDirty = false;
 	}
@@ -75,4 +95,5 @@ public class Cube extends Shape {
 			initSurfaces();
 		return new Surface[] {top, bottom, left, right, front, back};
 	}
+	
 }

@@ -27,8 +27,8 @@ public class Chunk {
 		return count == 0;
 	}
 	
-	Cell.LinkedShapes add(int x, int y, int z, Shape shape) {
-		return cell[x][y][z].add(shape);
+	void add(int x, int y, int z, Shape shape) {
+		cell[x][y][z].add(shape);
 	}
 	
 	//	Shape remove(int x, int y, int z, Cell.LinkedShapes shape) {

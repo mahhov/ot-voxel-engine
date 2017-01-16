@@ -29,13 +29,13 @@ public class Ship {
 			return;
 		
 		// body
-		int scale = 1;
-		ShipCube shape = new ShipCube(x, y, z, angle.get(), 0, scale, this);
+		int scale = 5;
+		ShipCube shape = new ShipCube(x, y, z, angle.get(), 0, scale, this, new boolean[] {true, true, true, false, true, true});
 		world.addShape((int) x, (int) y, (int) z, shape);
 		double x = this.x + angle.cos() * scale * 2;
 		double y = this.y + angle.sin() * scale * 2;
-		shape = new ShipCube(x, y, z, angle.get(), 0, scale, this);
-		world.addShape((int) x, (int) y, (int) z, shape);
+		ShipCube forward = new ShipCube(x, y, z, angle.get(), 0, scale, this, new boolean[] {true, true, false, true, true, true});
+		world.addShape((int) x, (int) y, (int) z, forward);
 		visible = false;
 	}
 	

@@ -74,7 +74,7 @@ public class World {
 		addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5));
 	}
 	
-	public Cell.LinkedShapes addShape(int x, int y, int z, Shape shape) {
+	public void addShape(int x, int y, int z, Shape shape) {
 		int cx = x / chunkSize;
 		int cy = y / chunkSize;
 		int cz = z / chunkSize;
@@ -82,7 +82,7 @@ public class World {
 		int sy = y - cy * chunkSize;
 		int sz = z - cz * chunkSize;
 		chunk[cx][cy][cz].safeInit(chunkSize);
-		return chunk[cx][cy][cz].add(sx, sy, sz, shape);
+		chunk[cx][cy][cz].add(sx, sy, sz, shape);
 	}
 	
 	// DRAWING

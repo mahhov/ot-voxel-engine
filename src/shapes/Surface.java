@@ -67,9 +67,8 @@ public class Surface {
 		normal[1] = dz1 * dx2 - dx1 * dz2;
 		normal[2] = dx1 * dy2 - dy1 * dx2;
 		
-		if (flipNormal) {
+		if (flipNormal)
 			normal = Math3D.transform(normal, -1, 0);
-		}
 	}
 	
 	void setColor(Color c) {
