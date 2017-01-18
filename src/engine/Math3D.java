@@ -122,13 +122,24 @@ public class Math3D {
 		return val;
 	}
 	
-	public static int min(int val, int min, int val3) {
-		if (val > min)
+	public static int min(int val, int val2, int val3) {
+		int min;
+		if (val2 < val)
+			min = val2;
+		else
+			min = val;
+		if (min < val3)
 			return min;
-		return val;
+		return val3;
 	}
 	
 	public static int max(int val, int max) {
+		if (val < max)
+			return max;
+		return val;
+	}
+	
+	public static double max(double val, double max) {
 		if (val < max)
 			return max;
 		return val;
@@ -164,7 +175,7 @@ public class Math3D {
 			x = 2 - x;
 		
 		if (x == 1)
-			return sign * 1;
+			return sign;
 		
 		return sign * sinTable[(int) (x * trigAccuracy)];
 		
@@ -257,5 +268,11 @@ public class Math3D {
 			return angleCos;
 		}
 		
+		public void bound() {
+			if (angle < -Math.PI / 2)
+				set(-Math.PI / 2);
+			if (angle > Math.PI / 2)
+				set(Math.PI / 2);
+		}
 	}
 }

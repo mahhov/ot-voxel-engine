@@ -4,13 +4,9 @@ import ships.Ship;
 
 public class ShipTrigger extends Shape {
 	Ship ship;
-	private double x, y, z;
 	private long drawCounter;
 	
-	public ShipTrigger(double x, double y, double z, Ship ship) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public ShipTrigger(Ship ship) {
 		this.ship = ship;
 		drawCounter = ship.drawCounter;
 	}

@@ -1,18 +1,20 @@
-package engine;
+package camera;
+
+import engine.Controller;
+import engine.Math3D;
 
 public class Camera {
-	static final double MOVE_SPEED = 1.2, ANGLE_SPEED = .04, MOUSE_DAMP_SPEED = 0.1;
 	public static final double FOG = 0.987;
-	static final double MIN_LIGHT = .12;
+	public static final double MIN_LIGHT = .12;
 	
 	public double x, y, z;
 	public Math3D.Angle angle, angleZ;
-	private double[] normal;
-	private int maxCull, maxCullSqrd;
+	double[] normal;
+	int maxCull, maxCullSqrd;
 	
 	boolean dirtyNorm;
 	
-	Camera() {
+	public Camera() {
 		maxCull = (int) (Math.log(MIN_LIGHT) / Math.log(FOG)) + 1;
 		System.out.println("maxCull set to " + maxCull);
 		if (maxCull > 200)
@@ -30,67 +32,37 @@ public class Camera {
 		computeNorm();
 	}
 	
-	void move(Controller c) {
-		int dx = 0, dy = 0, dz = 0;
-		if (c.isKeyDown(Controller.KEY_W))
-			dy += 1;
-		if (c.isKeyDown(Controller.KEY_S))
-			dy -= 1;
-		if (c.isKeyDown(Controller.KEY_A))
-			dx -= 1;
-		if (c.isKeyDown(Controller.KEY_D))
-			dx += 1;
-		if (c.isKeyDown(Controller.KEY_Z))
-			dz -= 1;
-		if (c.isKeyDown(Controller.KEY_X))
-			dz += 1;
-		if (dx != 0 || dy != 0 || dz != 0)
-			moveRelative(dx, dy, dz);
-		
-		double dangle = 0, danglez = 0;
-		if (c.isKeyDown(Controller.KEY_Q))
-			dangle += 1;
-		if (c.isKeyDown(Controller.KEY_E))
-			dangle -= 1;
-		if (c.isKeyDown(Controller.KEY_R))
-			danglez += 1;
-		if (c.isKeyDown(Controller.KEY_F))
-			danglez -= 1;
-		
-		int[] mouse = c.getMouseMovement();
-		dangle -= mouse[0] * MOUSE_DAMP_SPEED;
-		danglez -= mouse[1] * MOUSE_DAMP_SPEED;
-		
-		if (dangle != 0 || danglez != 0)
-			rotate(dangle, danglez);
+	public void move(Controller c) {
 	}
 	
-	private void moveRelative(double dx, double dy, double dz) {
-		x += dy * angle.cos() * MOVE_SPEED + dx * angle.sin() * MOVE_SPEED;
-		y += dy * angle.sin() * MOVE_SPEED - dx * angle.cos() * MOVE_SPEED;
-		z += dz * MOVE_SPEED;
+	void moveRelative(double dx, double dy, double dz, double scale) {
+		x += dy * angle.cos() * scale + dx * angle.sin() * scale;
+		y += dy * angle.sin() * scale - dx * angle.cos() * scale;
+		z += dz * scale;
 	}
 	
-	private void moveTo(double toX, double toY, double toZ) {
-		x = (x + toX) / 2;
-		y = (y + toY) / 2;
-		z = (z + toZ) / 2;
-		
-		double dy = -toY + y;
-		double dx = toX - x;
-		double dz = -toZ + z;
+	void moveTo(double toX, double toY, double toZ, double weight) {
+		x = x + (toX - x) * weight;
+		y = y + (toY - y) * weight;
+		z = z + (toZ - z) * weight;
+	}
+	
+	void rotate(double dangle, double dangleZ, double scale) {
+		angle.set(angle.get() + dangle * scale);
+		angleZ.set(angleZ.get() + dangleZ * scale);
+		dirtyNorm = true;
+	}
+	
+	void lookAt(double lookX, double lookY, double lookZ) {
+		double dy = lookY - y;
+		double dx = lookX - x;
+		double dz = lookZ - z;
 		angle.set(Math.atan2(dy, dx));
 		angleZ.set(Math.atan2(dz, Math3D.magnitude(dx, dy)));
 		dirtyNorm = true;
 	}
 	
-	private void rotate(double dangle, double dangleZ) {
-		angle.set(angle.get() + dangle * ANGLE_SPEED);
-		angleZ.set(angleZ.get() + dangleZ * ANGLE_SPEED);
-		dirtyNorm = true;
-	}
-	
-	void update(int width, int length, int height) {
+	public void update(int width, int length, int height) {
 		boundCoordinates(width, length, height);
 		if (dirtyNorm) {
 			dirtyNorm = false;
@@ -112,10 +84,7 @@ public class Camera {
 		if (z > height - Math3D.EPSILON)
 			z = height - Math3D.EPSILON;
 		
-		if (angleZ.get() < -Math.PI / 2)
-			angleZ.set(-Math.PI / 2);
-		if (angleZ.get() > Math.PI / 2)
-			angleZ.set(Math.PI / 2);
+		angleZ.bound();
 	}
 	
 	private void computeNorm() {

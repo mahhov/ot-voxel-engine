@@ -1,6 +1,7 @@
 package ships;
 
 import engine.Math3D;
+import parts.Part;
 import shapes.ShipCube;
 import shapes.ShipTrigger;
 import world.World;
@@ -8,8 +9,12 @@ import world.World;
 public class Ship {
 	public boolean visible;
 	public long drawCounter;
-	private double x, y, z;
-	private Math3D.Angle angle;
+	public double x, y, z;
+	private Math3D.Angle angle, angleZ, angleTilt;
+	
+	private double mass, massX, massY, massZ;
+	private int offsetX, offsetY, offsetZ;
+	private Part part[][][];
 	
 	public Ship(double x, double y, double z, double angle, World world) {
 		this.x = x;
@@ -22,7 +27,7 @@ public class Ship {
 	
 	private void addToWorld(World world) {
 		// triggers
-		ShipTrigger trigger = new ShipTrigger(x, y, z, this);
+		ShipTrigger trigger = new ShipTrigger(this);
 		world.addShape((int) x, (int) y, (int) z, trigger);
 		
 		if (!visible)

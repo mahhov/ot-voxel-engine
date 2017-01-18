@@ -1,7 +1,5 @@
 package shapes;
 
-import engine.Math3D;
-
 import java.awt.*;
 
 public class StaticCube extends Shape {
@@ -62,9 +60,9 @@ public class StaticCube extends Shape {
 	}
 	
 	public Surface[] draw(int xSide, int ySide, int zSide) {
-		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
-		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
-		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);
+		//		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
+		//		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
+		//		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);
 		return new Surface[] {top, bottom, left, right, front, back};
 	}
 }

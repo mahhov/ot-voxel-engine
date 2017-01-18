@@ -1,6 +1,6 @@
 package shapes;
 
-import engine.Camera;
+import camera.Camera;
 import engine.Math3D;
 
 import java.awt.*;

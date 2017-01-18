@@ -9,7 +9,6 @@ import static engine.Math3D.axisVectors;
 public class Cube extends Shape {
 	private double x, y, z;
 	private Math3D.Angle angle, angleZ;
-	private double[] norm;
 	private double size;
 	private boolean surfacesDirty;
 	private Surface top, bottom, left, right, front, back;
@@ -32,7 +31,7 @@ public class Cube extends Shape {
 	
 	private void initSurfaces() {
 		// axis  vectors
-		norm = Math3D.norm(angle, angleZ, size);
+		double[] norm = Math3D.norm(angle, angleZ, size);
 		double[] rightUp = axisVectors(norm, size);
 		
 		// corner coordinates

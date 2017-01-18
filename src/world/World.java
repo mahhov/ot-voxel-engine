@@ -1,6 +1,7 @@
 package world;
 
-import engine.Camera;
+import camera.Camera;
+import camera.Camera;
 import engine.Math3D;
 import engine.Painter;
 import particles.Particle;
@@ -15,6 +16,7 @@ public class World {
 	private Chunk[][][] chunk;
 	
 	private Ship[] ship;
+	public Ship cameraShip;
 	private Projectile[] projectile;
 	private Particle[] particle;
 	
@@ -35,6 +37,7 @@ public class World {
 		
 		ship = new Ship[1];
 		ship[0] = new Ship(50, 50, 25, 0, this);
+		cameraShip = ship[0];
 	}
 	
 	// FILLING

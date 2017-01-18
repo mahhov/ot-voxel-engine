@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static engine.Camera.MIN_LIGHT;
+import static camera.Camera.MIN_LIGHT;
 
 public class Painter extends JFrame {
 	public static String[] debugString = new String[] {"", "", ""};

@@ -1,6 +1,6 @@
 package world;
 
-import engine.Camera;
+import camera.Camera;
 import engine.Painter;
 import shapes.Shape;
 import shapes.Surface;

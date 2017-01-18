@@ -1,10 +1,11 @@
 package engine;
 
+import camera.TrailingCamera;
 import world.World;
 
 class Engine {
 	
-	private Camera camera;
+	private TrailingCamera camera;
 	private Controller controller;
 	private Painter painter;
 	private World world;
@@ -12,13 +13,14 @@ class Engine {
 	private Engine() {
 		int frame = 600, image = 600;
 		Math3D.loadTrig(1000);
-		camera = new Camera();
+		camera = new TrailingCamera();
 		controller = new Controller(frame / 2, frame / 2);
 		painter = new Painter(frame, image, controller);
 		int eachChunkSize = 5;
 		int numChunks = 500 / eachChunkSize;
 		int chunkFill = 50 / eachChunkSize;
 		world = new World(numChunks, numChunks, numChunks, eachChunkSize, chunkFill);
+		camera.setFollowShip(world.cameraShip);
 	}
 	
 	private void begin() {
