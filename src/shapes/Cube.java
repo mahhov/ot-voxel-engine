@@ -4,26 +4,27 @@ import engine.Math3D;
 
 import java.awt.*;
 
-import static engine.Math3D.axisVectors;
+import static engine.Math3D.axisVectorsTilt;
 
 public class Cube extends Shape {
 	private double x, y, z;
-	private Math3D.Angle angle, angleZ;
+	private Math3D.Angle angle, angleZ, angleTilt;
 	private double size;
 	private boolean surfacesDirty;
 	private Surface top, bottom, left, right, front, back;
 	private boolean[] sides;
 	
-	public Cube(double x, double y, double z, double angle, double angleZ, double size) {
-		this(x, y, z, angle, angleZ, size, new boolean[] {true, true, true, true, true, true});
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size) {
+		this(x, y, z, angle, angleZ, angleTilt, size, new boolean[] {true, true, true, true, true, true});
 	}
 	
-	public Cube(double x, double y, double z, double angle, double angleZ, double size, boolean[] sides) {
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] sides) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.angle = new Math3D.Angle(angle);
-		this.angleZ = new Math3D.Angle(angleZ);
+		this.angle = angle;
+		this.angleZ = angleZ;
+		this.angleTilt = angleTilt;
 		this.size = size;
 		surfacesDirty = true;
 		this.sides = sides;
@@ -32,7 +33,7 @@ public class Cube extends Shape {
 	private void initSurfaces() {
 		// axis  vectors
 		double[] norm = Math3D.norm(angle, angleZ, size);
-		double[] rightUp = axisVectors(norm, size);
+		double[] rightUp = axisVectorsTilt(norm, size, angleTilt);
 		
 		// corner coordinates
 		double[] leftFrontBottom = new double[] {x - norm[0] - rightUp[0] - rightUp[3], y - norm[1] - rightUp[1] - rightUp[4], z - norm[2] - rightUp[2] - rightUp[5]};

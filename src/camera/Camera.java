@@ -63,27 +63,18 @@ public class Camera {
 	}
 	
 	public void update(int width, int length, int height) {
-		boundCoordinates(width, length, height);
+		bound(width, length, height);
 		if (dirtyNorm) {
 			dirtyNorm = false;
 			computeNorm();
 		}
 	}
 	
-	private void boundCoordinates(int width, int length, int height) {
-		if (x < 0)
-			x = 0;
-		if (x > width - Math3D.EPSILON)
-			x = width - Math3D.EPSILON;
-		if (y < 0)
-			y = 0;
-		if (y > length - Math3D.EPSILON)
-			y = length - Math3D.EPSILON;
-		if (z < 0)
-			z = 0;
-		if (z > height - Math3D.EPSILON)
-			z = height - Math3D.EPSILON;
-		
+	private void bound(int width, int length, int height) {
+		double[] xyz = Math3D.bound(x, y, z, width, length, height);
+		x = xyz[0];
+		y = xyz[1];
+		z = xyz[2];
 		angleZ.bound();
 	}
 	

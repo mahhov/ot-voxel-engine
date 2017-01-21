@@ -5,14 +5,14 @@ import engine.Math3D;
 import ships.Ship;
 
 public class TrailingCamera extends Camera {
-	private final static double MIN_TRAIL = 15, MAX_TRAIL = 60;
+	private final static double MIN_TRAIL = 5, MAX_TRAIL = 60;
 	private final static double TRAIL_SPEED = 2.5, ANGLE_SPEED = .1, MOTION_AVG = .2, MOUSE_DAMP_SPEED = .01;
 	private double trailDistance;
 	private Math3D.Angle trailAngle, trailAngleZ;
 	Ship followShip;
 	
 	public TrailingCamera() {
-		trailDistance = MAX_TRAIL;
+		trailDistance = (MIN_TRAIL + MAX_TRAIL) / 2;
 		trailAngle = new Math3D.Angle(0);
 		trailAngleZ = new Math3D.Angle(0);
 	}
@@ -32,15 +32,6 @@ public class TrailingCamera extends Camera {
 		int[] mouse = c.getMouseMovement();
 		double angle = trailAngle.get() - mouse[0] * MOUSE_DAMP_SPEED;
 		double angleZ = trailAngleZ.get() + mouse[1] * MOUSE_DAMP_SPEED;
-		
-		//		if (c.isKeyDown(Controller.KEY_E))
-		//			angle -= ANGLE_SPEED;
-		//		if (c.isKeyDown(Controller.KEY_Q))
-		//			angle += ANGLE_SPEED;
-		//		if (c.isKeyDown(Controller.KEY_R))
-		//			angleZ -= ANGLE_SPEED;
-		//		if (c.isKeyDown(Controller.KEY_F))
-		//			angleZ += ANGLE_SPEED;
 		
 		trailAngle.set(angle);
 		trailAngleZ.set(angleZ);

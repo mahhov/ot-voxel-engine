@@ -1,7 +1,7 @@
 package world;
 
 import camera.Camera;
-import camera.Camera;
+import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
 import particles.Particle;
@@ -36,7 +36,7 @@ public class World {
 		System.out.println("done loading world");
 		
 		ship = new Ship[1];
-		ship[0] = new Ship(50, 50, 25, 0, this);
+		ship[0] = new Ship(50, 50, 25, 0, 0, 0, this);
 		cameraShip = ship[0];
 	}
 	
@@ -51,10 +51,11 @@ public class World {
 						for (int y = 0; y < chunkSize; y++)
 							for (int z = 0; z < chunkSize; z++)
 								if (Math.random() > 0.9995) {
-									double angle = Math.random() * Math.PI * 2;
-									double angleZ = Math.random() * Math.PI * 2;
+									Math3D.Angle angle = new Math3D.Angle(Math.random() * Math.PI * 2);
+									Math3D.Angle angleZ = new Math3D.Angle(Math.random() * Math.PI * 2);
+									Math3D.Angle angleTilt = new Math3D.Angle(Math.random() * Math.PI * 2);
 									double size = Math.random() * 2 + .25;
-									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, size));
+									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, angleTilt, size));
 								}
 				}
 	}
@@ -201,9 +202,9 @@ public class World {
 	
 	// UPDATE
 	
-	public void update() {
+	public void update(Controller controller) {
 		for (Ship s : ship)
-			s.update(this);
+			s.update(this, controller);
 	}
 	
 	// UITL

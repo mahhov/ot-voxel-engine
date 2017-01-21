@@ -6,7 +6,7 @@ import java.awt.event.*;
 public class Controller implements KeyListener, MouseListener, MouseMotionListener {
 	
 	static final int UP = 0, DOWN = 1, PRESSED = 2, RELEASED = 3;
-	public static final int KEY_W = 0, KEY_A = 1, KEY_S = 2, KEY_D = 3, KEY_Q = 4, KEY_E = 5, KEY_R = 6, KEY_F = 7, KEY_Z = 8, KEY_X = 9, KEY_ESC = 10;
+	public static final int KEY_W = 0, KEY_A = 1, KEY_S = 2, KEY_D = 3, KEY_Q = 4, KEY_E = 5, KEY_R = 6, KEY_F = 7, KEY_Z = 8, KEY_X = 9, KEY_ESC = 10, KEY_SPACE = 11, KEY_SHIFT = 12;
 	
 	Key[] keys;
 	
@@ -17,7 +17,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	private Robot robot;
 	
 	Controller(int centerMouseX, int centerMouseY) {
-		keys = new Key[11];
+		keys = new Key[13];
 		keys[KEY_W] = new Key(87);
 		keys[KEY_A] = new Key(65);
 		keys[KEY_S] = new Key(83);
@@ -29,6 +29,8 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		keys[KEY_Z] = new Key(90);
 		keys[KEY_X] = new Key(88);
 		keys[KEY_ESC] = new Key(27);
+		keys[KEY_SPACE] = new Key(32);
+		keys[KEY_SHIFT] = new Key(16);
 		
 		this.centerMouseX = centerMouseX;
 		this.centerMouseY = centerMouseY;

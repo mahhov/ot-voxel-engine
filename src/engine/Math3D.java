@@ -7,6 +7,13 @@ public class Math3D {
 	
 	public static final double sqrt2 = Math.sqrt(2), sqrt2Div3 = Math.sqrt(2.0 / 3), sqrt1Div2 = 1 / sqrt2, sqrt1Div5 = 1 / Math.sqrt(5);
 	
+	public static double magnitude(double[] c) {
+		double mag = 0;
+		for (int i = 0; i < c.length; i++)
+			mag += c[i] * c[i];
+		return Math.sqrt(mag);
+	}
+	
 	public static double magnitude(double x, double y, double z) {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
@@ -29,8 +36,8 @@ public class Math3D {
 		return x * x2 + y * y2 + z * z2;
 	}
 	
-	public static double[] crossProductNormalized(double x, double y, double z, double x2, double y2, double z2) {
-		double[] cross = crossProductUnormalized(x, y, z, x2, y2, z2);
+	public static double[] crossProductNormalized(double[] v1, double[] v2) {
+		double[] cross = crossProductUnormalized(v1, v2);
 		double mag = magnitude(cross[0], cross[1], cross[2]);
 		cross[0] /= mag;
 		cross[1] /= mag;
@@ -38,8 +45,8 @@ public class Math3D {
 		return cross;
 	}
 	
-	public static double[] crossProductUnormalized(double x, double y, double z, double x2, double y2, double z2) {
-		return new double[] {y * z2 - z * y2, z * x2 - x * z2, x * y2 - y * x2};
+	public static double[] crossProductUnormalized(double[] v1, double[] v2) {
+		return new double[] {v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]};
 	}
 	
 	public static double[] halfAxisVectors(double[] norm) {
@@ -60,6 +67,16 @@ public class Math3D {
 		double upMag = magnitude(upx, upy, upz);
 		
 		return new double[] {rightx, righty, 0, upx / upMag * mag, upy / upMag * mag, upz / upMag * mag};
+	}
+	
+	public static double[] axisVectorsTilt(double[] norm, double mag, Angle tilt) {
+		double normMag = magnitude(norm);
+		double[] zTilt = new double[] {-norm[1] / normMag * tilt.sin(), norm[0] / normMag * tilt.sin(), tilt.cos()};
+		double[] right = crossProductNormalized(norm, zTilt);
+		double[] up = crossProductNormalized(norm, right);
+		double rightMag = magnitude(right);
+		double upMag = magnitude(up);
+		return new double[] {right[0] / rightMag * mag, right[1] / rightMag * mag, right[2] / rightMag * mag, -up[0] / upMag * mag, -up[1] / upMag * mag, -up[2] / upMag * mag};
 	}
 	
 	public static double[] upVector(double x, double y, double z) {
@@ -274,5 +291,21 @@ public class Math3D {
 			if (angle > Math.PI / 2)
 				set(Math.PI / 2);
 		}
+	}
+	
+	public static double[] bound(double x, double y, double z, int width, int length, int height) {
+		if (x < 0)
+			x = 0;
+		if (x > width - Math3D.EPSILON)
+			x = width - Math3D.EPSILON;
+		if (y < 0)
+			y = 0;
+		if (y > length - Math3D.EPSILON)
+			y = length - Math3D.EPSILON;
+		if (z < 0)
+			z = 0;
+		if (z > height - Math3D.EPSILON)
+			z = height - Math3D.EPSILON;
+		return new double[] {x, y, z};
 	}
 }

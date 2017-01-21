@@ -11,7 +11,7 @@ class Engine {
 	private World world;
 	
 	private Engine() {
-		int frame = 600, image = 600;
+		int frame = 800, image = 800;
 		Math3D.loadTrig(1000);
 		camera = new TrailingCamera();
 		controller = new Controller(frame / 2, frame / 2);
@@ -30,7 +30,7 @@ class Engine {
 			painter.clear();
 			camera.move(controller);
 			camera.update(world.width, world.length, world.height);
-			world.update();
+			world.update(controller);
 			world.drawChunks(painter, camera);
 			painter.repaint();
 			wait(30);
@@ -58,5 +58,3 @@ class Engine {
 }
 
 // TODO : don't keep throwing away old buffered image and graphics2d
-// TODO : closer camera draw boundaries
-// TODO : redo cube -> surface code and support angles
