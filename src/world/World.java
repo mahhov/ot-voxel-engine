@@ -50,7 +50,7 @@ public class World {
 					for (int x = 0; x < chunkSize; x++)
 						for (int y = 0; y < chunkSize; y++)
 							for (int z = 0; z < chunkSize; z++)
-								if (Math.random() > 0.9995) {
+								if (Math.random() > 0.9995 || (Math.random() > 0.95 && ((x == 0 && cx == 0) || (y == 0 && cy == 0) || (z == 0 && cz == 0)))) {
 									Math3D.Angle angle = new Math3D.Angle(Math.random() * Math.PI * 2);
 									Math3D.Angle angleZ = new Math3D.Angle(Math.random() * Math.PI * 2);
 									Math3D.Angle angleTilt = new Math3D.Angle(Math.random() * Math.PI * 2);

@@ -12,9 +12,9 @@ public class Ship {
 	public boolean visible;
 	public long drawCounter;
 	public double x, y, z;
-	private Math3D.Angle angle, angleZ, angleTilt;
+	public Math3D.Angle angle, angleZ, angleTilt;
 	private double[] norm, rightUp;
-	private double vx, vy, vz, vAngleTilt, vAngleUp;
+	private double vx, vy, vz, vAngle, vAngleZ, vAngleTilt;
 	
 	private double mass, massX, massY, massZ;
 	private double offsetX, offsetY, offsetZ;
@@ -116,7 +116,7 @@ public class Ship {
 	private void move(World world, Controller controller) {
 		drawCounter++; // todo : only if moved
 		
-		final double friction = 9.5 / mass, force = .1, angleForce = .01, gravity = -.01 * 0; // todo : class vars
+		final double friction = 9.5 / mass, force = .1 / 2, angleForce = .01 / 2, gravity = -.01 * 0; // todo : class vars
 		
 		if (controller.isKeyDown(Controller.KEY_W)) {
 			vx += norm[0] * force;
@@ -128,37 +128,34 @@ public class Ship {
 			vy -= norm[1] * force;
 			vz -= norm[2] * force;
 		}
-		if (controller.isKeyDown(Controller.KEY_A)) {
+		if (controller.isKeyDown(Controller.KEY_A))
 			vAngleTilt += angleForce;
-		}
-		if (controller.isKeyDown(Controller.KEY_D)) {
+		if (controller.isKeyDown(Controller.KEY_D))
 			vAngleTilt -= angleForce;
-		}
 		if (controller.isKeyDown(Controller.KEY_SPACE)) {
-			vAngleUp += angleForce;
-			
+			vAngle += angleTilt.sin() * angleForce;
+			vAngleZ += angleTilt.cos() * angleForce;
+			vAngleTilt += angleZ.sin() * angleTilt.sin() * angleForce;
 		}
 		if (controller.isKeyDown(Controller.KEY_SHIFT)) {
-			vAngleUp -= angleForce;
+			vAngle -= angleTilt.sin() * angleForce;
+			vAngleZ -= angleTilt.cos() * angleForce;
+			vAngleTilt -= angleZ.sin() * angleTilt.sin() * angleForce;
 		}
 		
 		vx *= friction;
 		vy *= friction;
 		vz = (vz + gravity) * friction;
+		vAngle *= friction;
+		vAngleZ *= friction;
 		vAngleTilt *= friction;
-		vAngleUp *= friction;
 		
 		x += vx;
 		y += vy;
 		z += vz;
 		
-		// vAngleUp
-		angle.set(angle.get() + vAngleUp * angleTilt.sin());
-		angleZ.set(angleZ.get() + vAngleUp * angleTilt.cos());
-		angleTilt.set(angleTilt.get() - vAngleUp * angleTilt.sin() * angleTilt.cos());
-		
-		//		angle.set(angle.get() + vAngle);
-		//		angleZ.set(angleZ.get() + vAngleZ);
+		angle.set(angle.get() + vAngle);
+		angleZ.set(angleZ.get() + vAngleZ);
 		angleTilt.set(angleTilt.get() + vAngleTilt);
 		
 		double[] xyz = Math3D.bound(x, y, z, world.width, world.length, world.height); // todo : safe zone bound all sides
