@@ -2,6 +2,7 @@ package ships;
 
 import engine.Controller;
 import engine.Math3D;
+import engine.Painter;
 import parts.Hull;
 import parts.Part;
 import shapes.ShipCube;
@@ -14,7 +15,7 @@ public class Ship {
 	public double x, y, z;
 	public Math3D.Angle angle, angleZ, angleTilt;
 	private double[] norm, rightUp;
-	private double vx, vy, vz, vAngle, vAngleZ, vAngleTilt;
+	private double vx, vy, vz, vAngleUp, vAngleTilt;
 	
 	private double mass, massX, massY, massZ;
 	private double offsetX, offsetY, offsetZ;
@@ -116,7 +117,7 @@ public class Ship {
 	private void move(World world, Controller controller) {
 		drawCounter++; // todo : only if moved
 		
-		final double friction = 9.5 / mass, force = .1 / 2, angleForce = .01 / 2, gravity = -.01 * 0; // todo : class vars
+		final double friction = .95 / mass, force = .1 / 2 * 100, angleForce = .01 * 80, gravity = -.01 * 0; // todo : class vars
 		
 		if (controller.isKeyDown(Controller.KEY_W)) {
 			vx += norm[0] * force;
@@ -132,31 +133,44 @@ public class Ship {
 			vAngleTilt += angleForce;
 		if (controller.isKeyDown(Controller.KEY_D))
 			vAngleTilt -= angleForce;
-		if (controller.isKeyDown(Controller.KEY_SPACE)) {
-			vAngle += angleTilt.sin() * angleForce;
-			vAngleZ += angleTilt.cos() * angleForce;
-			vAngleTilt += angleZ.sin() * angleTilt.sin() * angleForce;
-		}
-		if (controller.isKeyDown(Controller.KEY_SHIFT)) {
-			vAngle -= angleTilt.sin() * angleForce;
-			vAngleZ -= angleTilt.cos() * angleForce;
-			vAngleTilt -= angleZ.sin() * angleTilt.sin() * angleForce;
-		}
+		if (controller.isKeyDown(Controller.KEY_SPACE))
+			vAngleUp += angleForce;
+		if (controller.isKeyDown(Controller.KEY_SHIFT))
+			vAngleUp -= angleForce;
 		
 		vx *= friction;
 		vy *= friction;
 		vz = (vz + gravity) * friction;
-		vAngle *= friction;
-		vAngleZ *= friction;
+		vAngleUp *= friction;
 		vAngleTilt *= friction;
 		
 		x += vx;
 		y += vy;
 		z += vz;
 		
-		angle.set(angle.get() + vAngle);
-		angleZ.set(angleZ.get() + vAngleZ);
+		// -- start vAngleUp --
+		angle.set(angle.get() + angleTilt.sin() * vAngleUp / angleZ.cos());
+		angleZ.set(angleZ.get() + angleTilt.cos() * vAngleUp);
+		
+		double newRightSin = -angle.cos();
+		double newRightCos = angle.sin();
+		
+		double dot = Math3D.dotProduct(rightUp[0], rightUp[1], rightUp[2], newRightCos, newRightSin, 0);
+		double newTilt = Math.acos(dot);
+		if (rightUp[2] < 0)
+			newTilt = -newTilt;
+		angleTilt.set(newTilt);
+		// -- end vAngleUp --
+		Painter.debugString[0] = norm[0] + ", " + norm[1] + ", " + norm[2];
+		Painter.debugString[2] = rightUp[0] + ", " + rightUp[1] + ", " + rightUp[2];
+		Painter.debugString[3] = rightUp[0 + 3] + ", " + rightUp[1 + 3] + ", " + rightUp[2 + 3];
+		Painter.debugString[4] = "new tilt : " + (newTilt * 180 / Math.PI) + " dot: " + dot;
+//		System.out.println(Painter.debugString[4]);
+		
 		angleTilt.set(angleTilt.get() + vAngleTilt);
+		
+		vAngleTilt = 0;
+		vAngleUp = 0;
 		
 		double[] xyz = Math3D.bound(x, y, z, world.width, world.length, world.height); // todo : safe zone bound all sides
 		x = xyz[0];

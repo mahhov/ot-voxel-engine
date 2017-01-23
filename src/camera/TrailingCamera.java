@@ -37,8 +37,8 @@ public class TrailingCamera extends Camera {
 		trailAngleZ.set(angleZ);
 		trailAngleZ.bound();
 		
-		//		trailAngle.set(Math.PI + followShip.angle.get());
-		//		trailAngleZ.set(-followShip.angleZ.get());
+//				trailAngle.set(Math.PI + followShip.angle.get());
+//				trailAngleZ.set(-followShip.angleZ.get());
 		
 		// position
 		double goalx = followShip.x + trailAngle.cos() * trailAngleZ.cos() * trailDistance;

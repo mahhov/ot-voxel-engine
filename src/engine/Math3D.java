@@ -291,6 +291,12 @@ public class Math3D {
 			if (angle > Math.PI / 2)
 				set(Math.PI / 2);
 		}
+		
+		public double diff(double angle) {
+			double d = angle - this.angle;
+			d -= (int) (d / Math.PI) * Math.PI;
+			return d;
+		}
 	}
 	
 	public static double[] bound(double x, double y, double z, int width, int length, int height) {

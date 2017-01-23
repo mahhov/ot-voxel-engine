@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import static camera.Camera.MIN_LIGHT;
 
 public class Painter extends JFrame {
-	public static String[] debugString = new String[] {"", "", ""};
+	public static String[] debugString = new String[] {"", "", "", "", ""};
 	
 	private final int FRAME_SIZE, IMAGE_SIZE;
 	private static int borderSize = 0;
