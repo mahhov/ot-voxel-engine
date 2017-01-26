@@ -33,7 +33,7 @@ public class Cube extends Shape {
 	private void initSurfaces() {
 		// axis  vectors
 		double[] norm = Math3D.norm(angle, angleZ, size);
-		double[] rightUp = axisVectorsTilt(norm, size, angleTilt);
+		double[] rightUp = axisVectorsTilt(norm, size, angleZ, angleTilt);
 		
 		// corner coordinates
 		double[] leftFrontBottom = new double[] {x - norm[0] - rightUp[0] - rightUp[3], y - norm[1] - rightUp[1] - rightUp[4], z - norm[2] - rightUp[2] - rightUp[5]};

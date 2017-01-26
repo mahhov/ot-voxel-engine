@@ -45,6 +45,16 @@ public class Math3D {
 		return cross;
 	}
 	
+	public static double[] crossProductNormalized(double[] v1, double[] v2, boolean flipped) {
+		int mult = flipped ? -1 : 1;
+		double[] cross = crossProductUnormalized(v1, v2);
+		double mag = magnitude(cross[0], cross[1], cross[2]) * mult;
+		cross[0] /= mag;
+		cross[1] /= mag;
+		cross[2] /= mag;
+		return cross;
+	}
+	
 	public static double[] crossProductUnormalized(double[] v1, double[] v2) {
 		return new double[] {v1[1] * v2[2] - v1[2] * v2[1], v1[2] * v2[0] - v1[0] * v2[2], v1[0] * v2[1] - v1[1] * v2[0]};
 	}
@@ -69,10 +79,10 @@ public class Math3D {
 		return new double[] {rightx, righty, 0, upx / upMag * mag, upy / upMag * mag, upz / upMag * mag};
 	}
 	
-	public static double[] axisVectorsTilt(double[] norm, double mag, Angle tilt) {
+	public static double[] axisVectorsTilt(double[] norm, double mag, Angle angleZ, Angle tilt) {
 		double normMag = magnitude(norm);
 		double[] zTilt = new double[] {-norm[1] / normMag * tilt.sin(), norm[0] / normMag * tilt.sin(), tilt.cos()};
-		double[] right = crossProductNormalized(norm, zTilt);
+		double[] right = crossProductNormalized(norm, zTilt, angleZ.cos() < 0);
 		double[] up = crossProductNormalized(norm, right);
 		double rightMag = magnitude(right);
 		double upMag = magnitude(up);

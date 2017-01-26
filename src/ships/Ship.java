@@ -2,7 +2,6 @@ package ships;
 
 import engine.Controller;
 import engine.Math3D;
-import engine.Painter;
 import parts.Hull;
 import parts.Part;
 import shapes.ShipCube;
@@ -71,7 +70,7 @@ public class Ship {
 	
 	private void computeAxis() {
 		norm = Math3D.norm(angle, angleZ, 1);
-		rightUp = Math3D.axisVectorsTilt(norm, 1, angleTilt);
+		rightUp = Math3D.axisVectorsTilt(norm, 1, angleZ, angleTilt);
 	}
 	
 	private void addToWorld(World world) {
@@ -117,7 +116,7 @@ public class Ship {
 	private void move(World world, Controller controller) {
 		drawCounter++; // todo : only if moved
 		
-		final double friction = .95 / mass, force = .1 / 2 * 100, angleForce = .01 * 80, gravity = -.01 * 0; // todo : class vars
+		final double friction = .9, force = .2, angleForce = .015, gravity = -.01 * 0; // todo : class vars
 		
 		if (controller.isKeyDown(Controller.KEY_W)) {
 			vx += norm[0] * force;
@@ -161,21 +160,14 @@ public class Ship {
 			newTilt = -newTilt;
 		angleTilt.set(newTilt);
 		// -- end vAngleUp --
-		Painter.debugString[0] = norm[0] + ", " + norm[1] + ", " + norm[2];
-		Painter.debugString[2] = rightUp[0] + ", " + rightUp[1] + ", " + rightUp[2];
-		Painter.debugString[3] = rightUp[0 + 3] + ", " + rightUp[1 + 3] + ", " + rightUp[2 + 3];
-		Painter.debugString[4] = "new tilt : " + (newTilt * 180 / Math.PI) + " dot: " + dot;
-//		System.out.println(Painter.debugString[4]);
 		
 		angleTilt.set(angleTilt.get() + vAngleTilt);
 		
-		vAngleTilt = 0;
-		vAngleUp = 0;
-		
-		double[] xyz = Math3D.bound(x, y, z, world.width, world.length, world.height); // todo : safe zone bound all sides
-		x = xyz[0];
-		y = xyz[1];
-		z = xyz[2];
+		int safeZone = 6;
+		double[] xyz = Math3D.bound(x - safeZone, y - safeZone, z - safeZone, world.width - safeZone * 2, world.length - safeZone * 2, world.height - safeZone * 2); // todo : safe zone bound all sides
+		x = xyz[0] + safeZone;
+		y = xyz[1] + safeZone;
+		z = xyz[2] + safeZone;
 		
 		computeAxis();
 	}
@@ -183,3 +175,4 @@ public class Ship {
 }
 
 // todo : force
+// todo : angleZ invisible bug
