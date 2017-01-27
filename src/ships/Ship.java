@@ -9,12 +9,15 @@ import shapes.ShipTrigger;
 import world.World;
 
 public class Ship {
+	final double FRICTION = .96, FORCE = .02, ANGLE_FORCE = .0015, GRAVITY = -.003;
+	//todo: force defining & force applying
+	
 	public boolean visible;
 	public long drawCounter;
 	public double x, y, z;
 	public Math3D.Angle angle, angleZ, angleTilt;
 	private double[] norm, rightUp;
-	private double vx, vy, vz, vAngleUp, vAngleTilt;
+	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
 	private double mass, massX, massY, massZ;
 	private double offsetX, offsetY, offsetZ;
@@ -116,63 +119,70 @@ public class Ship {
 	private void move(World world, Controller controller) {
 		drawCounter++; // todo : only if moved
 		
-		final double friction = .9, force = .2, angleForce = .015, gravity = -.01 * 0; // todo : class vars
-		
 		if (controller.isKeyDown(Controller.KEY_W)) {
-			vx += norm[0] * force;
-			vy += norm[1] * force;
-			vz += norm[2] * force;
+			vx += norm[0] * FORCE;
+			vy += norm[1] * FORCE;
+			vz += norm[2] * FORCE;
 		}
 		if (controller.isKeyDown(Controller.KEY_S)) {
-			vx -= norm[0] * force;
-			vy -= norm[1] * force;
-			vz -= norm[2] * force;
+			vx -= norm[0] * FORCE;
+			vy -= norm[1] * FORCE;
+			vz -= norm[2] * FORCE;
 		}
 		if (controller.isKeyDown(Controller.KEY_A))
-			vAngleTilt += angleForce;
+			vAngleTilt += ANGLE_FORCE;
 		if (controller.isKeyDown(Controller.KEY_D))
-			vAngleTilt -= angleForce;
+			vAngleTilt -= ANGLE_FORCE;
 		if (controller.isKeyDown(Controller.KEY_SPACE))
-			vAngleUp += angleForce;
+			vAngleUp += ANGLE_FORCE;
 		if (controller.isKeyDown(Controller.KEY_SHIFT))
-			vAngleUp -= angleForce;
+			vAngleUp -= ANGLE_FORCE;
+		if (controller.isKeyDown(Controller.KEY_Q))
+			vAngleFlat += ANGLE_FORCE;
+		if (controller.isKeyDown(Controller.KEY_E))
+			vAngleFlat -= ANGLE_FORCE;
 		
-		vx *= friction;
-		vy *= friction;
-		vz = (vz + gravity) * friction;
-		vAngleUp *= friction;
-		vAngleTilt *= friction;
+		
+		vx *= FRICTION;
+		vy *= FRICTION;
+		vz = (vz + GRAVITY) * FRICTION;
+		vAngleFlat *= FRICTION;
+		vAngleUp *= FRICTION;
+		vAngleTilt *= FRICTION;
 		
 		x += vx;
 		y += vy;
 		z += vz;
 		
-		// -- start vAngleUp --
+		// vAngleFlat
+		angle.set(angle.get() + angleTilt.cos() * vAngleFlat / angleZ.cos());
+		angleZ.set(angleZ.get() - angleTilt.sin() * vAngleFlat);
+		
+		// vAngleUp
 		angle.set(angle.get() + angleTilt.sin() * vAngleUp / angleZ.cos());
 		angleZ.set(angleZ.get() + angleTilt.cos() * vAngleUp);
 		
+		// restoring tilt
 		double newRightSin = -angle.cos();
 		double newRightCos = angle.sin();
-		
 		double dot = Math3D.dotProduct(rightUp[0], rightUp[1], rightUp[2], newRightCos, newRightSin, 0);
 		double newTilt = Math.acos(dot);
 		if (rightUp[2] < 0)
 			newTilt = -newTilt;
 		angleTilt.set(newTilt);
-		// -- end vAngleUp --
 		
+		// vAngleTilt
 		angleTilt.set(angleTilt.get() + vAngleTilt);
 		
+		computeAxis();
+		
 		int safeZone = 6;
-		double[] xyz = Math3D.bound(x - safeZone, y - safeZone, z - safeZone, world.width - safeZone * 2, world.length - safeZone * 2, world.height - safeZone * 2); // todo : safe zone bound all sides
+		double[] xyz = Math3D.bound(x - safeZone, y - safeZone, z - safeZone, world.width - safeZone * 2, world.length - safeZone * 2, world.height - safeZone * 2); // todo : *better* safe zone bound all sides
 		x = xyz[0] + safeZone;
 		y = xyz[1] + safeZone;
 		z = xyz[2] + safeZone;
-		
-		computeAxis();
 	}
 	
 }
 
-// todo : force
 // todo : angleZ invisible bug

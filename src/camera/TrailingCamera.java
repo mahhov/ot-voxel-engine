@@ -10,6 +10,7 @@ public class TrailingCamera extends Camera {
 	private double trailDistance;
 	private Math3D.Angle trailAngle, trailAngleZ;
 	Ship followShip;
+	private boolean free;
 	
 	public TrailingCamera() {
 		trailDistance = (MIN_TRAIL + MAX_TRAIL) / 2;
@@ -22,23 +23,29 @@ public class TrailingCamera extends Camera {
 	}
 	
 	public void move(Controller c) {
+		if (c.isKeyDown(Controller.KEY_ENTER))
+			free = !free;
+		
 		// distance
 		if (c.isKeyDown(Controller.KEY_X))
 			trailDistance = Math3D.min(trailDistance + TRAIL_SPEED, MAX_TRAIL);
 		if (c.isKeyDown(Controller.KEY_Z))
 			trailDistance = Math3D.max(trailDistance - TRAIL_SPEED, MIN_TRAIL);
 		
-		// trail angle
-		int[] mouse = c.getMouseMovement();
-		double angle = trailAngle.get() - mouse[0] * MOUSE_DAMP_SPEED;
-		double angleZ = trailAngleZ.get() + mouse[1] * MOUSE_DAMP_SPEED;
-		
-		trailAngle.set(angle);
-		trailAngleZ.set(angleZ);
-		trailAngleZ.bound();
-		
-//				trailAngle.set(Math.PI + followShip.angle.get());
-//				trailAngleZ.set(-followShip.angleZ.get());
+		if (free) {
+			// trail angle
+			int[] mouse = c.getMouseMovement();
+			double angle = trailAngle.get() - mouse[0] * MOUSE_DAMP_SPEED;
+			double angleZ = trailAngleZ.get() + mouse[1] * MOUSE_DAMP_SPEED;
+			
+			trailAngle.set(angle);
+			trailAngleZ.set(angleZ);
+			trailAngleZ.bound();
+			
+		} else {
+			trailAngle.set(Math.PI + followShip.angle.get());
+			trailAngleZ.set(-followShip.angleZ.get() + 30.0 / 180 * Math.PI);
+		}
 		
 		// position
 		double goalx = followShip.x + trailAngle.cos() * trailAngleZ.cos() * trailDistance;
