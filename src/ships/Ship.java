@@ -2,6 +2,7 @@ package ships;
 
 import engine.Controller;
 import engine.Math3D;
+import engine.Painter;
 import parts.Hull;
 import parts.Part;
 import shapes.ShipCube;
@@ -74,6 +75,7 @@ public class Ship {
 	private void computeAxis() {
 		norm = Math3D.norm(angle, angleZ, 1);
 		rightUp = Math3D.axisVectorsTilt(norm, 1, angleZ, angleTilt);
+		Painter.debugString[2] = "(norm) " + Math3D.doubles2Str(norm, 0) + "(right) " + Math3D.doubles2Str(rightUp, 0) + "(up) " + Math3D.doubles2Str(rightUp, 3);
 	}
 	
 	private void addToWorld(World world) {

@@ -352,4 +352,11 @@ public class Math3D {
 			angleTilt = -dotProductUnormalized(netTorque, norm);
 		}
 	}
+	
+	public static String doubles2Str(double[] d, int start) {
+		String str = "";
+		for (int i = start; i < start + 3; i++)
+			str += (int) (d[i] * 1000) / 1000.0 + " ";
+		return str;
+	}
 }
