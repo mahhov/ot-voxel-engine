@@ -36,6 +36,11 @@ public class Math3D {
 		return x * x2 + y * y2 + z * z2;
 	}
 	
+	public static double dotProductUnormalized(double[] v1, double[] v2) {
+		return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+	}
+	
+	
 	public static double[] crossProductNormalized(double[] v1, double[] v2) {
 		double[] cross = crossProductUnormalized(v1, v2);
 		double mag = magnitude(cross[0], cross[1], cross[2]);
@@ -323,5 +328,28 @@ public class Math3D {
 		if (z > height - Math3D.EPSILON)
 			z = height - Math3D.EPSILON;
 		return new double[] {x, y, z};
+	}
+	
+	public static class Force {
+		public double x, y, z;
+		public double[] netTorque;
+		public double angleFlat, angleUp, angleTilt;
+		
+		public void add(double[] force, double[] location) {
+			x += force[0];
+			y += force[1];
+			z += force[2];
+			double[] cross = crossProductUnormalized(location, force);
+			netTorque[0] += cross[0];
+			netTorque[1] += cross[1];
+			netTorque[2] += cross[2];
+		}
+		
+		public void computeAngle(double[] norm, double[] rightUp) {
+			double[] up = new double[] {rightUp[3], rightUp[4], rightUp[5]};
+			angleFlat = dotProductUnormalized(netTorque, up);
+			angleUp = dotProductUnormalized(netTorque, rightUp);
+			angleTilt = -dotProductUnormalized(netTorque, norm);
+		}
 	}
 }

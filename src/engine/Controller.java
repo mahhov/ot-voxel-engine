@@ -111,6 +111,11 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		return state == PRESSED || state == DOWN;
 	}
 	
+	public boolean isKeyPressed(int key) {
+		int state = getKeyState(key);
+		return state == PRESSED;
+	}
+	
 	public int[] getMouseMovement() {
 		int[] r = new int[] {mouseX, mouseY};
 		mouseX = 0;

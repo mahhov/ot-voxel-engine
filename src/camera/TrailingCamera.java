@@ -23,7 +23,7 @@ public class TrailingCamera extends Camera {
 	}
 	
 	public void move(Controller c) {
-		if (c.isKeyDown(Controller.KEY_ENTER))
+		if (c.isKeyPressed(Controller.KEY_ENTER))
 			free = !free;
 		
 		// distance

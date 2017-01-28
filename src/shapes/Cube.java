@@ -45,45 +45,51 @@ public class Cube extends Shape {
 		double[] leftBackTop = new double[] {x + norm[0] - rightUp[0] + rightUp[3], y + norm[1] - rightUp[1] + rightUp[4], z + norm[2] - rightUp[2] + rightUp[5]};
 		double[] rightBackTop = new double[] {x + norm[0] + rightUp[0] + rightUp[3], y + norm[1] + rightUp[1] + rightUp[4], z + norm[2] + rightUp[2] + rightUp[5]};
 		
+		Color[] sideColor;
+		int red = 120, green = 100, blue = 20, dif = 20;
+		sideColor = new Color[6];
+		for (int i = 0; i < sideColor.length; i++)
+			sideColor[i] = new Color(red + dif * i, green + dif * i, blue + dif * i);
+		
 		// from back/left -> back/right -> front/right -> front/left
 		if (sides[Math3D.TOP]) {
 			top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, true);
-			top.setColor(Color.red);
+			top.setColor(sideColor[0]);
 			top.setLight(1);
 		}
 		
 		// from back/left -> back/right -> front/right -> front/left
 		if (sides[Math3D.BOTTOM]) {
 			bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, false);
-			bottom.setColor(Color.green);
+			bottom.setColor(sideColor[1]);
 			bottom.setLight(1);
 		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
 		if (sides[Math3D.LEFT]) {
 			left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, true);
-			left.setColor(Color.cyan);
+			left.setColor(sideColor[2]);
 			left.setLight(1);
 		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
 		if (sides[Math3D.RIGHT]) {
 			right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, false);
-			right.setColor(Color.gray);
+			right.setColor(sideColor[3]);
 			right.setLight(1);
 		}
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
 		if (sides[Math3D.FRONT]) {
 			front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, true);
-			front.setColor(Color.blue);
+			front.setColor(sideColor[4]);
 			front.setLight(1);
 		}
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
 		if (sides[Math3D.BACK]) {
 			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false);
-			back.setColor(Color.yellow);
+			back.setColor(sideColor[5]);
 			back.setLight(1);
 		}
 		
