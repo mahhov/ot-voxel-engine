@@ -20,6 +20,7 @@ public class Ship {
 	private double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
+	
 	private double mass, massX, massY, massZ;
 	private double offsetX, offsetY, offsetZ;
 	private Part part[][][];
@@ -144,6 +145,10 @@ public class Ship {
 		if (controller.isKeyDown(Controller.KEY_E))
 			vAngleFlat -= ANGLE_FORCE;
 		
+//		Math3D.Force f = new Math3D.Force();
+//		f.add(.01, new double[] {1, 0, 0}, new double[] {0, .01, 0});
+//		f.computeAngle(norm, rightUp);
+//		applyForce(f);
 		
 		vx *= FRICTION;
 		vy *= FRICTION;
@@ -183,6 +188,15 @@ public class Ship {
 		x = xyz[0] + safeZone;
 		y = xyz[1] + safeZone;
 		z = xyz[2] + safeZone;
+	}
+	
+	private void applyForce(Math3D.Force f) {
+		vx += f.x;
+		vy += f.y;
+		vz += f.z;
+		vAngleFlat += f.angleFlat;
+		vAngleUp += f.angleUp;
+		vAngleTilt += f.angleTilt;
 	}
 	
 }

@@ -26,6 +26,11 @@ public class Math3D {
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 	
+	public static double[] setMagnitude(double[] v, double mag) {
+		double mult = mag / magnitude(v);
+		return new double[] {v[0] * mult, v[1] * mult, v[2] * mult};
+	}
+	
 	public static double dotProduct(double x, double y, double z, double x2, double y2, double z2) {
 		double mag1 = magnitude(x, y, z);
 		double mag2 = magnitude(x2, y2, z2);
@@ -335,14 +340,18 @@ public class Math3D {
 		public double[] netTorque;
 		public double angleFlat, angleUp, angleTilt;
 		
-		public void add(double[] force, double[] location) {
-			x += force[0];
-			y += force[1];
-			z += force[2];
-			double[] cross = crossProductUnormalized(location, force);
-			netTorque[0] += cross[0];
-			netTorque[1] += cross[1];
-			netTorque[2] += cross[2];
+		public Force() {
+			netTorque = new double[3];
+		}
+		
+		public void add(double force, double[] direction, double[] location) {
+			x += direction[0] * force;
+			y += direction[1] * force;
+			z += direction[2] * force;
+			double[] cross = crossProductUnormalized(location, direction);
+			netTorque[0] += cross[0] * force;
+			netTorque[1] += cross[1] * force;
+			netTorque[2] += cross[2] * force;
 		}
 		
 		public void computeAngle(double[] norm, double[] rightUp) {

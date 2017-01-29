@@ -55,20 +55,11 @@ public class Surface {
 		normal = new double[3];
 		
 		// set coord 0 to origin
-		double dx1 = coord[1][0] - coord[0][0];
-		double dy1 = coord[1][1] - coord[0][1];
-		double dz1 = coord[1][2] - coord[0][2];
-		double dx2 = coord[2][0] - coord[0][0];
-		double dy2 = coord[2][1] - coord[0][1];
-		double dz2 = coord[2][2] - coord[0][2];
+		double[] d1 = new double[] {coord[1][0] - coord[0][0], coord[1][1] - coord[0][1], coord[1][2] - coord[0][2]};
+		double[] d2 = new double[] {coord[2][0] - coord[0][0], coord[2][1] - coord[0][1], coord[2][2] - coord[0][2]};
 		
 		// cross product
-		normal[0] = dy1 * dz2 - dz1 * dy2;
-		normal[1] = dz1 * dx2 - dx1 * dz2;
-		normal[2] = dx1 * dy2 - dy1 * dx2;
-		
-		if (flipNormal)
-			normal = Math3D.transform(normal, -1, 0);
+		normal = Math3D.crossProductNormalized(d1, d2, flipNormal);
 	}
 	
 	void setColor(Color c) {
@@ -76,7 +67,8 @@ public class Surface {
 	}
 	
 	void setLight(double l) {
-		light = l;
+		light = l * (Math3D.dotProductUnormalized(normal, Camera.LIGHT_SOURCE) + .5);
+		light = Math3D.min(light, 1);
 	}
 	
 	public double[][] toCamera(Camera camera) {
@@ -104,8 +96,7 @@ public class Surface {
 				x[i] = ox / oy;
 				y[i] = oz / oy;
 			}
-			tempDistanceLight = light < 1 ? light : 1;
-			tempDistanceLight *= Math3D.pow(Camera.FOG, (int) oy);
+			tempDistanceLight = light * Math3D.pow(Camera.FOG, (int) oy);
 			return new double[][] {x, y};
 		}
 		return null;
