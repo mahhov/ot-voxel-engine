@@ -214,6 +214,9 @@ public class Math3D {
 		if (x == 1)
 			return sign;
 		
+		if ((int) (x * trigAccuracy) == -2147483648)
+			System.out.println("WOW");
+		
 		return sign * sinTable[(int) (x * trigAccuracy)];
 		
 	}
@@ -359,6 +362,39 @@ public class Math3D {
 			angleFlat = dotProductUnormalized(netTorque, up);
 			angleUp = dotProductUnormalized(netTorque, rightUp);
 			angleTilt = -dotProductUnormalized(netTorque, norm);
+		}
+	}
+	
+	public static class RelativeForce {
+		private double rx, ry, rz; // relative
+		private double[] netTorque;
+		public double x, y, z; // absolute
+		public double angleFlat, angleUp, angleTilt;
+		
+		public RelativeForce() {
+			netTorque = new double[3];
+		}
+		
+		public void add(double force, double[] direction, double[] location) {
+			double dmag = magnitude(direction);
+			force /= dmag;
+			rx += direction[0] * force;
+			ry += direction[1] * force;
+			rz += direction[2] * force;
+			double[] cross = crossProductUnormalized(location, direction);
+			netTorque[0] += cross[0] * force;
+			netTorque[1] += cross[1] * force;
+			netTorque[2] += cross[2] * force;
+		}
+		
+		public void computeRelative(double[] norm, double[] rightUp) {
+			x = ry * norm[0] + rx * rightUp[0] + rz * rightUp[3];
+			y = ry * norm[1] + rx * rightUp[1] + rz * rightUp[4];
+			z = ry * norm[2] + rx * rightUp[2] + rz * rightUp[5];
+			
+			angleFlat = netTorque[2]; // netTorque . <0,0,1>
+			angleUp = netTorque[0]; // netTorque . <1,0,0>
+			angleTilt = -netTorque[1]; // netTorque . <0,1,0>
 		}
 	}
 	

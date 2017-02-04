@@ -15,14 +15,13 @@ public class Ship {
 	
 	public boolean visible;
 	public long drawCounter;
-	public double x, y, z;
+	public double x, y, z; // mass center
 	public Math3D.Angle angle, angleZ, angleTilt;
 	private double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
 	
-	private double mass, massX, massY, massZ;
-	private double offsetX, offsetY, offsetZ;
+	private double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
 	private Part part[][][];
 	private boolean massDirty;
 	
@@ -42,12 +41,6 @@ public class Ship {
 	private void generateParts() {
 		massDirty = true;
 		
-		// offsets
-		offsetX = .5;
-		offsetY = 2.5;
-		offsetZ = 0;
-		
-		// parts
 		part = new Part[2][5][1];
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
@@ -56,6 +49,7 @@ public class Ship {
 	}
 	
 	private void computeMass() {
+		double tmass;
 		mass = 0;
 		massX = 0;
 		massY = 0;
@@ -63,10 +57,11 @@ public class Ship {
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++) {
-					mass += part[x][y][z].mass;
-					massX += x * mass;
-					massY += y * mass;
-					massZ += z * mass;
+					tmass = part[x][y][z].mass;
+					mass += tmass;
+					massX += x * tmass;
+					massY += y * tmass;
+					massZ += z * tmass;
 				}
 		massX /= mass;
 		massY /= mass;
@@ -94,9 +89,9 @@ public class Ship {
 		for (int xi = 0; xi < part.length; xi++)
 			for (int yi = 0; yi < part[xi].length; yi++)
 				for (int zi = 0; zi < part[xi][yi].length; zi++) {
-					dx = xi - offsetX;
-					dy = yi - offsetY;
-					dz = zi - offsetZ;
+					dx = xi - massX;
+					dy = yi - massY;
+					dz = zi - massZ;
 					
 					xc = x + dx * rightUp[0] + dy * norm[0] + dz * rightUp[3];
 					yc = y + dx * rightUp[1] + dy * norm[1] + dz * rightUp[4];
@@ -145,10 +140,15 @@ public class Ship {
 		if (controller.isKeyDown(Controller.KEY_E))
 			vAngleFlat -= ANGLE_FORCE;
 		
-//		Math3D.Force f = new Math3D.Force();
-//		f.add(.01, new double[] {1, 0, 0}, new double[] {0, .01, 0});
-//		f.computeAngle(norm, rightUp);
-//		applyForce(f);
+		//		Math3D.Force f = new Math3D.Force();
+		//		f.add(.01, new double[] {1, 0, 0}, new double[] {0, .01, 0});
+		//		f.computeAngle(norm, rightUp);
+		//		applyForce(f);
+		
+		Math3D.RelativeForce f = new Math3D.RelativeForce();
+		f.add(.02, new double[] {0, 1, 0}, new double[] {.01, 10000000, .1});
+		f.computeRelative(norm, rightUp);
+		//		applyForce(f);
 		
 		vx *= FRICTION;
 		vy *= FRICTION;
@@ -160,6 +160,10 @@ public class Ship {
 		x += vx;
 		y += vy;
 		z += vz;
+		
+		Math3D.Angle tempAngle = new Math3D.Angle(angle.get());
+		Math3D.Angle tempAngleZ = new Math3D.Angle(angleZ.get());
+		Math3D.Angle tempAngleTilt = new Math3D.Angle(angleTilt.get());
 		
 		// vAngleFlat
 		angle.set(angle.get() + angleTilt.cos() * vAngleFlat / angleZ.cos());
@@ -191,6 +195,15 @@ public class Ship {
 	}
 	
 	private void applyForce(Math3D.Force f) {
+		vx += f.x;
+		vy += f.y;
+		vz += f.z;
+		vAngleFlat += f.angleFlat;
+		vAngleUp += f.angleUp;
+		vAngleTilt += f.angleTilt;
+	}
+	
+	private void applyForce(Math3D.RelativeForce f) {
 		vx += f.x;
 		vy += f.y;
 		vz += f.z;
