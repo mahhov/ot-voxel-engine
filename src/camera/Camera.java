@@ -6,7 +6,7 @@ import engine.Math3D;
 public class Camera {
 	public static final double FOG = 0.987;
 	public static final double MIN_LIGHT = .12;
-	public static final double[] LIGHT_SOURCE = new double[] {0, 0, 1};
+	public static final double[] LIGHT_SOURCE = Math3D.normalize(new double[] {1, 2, 4});
 	
 	public double x, y, z;
 	public Math3D.Angle angle, angleZ;

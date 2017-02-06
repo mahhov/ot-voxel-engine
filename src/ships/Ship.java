@@ -3,14 +3,14 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import parts.Hull;
 import parts.Part;
+import parts.Rotor;
 import shapes.ShipCube;
 import shapes.ShipTrigger;
 import world.World;
 
 public class Ship {
-	final double FRICTION = .96, FORCE = .02, ANGLE_FORCE = .0015, GRAVITY = -.003;
+	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
 	//todo: force defining & force applying
 	
 	public boolean visible;
@@ -20,10 +20,8 @@ public class Ship {
 	private double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
-	
-	private double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
+	private double mass, massX, massY, massZ, inertia; // in relative axis system, offset from corner to mass center
 	private Part part[][][];
-	private boolean massDirty;
 	
 	public Ship(double x, double y, double z, double angle, double angleZ, double angleTilt, World world) {
 		this.x = x;
@@ -39,13 +37,39 @@ public class Ship {
 	}
 	
 	private void generateParts() {
-		massDirty = true;
-		
 		part = new Part[2][5][1];
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
-					part[x][y][z] = new Hull();
+					part[x][y][z] = new Rotor();
+		computeMass();
+		computeInertia();
+		System.out.println("mass : " + mass + " and inertia : " + inertia);
+		
+		int x = 0, y = 4, z = 0;
+		part[x][y][z].set(Math3D.LEFT, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.RIGHT, new double[] {x - massX, y - massY, z - massZ});
+		x = 0;
+		y = 3;
+		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		x = 0;
+		y = 2;
+		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
+		x = 0;
+		y = 1;
+		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
+		x = 0;
+		y = 0;
+		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
 	}
 	
 	private void computeMass() {
@@ -66,6 +90,14 @@ public class Ship {
 		massX /= mass;
 		massY /= mass;
 		massZ /= mass;
+	}
+	
+	private void computeInertia() {
+		inertia = 0;
+		for (int x = 0; x < part.length; x++)
+			for (int y = 0; y < part[x].length; y++)
+				for (int z = 0; z < part[x][y].length; z++)
+					inertia += Math3D.magnitudeSqrd(x - massX, y - massY, z - massZ) * part[x][y][z].mass;
 	}
 	
 	private void computeAxis() {
@@ -98,7 +130,7 @@ public class Ship {
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
 					// LEFT 0, RIGHT 1, FRONT 2, BACK 3, BOTTOM 4, TOP 5, NONE -1
-					shape = new ShipCube(xc, yc, zc, angle, angleZ, angleTilt, .5, this, new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1});
+					shape = new ShipCube(xc, yc, zc, angle, angleZ, angleTilt, .5, this, new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1}, part[xi][yi][zi].getColors());
 					world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
 		
@@ -106,17 +138,38 @@ public class Ship {
 	}
 	
 	public void update(World world, Controller controller) {
-		if (massDirty) {
-			computeMass();
-			massDirty = false;
-		}
 		move(world, controller);
 		addToWorld(world); // todo : only if moved
 	}
 	
-	private void move(World world, Controller controller) {
-		drawCounter++; // todo : only if moved
+	private void doControl(Controller controller) {
+		// controls
+		boolean[] control = new boolean[6];
+		if (controller.isKeyDown(Controller.KEY_W))
+			control[Math3D.FRONT] = true;
+		if (controller.isKeyDown(Controller.KEY_S))
+			control[Math3D.BACK] = true;
+		if (controller.isKeyDown(Controller.KEY_A))
+			control[Math3D.LEFT] = true;
+		if (controller.isKeyDown(Controller.KEY_D))
+			control[Math3D.RIGHT] = true;
+		if (controller.isKeyDown(Controller.KEY_SPACE))
+			control[Math3D.TOP] = true;
+		if (controller.isKeyDown(Controller.KEY_SHIFT))
+			control[Math3D.BOTTOM] = true;
 		
+		// force
+		Math3D.RelativeForce rotorForce = new Math3D.RelativeForce();
+		for (int x = 0; x < part.length; x++)
+			for (int y = 0; y < part[x].length; y++)
+				for (int z = 0; z < part[x][y].length; z++)
+					part[x][y][z].addForce(rotorForce, control);
+		
+		// apply
+		applyForce(rotorForce);
+	}
+	
+	void doControlOld(Controller controller) {
 		if (controller.isKeyDown(Controller.KEY_W)) {
 			vx += norm[0] * FORCE;
 			vy += norm[1] * FORCE;
@@ -139,16 +192,11 @@ public class Ship {
 			vAngleFlat += ANGLE_FORCE;
 		if (controller.isKeyDown(Controller.KEY_E))
 			vAngleFlat -= ANGLE_FORCE;
-		
-		//		Math3D.Force f = new Math3D.Force();
-		//		f.add(.01, new double[] {1, 0, 0}, new double[] {0, .01, 0});
-		//		f.computeAngle(norm, rightUp);
-		//		applyForce(f);
-		
-		Math3D.RelativeForce f = new Math3D.RelativeForce();
-		f.add(.02, new double[] {0, 1, 0}, new double[] {.01, 10000000, .1});
-		f.computeRelative(norm, rightUp);
-		//		applyForce(f);
+	}
+	
+	private void move(World world, Controller controller) {
+		drawCounter++; // todo : only if moved
+		doControl(controller);
 		
 		vx *= FRICTION;
 		vy *= FRICTION;
@@ -204,14 +252,20 @@ public class Ship {
 	}
 	
 	private void applyForce(Math3D.RelativeForce f) {
-		vx += f.x;
-		vy += f.y;
-		vz += f.z;
-		vAngleFlat += f.angleFlat;
-		vAngleUp += f.angleUp;
-		vAngleTilt += f.angleTilt;
+		f.computeRelative(norm, rightUp);
+		double force = FORCE / mass;
+		vx += f.x * force;
+		vy += f.y * force;
+		vz += f.z * force;
+		double angleForce = FORCE / inertia;
+		vAngleFlat += f.angleFlat * angleForce;
+		vAngleUp += f.angleUp * angleForce;
+		vAngleTilt += f.angleTilt * angleForce;
 	}
 	
 }
 
 // todo : angleZ invisible bug
+// todo : inertia for angle v
+// todo: blades
+// todo: smaller than cube drawing

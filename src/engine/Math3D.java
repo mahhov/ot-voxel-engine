@@ -7,6 +7,25 @@ public class Math3D {
 	
 	public static final double sqrt2 = Math.sqrt(2), sqrt2Div3 = Math.sqrt(2.0 / 3), sqrt1Div2 = 1 / sqrt2, sqrt1Div5 = 1 / Math.sqrt(5);
 	
+	public static int flipDirection(int direction) {
+		switch (direction) {
+			case LEFT:
+				return RIGHT;
+			case RIGHT:
+				return LEFT;
+			case FRONT:
+				return BACK;
+			case BACK:
+				return FRONT;
+			case BOTTOM:
+				return TOP;
+			case TOP:
+				return BOTTOM;
+			default:
+				return NONE;
+		}
+	}
+	
 	public static double magnitude(double[] c) {
 		double mag = 0;
 		for (int i = 0; i < c.length; i++)
@@ -24,6 +43,13 @@ public class Math3D {
 	
 	public static double magnitude(double dx, double dy) {
 		return Math.sqrt(dx * dx + dy * dy);
+	}
+	
+	public static double[] normalize(double[] v) {
+		double mag = magnitude(v);
+		for (int i = 0; i < v.length; i++)
+			v[i] /= mag;
+		return v;
 	}
 	
 	public static double[] setMagnitude(double[] v, double mag) {
@@ -394,7 +420,7 @@ public class Math3D {
 			
 			angleFlat = netTorque[2]; // netTorque . <0,0,1>
 			angleUp = netTorque[0]; // netTorque . <1,0,0>
-			angleTilt = -netTorque[1]; // netTorque . <0,1,0>
+			angleTilt = -netTorque[1]; // netTorque . <0,-1,0>
 		}
 	}
 	

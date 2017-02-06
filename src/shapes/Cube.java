@@ -7,18 +7,21 @@ import java.awt.*;
 import static engine.Math3D.axisVectorsTilt;
 
 public class Cube extends Shape {
+	public static final Color PRIMARY_COLOR = new Color(120, 100, 20), SECONDARY_COLOR = new Color(240, 200, 40), TERENARY_COLOR = new Color(250, 0, 0);
+	
 	private double x, y, z;
 	private Math3D.Angle angle, angleZ, angleTilt;
 	private double size;
 	private boolean surfacesDirty;
 	private Surface top, bottom, left, right, front, back;
-	private boolean[] sides;
+	private boolean[] side;
+	private Color[] color;
 	
 	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size) {
-		this(x, y, z, angle, angleZ, angleTilt, size, new boolean[] {true, true, true, true, true, true});
+		this(x, y, z, angle, angleZ, angleTilt, size, null, null);
 	}
 	
-	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] sides) {
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] side, Color[] color) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -27,7 +30,8 @@ public class Cube extends Shape {
 		this.angleTilt = angleTilt;
 		this.size = size;
 		surfacesDirty = true;
-		this.sides = sides;
+		this.side = side != null ? side : new boolean[] {true, true, true, true, true, true};
+		this.color = color != null ? color : new Color[] {PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR};
 	}
 	
 	private void initSurfaces() {
@@ -45,51 +49,45 @@ public class Cube extends Shape {
 		double[] leftBackTop = new double[] {x + norm[0] - rightUp[0] + rightUp[3], y + norm[1] - rightUp[1] + rightUp[4], z + norm[2] - rightUp[2] + rightUp[5]};
 		double[] rightBackTop = new double[] {x + norm[0] + rightUp[0] + rightUp[3], y + norm[1] + rightUp[1] + rightUp[4], z + norm[2] + rightUp[2] + rightUp[5]};
 		
-		Color[] sideColor;
-		int red = 120, green = 100, blue = 20, dif = 20;
-		sideColor = new Color[6];
-		for (int i = 0; i < sideColor.length; i++)
-			sideColor[i] = new Color(red + dif * i, green + dif * i, blue + dif * i);
-		
 		// from back/left -> back/right -> front/right -> front/left
-		if (sides[Math3D.TOP]) {
+		if (side[Math3D.TOP]) {
 			top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, true);
-			top.setColor(sideColor[0]);
+			top.setColor(color[Math3D.TOP]);
 			top.setLight(1);
 		}
 		
 		// from back/left -> back/right -> front/right -> front/left
-		if (sides[Math3D.BOTTOM]) {
+		if (side[Math3D.BOTTOM]) {
 			bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, false);
-			bottom.setColor(sideColor[1]);
+			bottom.setColor(color[Math3D.BOTTOM]);
 			bottom.setLight(1);
 		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		if (sides[Math3D.LEFT]) {
+		if (side[Math3D.LEFT]) {
 			left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, true);
-			left.setColor(sideColor[2]);
+			left.setColor(color[Math3D.LEFT]);
 			left.setLight(1);
 		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		if (sides[Math3D.RIGHT]) {
+		if (side[Math3D.RIGHT]) {
 			right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, false);
-			right.setColor(sideColor[3]);
+			right.setColor(color[Math3D.RIGHT]);
 			right.setLight(1);
 		}
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		if (sides[Math3D.FRONT]) {
+		if (side[Math3D.FRONT]) {
 			front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, true);
-			front.setColor(sideColor[4]);
+			front.setColor(color[Math3D.FRONT]);
 			front.setLight(1);
 		}
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		if (sides[Math3D.BACK]) {
+		if (side[Math3D.BACK]) {
 			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false);
-			back.setColor(sideColor[5]);
+			back.setColor(color[Math3D.BACK]);
 			back.setLight(1);
 		}
 		
