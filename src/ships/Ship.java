@@ -47,29 +47,29 @@ public class Ship {
 		System.out.println("mass : " + mass + " and inertia : " + inertia);
 		
 		int x = 0, y = 4, z = 0;
-		part[x][y][z].set(Math3D.LEFT, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
 		part[x][y][z].set(Math3D.RIGHT, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.LEFT, new double[] {x - massX, y - massY, z - massZ});
 		x = 0;
 		y = 3;
-		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
 		x = 1;
-		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
 		x = 0;
 		y = 2;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
 		x = 1;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
 		x = 0;
 		y = 1;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
 		x = 1;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
 		x = 0;
 		y = 0;
-		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
 		x = 1;
-		part[x][y][z].set(Math3D.TOP, new double[] {x - massX, y - massY, z - massZ});
+		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
 	}
 	
 	private void computeMass() {
@@ -257,7 +257,7 @@ public class Ship {
 		vx += f.x * force;
 		vy += f.y * force;
 		vz += f.z * force;
-		double angleForce = FORCE / inertia;
+		double angleForce = FORCE / inertia / 2; // todo: fix this calculation
 		vAngleFlat += f.angleFlat * angleForce;
 		vAngleUp += f.angleUp * angleForce;
 		vAngleTilt += f.angleTilt * angleForce;
