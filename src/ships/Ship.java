@@ -93,7 +93,7 @@ public class Ship {
 	}
 	
 	private void computeInertia() {
-		inertia = 0;
+		inertia = mass / 4;
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
