@@ -9,6 +9,7 @@ class Engine {
 	private Controller controller;
 	private Painter painter;
 	private World world;
+	private boolean pause;
 	
 	private Engine() {
 		int frame = 800, image = 800;
@@ -27,12 +28,17 @@ class Engine {
 		int frame = 0;
 		long beginTime = 0, endTime;
 		while (true) {
+			while (pause) {
+				checkPause();
+				wait(30);
+			}
 			painter.clear();
 			camera.move(controller);
 			camera.update(world.width, world.length, world.height);
 			world.update(controller);
 			world.drawChunks(painter, camera);
 			painter.repaint();
+			checkPause();
 			wait(30);
 			endTime = System.nanoTime() + 1;
 			if (endTime - beginTime > 1000000000L) {
@@ -44,7 +50,12 @@ class Engine {
 		}
 	}
 	
-	public static void wait(int howLong) {
+	private void checkPause() {
+		if (controller.isKeyPressed(Controller.KEY_P))
+			pause = !pause;
+	}
+	
+	private static void wait(int howLong) {
 		try {
 			Thread.sleep(howLong);
 		} catch (InterruptedException e) {
