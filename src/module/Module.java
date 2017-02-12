@@ -1,13 +1,13 @@
-package parts;
+package module;
 
 import engine.Math3D;
 
 import java.awt.*;
 
-public class Part {
+public class Module {
 	public int mass;
 	
-	Part() {
+	Module() {
 		mass = 1;
 	}
 	

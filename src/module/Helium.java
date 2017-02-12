@@ -1,11 +1,11 @@
-package parts;
+package module;
 
 import engine.Math3D;
 import ships.Ship;
 
 import java.awt.*;
 
-public class Helium extends Part {
+public class Helium extends Module {
 	
 	private static final double force = .0005;
 	private double[] location;
@@ -23,7 +23,6 @@ public class Helium extends Part {
 	
 	public void set(int dir, double[] location) {
 		this.location = location;
-		this.location = new double[] {0, 5, 0};
 		for (int i = 0; i < color.length; i++)
 			color[i] = Color.YELLOW;
 	}

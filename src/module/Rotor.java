@@ -1,11 +1,11 @@
-package parts;
+package module;
 
 import engine.Math3D;
 import shapes.Cube;
 
 import java.awt.*;
 
-public class Rotor extends Part {
+public class Rotor extends Module {
 	
 	private static final double force = .01;
 	private double[] direction, location;

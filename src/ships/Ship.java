@@ -3,10 +3,10 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import parts.Helium;
-import parts.Hull;
-import parts.Part;
-import parts.Rotor;
+import module.Helium;
+import module.Hull;
+import module.Module;
+import module.Rotor;
 import shapes.ShipCube;
 import shapes.ShipTrigger;
 import world.World;
@@ -23,7 +23,7 @@ public class Ship {
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
 	private double mass, massX, massY, massZ, inertia; // in relative axis system, offset from corner to mass center
-	private Part part[][][];
+	private Module part[][][];
 	
 	public Ship(double x, double y, double z, double angle, double angleZ, double angleTilt, World world) {
 		this.x = x;
@@ -39,7 +39,7 @@ public class Ship {
 	}
 	
 	private void generateParts() {
-		part = new Part[2][6][1];
+		part = new Module[2][6][1];
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
@@ -185,7 +185,7 @@ public class Ship {
 		applyForce(force);
 	}
 	
-	void doControlOld(Controller controller) {
+	void doControlAuto(Controller controller) {
 		if (controller.isKeyDown(Controller.KEY_W)) {
 			vx += norm[0] * FORCE;
 			vy += norm[1] * FORCE;
