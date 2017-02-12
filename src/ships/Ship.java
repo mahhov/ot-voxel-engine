@@ -3,6 +3,8 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
+import parts.Helium;
+import parts.Hull;
 import parts.Part;
 import parts.Rotor;
 import shapes.ShipCube;
@@ -10,14 +12,14 @@ import shapes.ShipTrigger;
 import world.World;
 
 public class Ship {
-	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
+	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003 * 0;
 	//todo: force defining & force applying
 	
 	public boolean visible;
 	public long drawCounter;
 	public double x, y, z; // mass center
 	public Math3D.Angle angle, angleZ, angleTilt;
-	private double[] norm, rightUp;
+	public double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
 	private double mass, massX, massY, massZ, inertia; // in relative axis system, offset from corner to mass center
@@ -37,11 +39,19 @@ public class Ship {
 	}
 	
 	private void generateParts() {
-		part = new Part[2][5][1];
+		part = new Part[2][6][1];
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
-					part[x][y][z] = new Rotor();
+					if (y != 5)
+						part[x][y][z] = new Rotor();
+					else {
+						if (x == 0)
+							part[x][y][z] = new Helium(this);
+						else
+							part[x][y][z] = new Hull();
+					}
+		
 		computeMass();
 		computeInertia();
 		System.out.println("mass : " + mass + " and inertia : " + inertia);
@@ -70,6 +80,12 @@ public class Ship {
 		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
 		x = 1;
 		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
+		
+		x = 0;
+		y = 5;
+		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
+		x = 1;
+		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
 	}
 	
 	private void computeMass() {
@@ -159,14 +175,14 @@ public class Ship {
 			control[Math3D.BOTTOM] = true;
 		
 		// force
-		Math3D.RelativeForce rotorForce = new Math3D.RelativeForce();
+		Math3D.Force force = new Math3D.Force();
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
-					part[x][y][z].addForce(rotorForce, control);
+					part[x][y][z].addForce(force, control);
 		
 		// apply
-		applyForce(rotorForce);
+		applyForce(force);
 	}
 	
 	void doControlOld(Controller controller) {
@@ -213,12 +229,19 @@ public class Ship {
 		Math3D.Angle tempAngleZ = new Math3D.Angle(angleZ.get());
 		Math3D.Angle tempAngleTilt = new Math3D.Angle(angleTilt.get());
 		
+		double angleZCos = angleZ.cos();
+		if (angleZCos < Math3D.EPSILON && angleZCos > -Math3D.EPSILON)
+			if (angleZCos > 0)
+				angleZCos = Math3D.EPSILON;
+			else
+				angleZCos = -Math3D.EPSILON;
+		
 		// vAngleFlat
-		angle.set(angle.get() + angleTilt.cos() * vAngleFlat / angleZ.cos());
+		angle.set(angle.get() + angleTilt.cos() * vAngleFlat / angleZCos);
 		angleZ.set(angleZ.get() - angleTilt.sin() * vAngleFlat);
 		
 		// vAngleUp
-		angle.set(angle.get() + angleTilt.sin() * vAngleUp / angleZ.cos());
+		angle.set(angle.get() + angleTilt.sin() * vAngleUp / angleZCos);
 		angleZ.set(angleZ.get() + angleTilt.cos() * vAngleUp);
 		
 		// restoring tilt
@@ -243,16 +266,7 @@ public class Ship {
 	}
 	
 	private void applyForce(Math3D.Force f) {
-		vx += f.x;
-		vy += f.y;
-		vz += f.z;
-		vAngleFlat += f.angleFlat;
-		vAngleUp += f.angleUp;
-		vAngleTilt += f.angleTilt;
-	}
-	
-	private void applyForce(Math3D.RelativeForce f) {
-		f.computeRelative(norm, rightUp);
+		f.prepare(norm, rightUp);
 		double force = FORCE / mass;
 		vx += f.x * force;
 		vy += f.y * force;

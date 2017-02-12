@@ -18,6 +18,6 @@ public class Part {
 	public void set(int dir, double[] location) {
 	}
 	
-	public void addForce(Math3D.RelativeForce rotorForce, boolean[] control) {
+	public void addForce(Math3D.Force force, boolean[] control) {
 	}
 }

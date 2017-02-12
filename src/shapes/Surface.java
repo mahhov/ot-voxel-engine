@@ -68,7 +68,6 @@ public class Surface {
 	
 	void setLight(double l) {
 		light = l * (Math3D.dotProductUnormalized(normal, Camera.LIGHT_SOURCE) + 1);
-//		light = 1;
 		light = Math3D.min(light, 1);
 	}
 	

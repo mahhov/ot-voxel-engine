@@ -71,7 +71,6 @@ public class Math3D {
 		return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
 	}
 	
-	
 	public static double[] crossProductNormalized(double[] v1, double[] v2) {
 		double[] cross = crossProductUnormalized(v1, v2);
 		double mag = magnitude(cross[0], cross[1], cross[2]);
@@ -281,10 +280,6 @@ public class Math3D {
 			for (int j = 0; j < a[i].length; j++)
 				aa[i][j] = (int) (a[i][j] * scale + shift);
 		return aa;
-		// int[][] aa = new int[a.length][];
-		// for (int i = 0; i < a.length; i++)
-		// aa[i] = transform(a[i], scale, shift);
-		// return aa;
 	}
 	
 	public static double pow(double base, int p) {
@@ -365,39 +360,12 @@ public class Math3D {
 	}
 	
 	public static class Force {
-		public double x, y, z;
-		public double[] netTorque;
-		public double angleFlat, angleUp, angleTilt;
-		
-		public Force() {
-			netTorque = new double[3];
-		}
-		
-		public void add(double force, double[] direction, double[] location) {
-			x += direction[0] * force;
-			y += direction[1] * force;
-			z += direction[2] * force;
-			double[] cross = crossProductUnormalized(location, direction);
-			netTorque[0] += cross[0] * force;
-			netTorque[1] += cross[1] * force;
-			netTorque[2] += cross[2] * force;
-		}
-		
-		public void computeAngle(double[] norm, double[] rightUp) {
-			double[] up = new double[] {rightUp[3], rightUp[4], rightUp[5]};
-			angleFlat = dotProductUnormalized(netTorque, up);
-			angleUp = dotProductUnormalized(netTorque, rightUp);
-			angleTilt = -dotProductUnormalized(netTorque, norm);
-		}
-	}
-	
-	public static class RelativeForce {
-		private double rx, ry, rz; // relative
-		private double[] netTorque;
 		public double x, y, z; // absolute
 		public double angleFlat, angleUp, angleTilt;
+		double[] netTorque;
+		private double rx, ry, rz; // relative
 		
-		public RelativeForce() {
+		public Force() {
 			netTorque = new double[3];
 		}
 		
@@ -407,17 +375,16 @@ public class Math3D {
 			rx += direction[0] * force;
 			ry += direction[1] * force;
 			rz += direction[2] * force;
-			double[] cross = crossProductUnormalized(location, direction);
-			netTorque[0] += cross[0] * force;
-			netTorque[1] += cross[1] * force;
-			netTorque[2] += cross[2] * force;
+			double[] torque = crossProductUnormalized(location, direction);
+			netTorque[0] += torque[0] * force;
+			netTorque[1] += torque[1] * force;
+			netTorque[2] += torque[2] * force;
 		}
 		
-		public void computeRelative(double[] norm, double[] rightUp) {
+		public void prepare(double[] norm, double[] rightUp) {
 			x = ry * norm[0] + rx * rightUp[0] + rz * rightUp[3];
 			y = ry * norm[1] + rx * rightUp[1] + rz * rightUp[4];
 			z = ry * norm[2] + rx * rightUp[2] + rz * rightUp[5];
-			
 			angleFlat = netTorque[2]; // netTorque . <0,0,1>
 			angleUp = netTorque[0]; // netTorque . <1,0,0>
 			angleTilt = -netTorque[1]; // netTorque . <0,-1,0>

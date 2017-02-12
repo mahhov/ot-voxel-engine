@@ -80,7 +80,7 @@ public class Rotor extends Part {
 				color[i] = Cube.PRIMARY_COLOR;
 	}
 	
-	public void addForce(Math3D.RelativeForce rotorForce, boolean[] control) {
+	public void addForce(Math3D.Force force, boolean[] control) {
 		active = false;
 		for (int i = 0; i < this.control.length; i++)
 			if (this.control[i] && control[i]) {
@@ -89,6 +89,6 @@ public class Rotor extends Part {
 			}
 		
 		if (active)
-			rotorForce.add(force, direction, location);
+			force.add(this.force, direction, location);
 	}
 }
