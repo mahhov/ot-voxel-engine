@@ -189,10 +189,10 @@ public class Ship {
 		
 		// force
 		Math3D.Force force = new Math3D.Force();
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
-					part[x][y][z].addForce(force, control);
+		for (Module[][] ppp : part)
+			for (Module[] pp : ppp)
+				for (Module p : pp)
+					p.addForce(force, control);
 		
 		// apply
 		applyForce(force);

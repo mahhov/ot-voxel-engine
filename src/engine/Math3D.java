@@ -28,8 +28,8 @@ public class Math3D {
 	
 	public static double magnitude(double[] c) {
 		double mag = 0;
-		for (int i = 0; i < c.length; i++)
-			mag += c[i] * c[i];
+		for (double cc : c)
+			mag += cc * cc;
 		return Math.sqrt(mag);
 	}
 	

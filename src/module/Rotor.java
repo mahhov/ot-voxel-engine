@@ -23,7 +23,7 @@ public class Rotor extends Module {
 	
 	public Color[] getColors() {
 		if (active)
-			color[opDir] = Cube.TERENARY_COLOR;
+			color[opDir] = Cube.TERNARY_COLOR;
 		else
 			color[opDir] = Cube.SECONDARY_COLOR;
 		return color;

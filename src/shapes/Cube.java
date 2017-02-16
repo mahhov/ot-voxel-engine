@@ -7,8 +7,8 @@ import java.awt.*;
 import static engine.Math3D.axisVectorsTilt;
 
 public class Cube extends Shape {
-	//			public static final Color PRIMARY_COLOR = new Color(120, 100, 20), SECONDARY_COLOR = new Color(240, 200, 40), TERENARY_COLOR = new Color(250, 0, 0);
-	public static final Color PRIMARY_COLOR = Color.WHITE, SECONDARY_COLOR = Color.GREEN, TERENARY_COLOR = Color.RED;
+	//			public static final Color PRIMARY_COLOR = new Color(120, 100, 20), SECONDARY_COLOR = new Color(240, 200, 40), TERNARY_COLOR = new Color(250, 0, 0);
+	public static final Color PRIMARY_COLOR = Color.WHITE, SECONDARY_COLOR = Color.GREEN, TERNARY_COLOR = Color.RED;
 	
 	private double x, y, z;
 	private Math3D.Angle angle, angleZ, angleTilt;
