@@ -8,7 +8,7 @@ import java.awt.*;
 import static engine.Math3D.TOP_VECTOR;
 
 public class ForwBlade extends Module {
-	private static final double force = .05;
+	private static final double force = .02;
 	private double[] location;
 	private boolean[] controlUp, controlDown;
 	private static final int STATE_INACTIVE = 0, STATE_UP = 1, STATE_DOWN = 2;

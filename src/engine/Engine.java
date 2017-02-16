@@ -12,7 +12,7 @@ class Engine {
 	private boolean pause;
 	
 	private Engine() {
-		int frame = 400, image = 400;
+		int frame = 200, image = 200;
 		Math3D.loadTrig(1000);
 		camera = new TrailingCamera();
 		controller = new Controller(frame / 2, frame / 2);

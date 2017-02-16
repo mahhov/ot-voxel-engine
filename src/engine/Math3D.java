@@ -37,12 +37,16 @@ public class Math3D {
 		return Math.sqrt(x * x + y * y + z * z);
 	}
 	
+	public static double magnitude(double dx, double dy) {
+		return Math.sqrt(dx * dx + dy * dy);
+	}
+	
 	public static double magnitudeSqrd(double x, double y, double z) {
 		return x * x + y * y + z * z;
 	}
 	
-	public static double magnitude(double dx, double dy) {
-		return Math.sqrt(dx * dx + dy * dy);
+	public static double magnitudeSqrd(double dx, double dy) {
+		return dx * dx + dy * dy;
 	}
 	
 	public static double[] normalize(double[] v) {

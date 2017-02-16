@@ -22,7 +22,8 @@ public class Ship {
 	public double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
-	private double mass, massX, massY, massZ, inertia; // in relative axis system, offset from corner to mass center
+	private double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
+	private double inertiaFlat, inertiaUp, inertiaTilt;
 	private Module part[][][];
 	
 	public Ship(double x, double y, double z, double angle, double angleZ, double angleTilt, World world) {
@@ -39,24 +40,26 @@ public class Ship {
 	}
 	
 	private void generateParts() {
+		// 5 hull
+		// 4 blade
+		// 3 hull
+		// 2 rotor - back
+		// 1 hull
+		// 0 rotor - front
+		
 		part = new Module[2][6][1];
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
 					if (y == 0 || y == 2)
 						part[x][y][z] = new Rotor();
-					else if (y != 5 && y != 4)
-						part[x][y][z] = new Hull(); // Rotor();
-					else {
-						if (x == 0 || true)
-							part[x][y][z] = new ForwBlade(this);
-						else
-							part[x][y][z] = new Hull();
-					}
+					else if (y == 4)
+						part[x][y][z] = new ForwBlade(this);
+					else
+						part[x][y][z] = new Hull();
 		
 		computeMass();
 		computeInertia();
-		System.out.println("mass : " + mass + " and inertia : " + inertia);
 		
 		int x = 0, y = 4, z = 0;
 		part[x][y][z].set(Math3D.RIGHT, new double[] {x - massX, y - massY, z - massZ});
@@ -111,11 +114,16 @@ public class Ship {
 	}
 	
 	private void computeInertia() {
-		inertia = mass / 4;
+		inertiaFlat = 0; // todo : fix these initial value
+		inertiaUp = 0;
+		inertiaTilt = 0;
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
-					inertia += Math3D.magnitudeSqrd(x - massX, y - massY, z - massZ) * part[x][y][z].mass;
+				for (int z = 0; z < part[x][y].length; z++) {
+					inertiaFlat += Math3D.magnitudeSqrd(x - massX, y - massY) * part[x][y][z].mass;
+					inertiaUp += Math3D.magnitudeSqrd(y - massY, z - massZ) * part[x][y][z].mass;
+					inertiaTilt += Math3D.magnitudeSqrd(x - massX, z - massZ) * part[x][y][z].mass;
+				}
 	}
 	
 	private void computeAxis() {
@@ -272,10 +280,9 @@ public class Ship {
 		vx += f.x * force;
 		vy += f.y * force;
 		vz += f.z * force;
-		double angleForce = FORCE / inertia / 2; // todo: fix this calculation
-		vAngleFlat += f.angleFlat * angleForce;
-		vAngleUp += f.angleUp * angleForce;
-		vAngleTilt += f.angleTilt * angleForce;
+		vAngleFlat += f.angleFlat * FORCE / inertiaFlat;
+		vAngleUp += f.angleUp * FORCE / inertiaUp;
+		vAngleTilt += f.angleTilt * FORCE / inertiaTilt;
 	}
 	
 }
