@@ -5,11 +5,13 @@ import shapes.Cube;
 
 import java.awt.*;
 
+import static engine.Math3D.*;
+
 public class Rotor extends Module {
 	
 	private static final double force = .01;
 	private double[] direction, location;
-	private int dir, opDir;
+	private int opDir; // opposite direction
 	private boolean[] control;
 	private boolean active;
 	private Color[] color;
@@ -28,7 +30,6 @@ public class Rotor extends Module {
 	}
 	
 	public void set(int dir, double[] location) {
-		this.dir = dir;
 		opDir = Math3D.flipDirection(dir);
 		this.location = location;
 		
@@ -38,39 +39,39 @@ public class Rotor extends Module {
 					control[Math3D.RIGHT] = true;
 				else
 					control[Math3D.LEFT] = true;
-				direction = new double[] {-1, 0, 0};
+				direction = LEFT_VECTOR;
 				break;
 			case Math3D.RIGHT:
 				if (location[1] < 0)
 					control[Math3D.LEFT] = true;
 				else
 					control[Math3D.RIGHT] = true;
-				direction = new double[] {1, 0, 0};
+				direction = RIGHT_VECTOR;
 				break;
 			case Math3D.FRONT:
 				control[Math3D.FRONT] = true;
-				direction = new double[] {0, 1, 0};
+				direction = FRONT_VECTOR;
 				break;
 			case Math3D.BACK:
 				control[Math3D.BACK] = true;
-				direction = new double[] {0, -1, 0};
+				direction = BACK_VECTOR;
 				break;
 			case Math3D.TOP:
 				if (location[1] < 0)
 					control[Math3D.BOTTOM] = true;
 				else
 					control[Math3D.TOP] = true;
-				direction = new double[] {0, 0, 1};
+				direction = TOP_VECTOR;
 				break;
 			case Math3D.BOTTOM:
 				if (location[1] < 0)
 					control[Math3D.TOP] = true;
 				else
 					control[Math3D.BOTTOM] = true;
-				direction = new double[] {0, 0, -1};
+				direction = BOTTOM_VECTOR;
 				break;
 			default:
-				direction = new double[] {0, 0, 0};
+				direction = ZERO_VECTOR;
 		}
 		
 		for (int i = 0; i < color.length; i++)

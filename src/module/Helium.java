@@ -5,6 +5,8 @@ import ships.Ship;
 
 import java.awt.*;
 
+import static engine.Math3D.TOP_VECTOR;
+
 public class Helium extends Module {
 	
 	private static final double force = .0005;
@@ -30,7 +32,7 @@ public class Helium extends Module {
 	public void addForce(Math3D.Force force, boolean[] control) {
 		double[] dir = new double[3];
 		
-		double[] absDir = new double[] {0, 0, 1};
+		double[] absDir = TOP_VECTOR;
 		double[] up = new double[] {ship.rightUp[3], ship.rightUp[4], ship.rightUp[5]};
 		dir[0] = Math3D.dotProductUnormalized(absDir, ship.rightUp);
 		dir[1] = Math3D.dotProductUnormalized(absDir, ship.norm);

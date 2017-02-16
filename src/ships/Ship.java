@@ -3,7 +3,7 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import module.Helium;
+import module.ForwBlade;
 import module.Hull;
 import module.Module;
 import module.Rotor;
@@ -12,7 +12,7 @@ import shapes.ShipTrigger;
 import world.World;
 
 public class Ship {
-	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003 * 0;
+	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
 	//todo: force defining & force applying
 	
 	public boolean visible;
@@ -43,11 +43,13 @@ public class Ship {
 		for (int x = 0; x < part.length; x++)
 			for (int y = 0; y < part[x].length; y++)
 				for (int z = 0; z < part[x][y].length; z++)
-					if (y != 5)
+					if (y == 0 || y == 2)
 						part[x][y][z] = new Rotor();
+					else if (y != 5 && y != 4)
+						part[x][y][z] = new Hull(); // Rotor();
 					else {
-						if (x == 0)
-							part[x][y][z] = new Helium(this);
+						if (x == 0 || true)
+							part[x][y][z] = new ForwBlade(this);
 						else
 							part[x][y][z] = new Hull();
 					}
@@ -122,6 +124,10 @@ public class Ship {
 		Painter.debugString[2] = "(norm) " + Math3D.doubles2Str(norm, 0) + "(right) " + Math3D.doubles2Str(rightUp, 0) + "(up) " + Math3D.doubles2Str(rightUp, 3);
 	}
 	
+	public double getVForward() {
+		return Math3D.dotProductUnormalized(norm, new double[] {vx, vy, vz});
+	}
+	
 	private void addToWorld(World world) {
 		// triggers
 		ShipTrigger trigger = new ShipTrigger(this);
@@ -145,7 +151,6 @@ public class Ship {
 					yc = y + dx * rightUp[1] + dy * norm[1] + dz * rightUp[4];
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
-					// LEFT 0, RIGHT 1, FRONT 2, BACK 3, BOTTOM 4, TOP 5, NONE -1
 					shape = new ShipCube(xc, yc, zc, angle, angleZ, angleTilt, .5, this, new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1}, part[xi][yi][zi].getColors());
 					world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
@@ -225,10 +230,6 @@ public class Ship {
 		y += vy;
 		z += vz;
 		
-		Math3D.Angle tempAngle = new Math3D.Angle(angle.get());
-		Math3D.Angle tempAngleZ = new Math3D.Angle(angleZ.get());
-		Math3D.Angle tempAngleTilt = new Math3D.Angle(angleTilt.get());
-		
 		double angleZCos = angleZ.cos();
 		if (angleZCos < Math3D.EPSILON && angleZCos > -Math3D.EPSILON)
 			if (angleZCos > 0)
@@ -280,6 +281,5 @@ public class Ship {
 }
 
 // todo : angleZ invisible bug
-// todo : inertia for angle v
-// todo: blades
-// todo: smaller than cube drawing
+// todo : blades
+// todo : smaller than cube drawing
