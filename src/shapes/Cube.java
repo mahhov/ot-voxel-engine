@@ -1,6 +1,7 @@
 package shapes;
 
 import engine.Math3D;
+import ships.Ship;
 
 import java.awt.*;
 
@@ -18,11 +19,12 @@ public class Cube extends Shape {
 	private boolean[] side;
 	private Color[] color;
 	
-	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size) {
-		this(x, y, z, angle, angleZ, angleTilt, size, null, null);
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, Ship ship) {
+		this(x, y, z, angle, angleZ, angleTilt, size, null, null, ship);
 	}
 	
-	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] side, Color[] color) {
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] side, Color[] color, Ship ship) {
+		super(ship);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -95,7 +97,7 @@ public class Cube extends Shape {
 		surfacesDirty = false;
 	}
 	
-	public Surface[] draw(int xSide, int ySide, int zSide) {
+	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
 		if (surfacesDirty)
 			initSurfaces();
 		return new Surface[] {top, bottom, left, right, front, back};

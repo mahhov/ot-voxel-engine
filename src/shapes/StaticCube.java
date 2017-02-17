@@ -7,6 +7,7 @@ public class StaticCube extends Shape {
 	private Surface top, bottom, left, right, front, back;
 	
 	public StaticCube(double x, double y, double z) {
+		super(null);
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -59,7 +60,7 @@ public class StaticCube extends Shape {
 		left.setLight(1);
 	}
 	
-	public Surface[] draw(int xSide, int ySide, int zSide) {
+	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
 		//		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
 		//		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
 		//		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);

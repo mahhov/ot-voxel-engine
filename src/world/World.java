@@ -55,7 +55,7 @@ public class World {
 									Math3D.Angle angleZ = new Math3D.Angle(Math.random() * Math.PI * 2);
 									Math3D.Angle angleTilt = new Math3D.Angle(Math.random() * Math.PI * 2);
 									double size = Math.random() * 2 + .25;
-									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, angleTilt, size));
+									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, angleTilt, size, null));
 								}
 				}
 	}
