@@ -21,14 +21,6 @@ public class Rotor extends Module {
 		color = new Color[6];
 	}
 	
-	public Color[] getColors() {
-		if (active)
-			color[opDir] = Cube.TERNARY_COLOR;
-		else
-			color[opDir] = Cube.SECONDARY_COLOR;
-		return color;
-	}
-	
 	public void set(int dir, double[] location) {
 		opDir = Math3D.flipDirection(dir);
 		this.location = location;
@@ -92,4 +84,14 @@ public class Rotor extends Module {
 		if (active)
 			force.add(this.force, direction, location);
 	}
+	
+	public Color[] getColors() {
+		if (active)
+			color[opDir] = Cube.TERNARY_COLOR;
+		else
+			color[opDir] = Cube.SECONDARY_COLOR;
+		return color;
+	}
+	
+	
 }

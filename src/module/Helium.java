@@ -19,10 +19,6 @@ public class Helium extends Module {
 		this.ship = ship;
 	}
 	
-	public Color[] getColors() {
-		return color;
-	}
-	
 	public void set(int dir, double[] location) {
 		this.location = location;
 		for (int i = 0; i < color.length; i++)
@@ -39,5 +35,9 @@ public class Helium extends Module {
 		dir[2] = Math3D.dotProductUnormalized(absDir, up);
 		
 		force.add(this.force, dir, location);
+	}
+	
+	public Color[] getColors() {
+		return color;
 	}
 }

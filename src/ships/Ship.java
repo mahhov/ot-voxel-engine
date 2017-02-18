@@ -7,7 +7,7 @@ import module.ForwBlade;
 import module.Hull;
 import module.Module;
 import module.Rotor;
-import shapes.Cube;
+import shapes.Shape;
 import shapes.ShipTrigger;
 import world.World;
 
@@ -145,7 +145,7 @@ public class Ship {
 			return;
 		
 		// body
-		Cube shape;
+		Shape shape;
 		double xc, yc, zc;
 		double dx, dy, dz;
 		for (int xi = 0; xi < part.length; xi++)
@@ -159,7 +159,8 @@ public class Ship {
 					yc = y + dx * rightUp[1] + dy * norm[1] + dz * rightUp[4];
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
-					shape = new Cube(xc, yc, zc, angle, angleZ, angleTilt, .5, new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1}, part[xi][yi][zi].getColors(), this);
+					boolean[] sides = new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1};
+					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, sides, this);
 					world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
 		

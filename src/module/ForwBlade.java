@@ -1,6 +1,8 @@
 package module;
 
 import engine.Math3D;
+import shapes.Cube;
+import shapes.Shape;
 import ships.Ship;
 
 import java.awt.*;
@@ -21,10 +23,6 @@ public class ForwBlade extends Module {
 		controlDown = new boolean[6];
 		color = new Color[6];
 		this.ship = ship;
-	}
-	
-	public Color[] getColors() {
-		return color;
 	}
 	
 	public void set(int dir, double[] location) {
@@ -63,5 +61,13 @@ public class ForwBlade extends Module {
 			force.add(f, TOP_VECTOR, location);
 		else if (state == STATE_DOWN)
 			force.add(-f, TOP_VECTOR, location);
+	}
+	
+	public Color[] getColors() {
+		return color;
+	}
+	
+	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, boolean[] sides, Ship ship) {
+		return new Cube(xc, yc, zc, angle, angleZ, angleTilt, .5, sides, getColors(), ship);
 	}
 }
