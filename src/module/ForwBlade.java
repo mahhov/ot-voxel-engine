@@ -57,6 +57,8 @@ public class ForwBlade extends Module {
 		
 		double forwVelocity = ship.getVForward();
 		double f = this.force * forwVelocity * forwVelocity;
+		if (forwVelocity < 0)
+			f = -f;
 		if (state == STATE_UP)
 			force.add(f, TOP_VECTOR, location);
 		else if (state == STATE_DOWN)
