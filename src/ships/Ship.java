@@ -13,7 +13,6 @@ import world.World;
 
 public class Ship {
 	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
-	//todo: force defining & force applying
 	
 	public boolean visible;
 	public long drawCounter;
@@ -293,5 +292,4 @@ public class Ship {
 }
 
 // todo : angleZ invisible bug
-// todo : blades
 // todo : smaller than cube drawing
