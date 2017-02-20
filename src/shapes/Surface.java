@@ -6,11 +6,14 @@ import engine.Math3D;
 import java.awt.*;
 
 public class Surface {
-	double[][] coord;
-	double[] normal;
-	double light;
+	private double[][] coord;
+	private double[] normal;
+	private double light;
 	public double tempDistanceLight;
 	public Color color;
+	
+	public int clipState;
+	public static final int CLIP_NONE = 0, CLIP_ADD = 1, CLIP_SET = 2, CLIP_RESET = 3;
 	
 	Surface(double x, double[] y, double[] z, boolean flipNormal) {
 		int n = Math3D.min(y.length, z.length);
@@ -49,6 +52,9 @@ public class Surface {
 		setNormal(flipNormal);
 	}
 	
+	private Surface() {
+	}
+	
 	void setNormal(boolean flipNormal) {
 		// uses first 3 coordinates
 		// when flipNormal is false, normal points toward right hand rule
@@ -69,6 +75,10 @@ public class Surface {
 	void setLight(double l) {
 		light = l * (Math3D.dotProductUnormalized(normal, Camera.LIGHT_SOURCE) + 1);
 		light = Math3D.min(light, 1);
+	}
+	
+	void setClip(int clipState) {
+		this.clipState = clipState;
 	}
 	
 	public double[][] toCamera(Camera camera) {
@@ -102,8 +112,13 @@ public class Surface {
 		return null;
 	}
 	
+	public static class NullSurface extends Surface {
+		public double[][] toCamera(Camera camera) {
+			return null;
+		}
+	}
 }
 
 // TODO: move camera.inview check to prior to cube/shape logic
 // TODO: make sure facingTowards checks smaller than 180 degrees
-// TODO : cache / reuse surface points
+// TODO: cache / reuse surface points

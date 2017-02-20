@@ -119,13 +119,17 @@ public class Math3D {
 	}
 	
 	public static double[] axisVectorsTilt(double[] norm, double mag, Angle angleZ, Angle tilt) {
+		return axisVectorsTilt(norm, mag, mag, angleZ, tilt);
+	}
+	
+	public static double[] axisVectorsTilt(double[] norm, double magRight, double magUp, Angle angleZ, Angle tilt) {
 		double normMag = magnitude(norm);
 		double[] zTilt = new double[] {-norm[1] / normMag * tilt.sin(), norm[0] / normMag * tilt.sin(), tilt.cos()};
 		double[] right = crossProductNormalized(norm, zTilt, angleZ.cos() < 0);
 		double[] up = crossProductNormalized(norm, right);
-		double rightMag = magnitude(right);
-		double upMag = magnitude(up);
-		return new double[] {right[0] / rightMag * mag, right[1] / rightMag * mag, right[2] / rightMag * mag, -up[0] / upMag * mag, -up[1] / upMag * mag, -up[2] / upMag * mag};
+		double rightScale = magRight / magnitude(right);
+		double upScale = -magUp / magnitude(up);
+		return new double[] {right[0] * rightScale, right[1] * rightScale, right[2] * rightScale, up[0] * upScale, up[1] * upScale, up[2] * upScale};
 	}
 	
 	public static double[] upVector(double x, double y, double z) {

@@ -43,17 +43,8 @@ public class Cell {
 			else
 				for (Surface s : surfaces)
 					if (s != null)
-						painter.polygon(s.toCamera(c), s.tempDistanceLight, s.color);
+						painter.clipPolygon(s.toCamera(c), s.tempDistanceLight, s.color, s.clipState);
 			lShape = lShape.next;
-		}
-	}
-	
-	public void drawFirst(Painter painter, Camera c, int xSide, int ySide, int zSide) {
-		if (shapes != null) {
-			Surface[] surfaces = shapes.shape.draw(xSide, ySide, zSide);
-			for (Surface s : surfaces)
-				if (s != null)
-					painter.polygon(s.toCamera(c), s.tempDistanceLight, s.color);
 		}
 	}
 	

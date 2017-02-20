@@ -1,7 +1,7 @@
 package module;
 
 import engine.Math3D;
-import shapes.Cube;
+import shapes.Bar;
 import shapes.Shape;
 import ships.Ship;
 
@@ -70,6 +70,6 @@ public class ForwBlade extends Module {
 	}
 	
 	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, boolean[] sides, Ship ship) {
-		return new Cube(xc, yc, zc, angle, angleZ, angleTilt, .5, sides, getColors(), ship);
+		return new Bar(xc, yc, zc, angle, angleZ, angleTilt, .5, .2, sides, getColors(), ship);
 	}
 }

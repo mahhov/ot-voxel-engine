@@ -2,6 +2,7 @@ package engine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 
 import static camera.Camera.MIN_LIGHT;
@@ -14,6 +15,7 @@ public class Painter extends JFrame {
 	Graphics2D brush;
 	private BufferedImage canvas;
 	int surfaceCount, drawCount;
+	Area clip;
 	
 	Painter(int frameSize, int imageSize, Controller controller) {
 		FRAME_SIZE = frameSize;
@@ -69,6 +71,25 @@ public class Painter extends JFrame {
 					brush.fillPolygon(xyScaled[0], xyScaled[1], xyScaled[0].length);
 					return;
 				}
+		}
+	}
+	
+	public void clipPolygon(double[][] xy, double light, Color color, int clipState) {
+		if (clipState == Surface.CLIP_ADD) {
+			if (clip == null)
+				clip = new Area();
+			if (xy != null) {
+				int[][] xyScaled = Math3D.transform(xy, IMAGE_SIZE, IMAGE_SIZE / 2);
+				clip.add(new Area(new Polygon(xyScaled[0], xyScaled[1], xyScaled[0].length)));
+			}
+		} else {
+			if (clipState == Surface.CLIP_SET)
+				brush.setClip(clip);
+			polygon(xy, light, color);
+			if (clipState == Surface.CLIP_RESET) {
+				clip = new Area();
+				brush.setClip(null);
+			}
 		}
 	}
 }

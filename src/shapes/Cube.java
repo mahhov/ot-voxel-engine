@@ -13,11 +13,11 @@ public class Cube extends Shape {
 	
 	private double x, y, z;
 	private Math3D.Angle angle, angleZ, angleTilt;
-	private double size;
+	double size;
 	private boolean surfacesDirty;
-	private Surface top, bottom, left, right, front, back;
-	private boolean[] side;
-	private Color[] color;
+	Surface[] surface;
+	boolean[] side;
+	Color[] color;
 	
 	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, Ship ship) {
 		this(x, y, z, angle, angleZ, angleTilt, size, null, null, ship);
@@ -37,10 +37,12 @@ public class Cube extends Shape {
 		this.color = color != null ? color : new Color[] {PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR};
 	}
 	
-	private void initSurfaces() {
+	Surface[] initSurfacesGeom(double normSize, double rightSize, double upSize, boolean[] side, boolean flipNormal, boolean flipSide) {
+		Surface top = null, bottom = null, left = null, right = null, front = null, back = null;
+		
 		// axis  vectors
-		double[] norm = Math3D.norm(angle, angleZ, size);
-		double[] rightUp = axisVectorsTilt(norm, size, angleZ, angleTilt);
+		double[] norm = Math3D.norm(angle, angleZ, normSize);
+		double[] rightUp = axisVectorsTilt(norm, rightSize, upSize, angleZ, angleTilt);
 		
 		// corner coordinates
 		double[] leftFrontBottom = new double[] {x - norm[0] - rightUp[0] - rightUp[3], y - norm[1] - rightUp[1] - rightUp[4], z - norm[2] - rightUp[2] - rightUp[5]};
@@ -53,54 +55,47 @@ public class Cube extends Shape {
 		double[] rightBackTop = new double[] {x + norm[0] + rightUp[0] + rightUp[3], y + norm[1] + rightUp[1] + rightUp[4], z + norm[2] + rightUp[2] + rightUp[5]};
 		
 		// from back/left -> back/right -> front/right -> front/left
-		if (side[Math3D.TOP]) {
-			top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, true);
-			top.setColor(color[Math3D.TOP]);
-			top.setLight(1);
-		}
+		if (side[Math3D.TOP] ^ flipSide)
+			top = new Surface(leftBackTop, rightBackTop, rightFrontTop, leftFrontTop, true ^ flipNormal);
 		
 		// from back/left -> back/right -> front/right -> front/left
-		if (side[Math3D.BOTTOM]) {
-			bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, false);
-			bottom.setColor(color[Math3D.BOTTOM]);
-			bottom.setLight(1);
-		}
+		if (side[Math3D.BOTTOM] ^ flipSide)
+			bottom = new Surface(leftBackBottom, rightBackBottom, rightFrontBottom, leftFrontBottom, false ^ flipNormal);
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		if (side[Math3D.LEFT]) {
-			left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, true);
-			left.setColor(color[Math3D.LEFT]);
-			left.setLight(1);
-		}
+		if (side[Math3D.LEFT] ^ flipSide)
+			left = new Surface(leftBackBottom, leftBackTop, leftFrontTop, leftFrontBottom, true ^ flipNormal);
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		if (side[Math3D.RIGHT]) {
-			right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, false);
-			right.setColor(color[Math3D.RIGHT]);
-			right.setLight(1);
-		}
+		if (side[Math3D.RIGHT] ^ flipSide)
+			right = new Surface(rightBackBottom, rightBackTop, rightFrontTop, rightFrontBottom, false ^ flipNormal);
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		if (side[Math3D.FRONT]) {
-			front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, true);
-			front.setColor(color[Math3D.BACK]);
-			front.setLight(1);
-		}
+		if (side[Math3D.FRONT] ^ flipSide)
+			front = new Surface(leftFrontBottom, leftFrontTop, rightFrontTop, rightFrontBottom, true ^ flipNormal);
 		
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		if (side[Math3D.BACK]) {
-			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false);
-			back.setColor(color[Math3D.FRONT]);
-			back.setLight(1);
-		}
+		if (side[Math3D.BACK] ^ flipSide)
+			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false ^ flipNormal);
 		
-		surfacesDirty = false;
+		return new Surface[] {top, bottom, left, right, front, back};
+	}
+	
+	void initSurfaces() {
+		surface = initSurfacesGeom(size, size, size, side, false, false);
+		for (int i = 0; i < surface.length; i++)
+			if (surface[i] != null) {
+				surface[i].setColor(color[i]);
+				surface[i].setLight(1);
+			}
 	}
 	
 	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
-		if (surfacesDirty)
+		if (surfacesDirty) {
 			initSurfaces();
-		return new Surface[] {top, bottom, left, right, front, back};
+			surfacesDirty = false;
+		}
+		return surface;
 	}
 	
 }

@@ -160,6 +160,10 @@ public class Ship {
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
 					boolean[] sides = new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1};
+					if (yi == 4) { // forw blades
+						sides[Math3D.LEFT] = true;
+						sides[Math3D.RIGHT] = true;
+					}
 					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, sides, this);
 					world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
