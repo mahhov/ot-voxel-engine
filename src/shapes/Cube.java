@@ -1,5 +1,6 @@
 package shapes;
 
+import camera.Camera;
 import engine.Math3D;
 import ships.Ship;
 
@@ -90,7 +91,7 @@ public class Cube extends Shape {
 			}
 	}
 	
-	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
+	Surface[] getSurfaces(int xSide, int ySide, int zSide, Camera camera) {
 		if (surfacesDirty) {
 			initSurfaces();
 			surfacesDirty = false;

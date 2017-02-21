@@ -1,5 +1,7 @@
 package shapes;
 
+import camera.Camera;
+
 import java.awt.*;
 
 public class StaticCube extends Shape {
@@ -60,7 +62,7 @@ public class StaticCube extends Shape {
 		left.setLight(1);
 	}
 	
-	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
+	Surface[] getSurfaces(int xSide, int ySide, int zSide, Camera camera) {
 		//		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
 		//		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
 		//		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);

@@ -37,7 +37,7 @@ public class Cell {
 		LinkedShapes lShape = shapes;
 		Surface surfaces[];
 		while (lShape != null) {
-			surfaces = lShape.shape.draw(xSide, ySide, zSide);
+			surfaces = lShape.shape.draw(xSide, ySide, zSide, c);
 			if (surfaces == null)
 				remove(lShape);
 			else

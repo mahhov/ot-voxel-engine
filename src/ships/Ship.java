@@ -1,5 +1,6 @@
 package ships;
 
+import camera.Camera;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
@@ -9,12 +10,13 @@ import module.Module;
 import module.Rotor;
 import shapes.Shape;
 import shapes.ShipTrigger;
+import shapes.Surface;
 import world.World;
 
 public class Ship {
 	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
 	
-	public boolean visible;
+	// todo : visible counter, draw on visible==lastVisible-1
 	public long drawCounter;
 	public double x, y, z; // mass center
 	public Math3D.Angle angle, angleZ, angleTilt;
@@ -33,9 +35,7 @@ public class Ship {
 		this.angleZ = new Math3D.Angle(angleZ);
 		this.angleTilt = new Math3D.Angle(angleTilt);
 		computeAxis();
-		visible = false;
 		generateParts();
-		addToWorld(world);
 	}
 	
 	private void generateParts() {
@@ -136,17 +136,15 @@ public class Ship {
 	}
 	
 	private void addToWorld(World world) {
-		// triggers
-		ShipTrigger trigger = new ShipTrigger(this);
-		world.addShape((int) x, (int) y, (int) z, trigger);
-		
-		if (!visible)
-			return;
-		
-		// body
+		world.addShape((int) x, (int) y, (int) z, new ShipTrigger(this));
+	}
+	
+	public Surface[] getSurfaces(int xSide, int ySide, int zSide, Camera camera) {
+		Surface[][] surface = new Surface[part.length * part[0].length * part[0][0].length][];
 		Shape shape;
 		double xc, yc, zc;
 		double dx, dy, dz;
+		int si = 0, sn = 0;
 		for (int xi = 0; xi < part.length; xi++)
 			for (int yi = 0; yi < part[xi].length; yi++)
 				for (int zi = 0; zi < part[xi][yi].length; zi++) {
@@ -164,10 +162,15 @@ public class Ship {
 						sides[Math3D.RIGHT] = true;
 					}
 					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, sides, this);
-					world.addShape((int) xc, (int) yc, (int) zc, shape);
+					surface[si] = shape.draw(xSide, ySide, zSide, camera);
+					sn += surface[si++].length;
 				}
-		
-		visible = false;
+		Surface[] surfaceFlat = new Surface[sn];
+		si = 0;
+		for (int i = 0; i < surface.length; i++)
+			for (int j = 0; j < surface[i].length; j++)
+				surfaceFlat[si++] = surface[i][j];
+		return surfaceFlat;
 	}
 	
 	public void update(World world, Controller controller) {
