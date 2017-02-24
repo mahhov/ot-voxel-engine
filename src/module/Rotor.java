@@ -8,7 +8,6 @@ import java.awt.*;
 import static engine.Math3D.*;
 
 public class Rotor extends Module {
-	
 	private static final double force = .01;
 	private double[] direction, location;
 	private int opDir; // opposite direction

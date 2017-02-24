@@ -78,7 +78,7 @@ public class Cube extends Shape {
 		if (side[Math3D.BACK] ^ flipSide)
 			back = new Surface(leftBackBottom, leftBackTop, rightBackTop, rightBackBottom, false ^ flipNormal);
 		
-		return new Surface[] {top, bottom, left, right, front, back};
+		return new Surface[] {left, right, back, front, bottom, top};
 	}
 	
 	void initSurfaces() {
