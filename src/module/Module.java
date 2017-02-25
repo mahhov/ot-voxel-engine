@@ -24,7 +24,7 @@ public class Module {
 		return null;
 	}
 	
-	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, boolean[] sides, Ship ship) {
-		return new Cube(xc, yc, zc, angle, angleZ, angleTilt, .5, sides, getColors(), ship);
+	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double[] rightUp, boolean[] side, boolean[] innerSide, Ship ship) {
+		return new Cube(xc, yc, zc, angle, angleZ, angleTilt, .5, side, getColors(), ship);
 	}
 }

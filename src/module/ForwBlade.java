@@ -69,7 +69,17 @@ public class ForwBlade extends Module {
 		return color;
 	}
 	
-	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, boolean[] sides, Ship ship) {
-		return new Bar(xc, yc, zc, angle, angleZ, angleTilt, .5, .2, sides, getColors(), ship);
+	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double[] rightUp, boolean[] side, boolean[] innerSide, Ship ship) {
+		Math3D.Angle angleInner = angle, angleZInner = angleZ, angleTiltInner = angleTilt;
+		if (state != STATE_INACTIVE) {
+			angleInner = new Math3D.Angle(angle.get());
+			angleZInner = new Math3D.Angle(angleZ.get());
+			angleTiltInner = new Math3D.Angle(angleTilt.get());
+			if (state == STATE_UP)
+				Math3D.Angle.rotate(angleInner, angleZInner, angleTiltInner, rightUp, 0, Math.PI / 10);
+			else
+				Math3D.Angle.rotate(angleInner, angleZInner, angleTiltInner, rightUp, 0, -Math.PI / 10);
+		}
+		return new Bar(xc, yc, zc, angle, angleZ, angleTilt, angleInner, angleZInner, angleTiltInner, .5, .2, side, innerSide, getColors(), ship);
 	}
 }

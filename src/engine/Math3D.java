@@ -344,10 +344,26 @@ public class Math3D {
 				set(Math.PI / 2);
 		}
 		
-		public double diff(double angle) {
-			double d = angle - this.angle;
-			d -= (int) (d / Math.PI) * Math.PI;
-			return d;
+		public static void rotate(Angle angle, Angle angleZ, Angle angleTilt, double[] rightUp, double flat, double up) {
+			// rotating
+			double angleZCos = angleZ.cos();
+			if (angleZCos < Math3D.EPSILON && angleZCos > -Math3D.EPSILON)
+				if (angleZCos > 0)
+					angleZCos = Math3D.EPSILON;
+				else
+					angleZCos = -Math3D.EPSILON;
+			
+			angle.set(angle.get() + (angleTilt.cos() * flat + angleTilt.sin() * up) / angleZCos);
+			angleZ.set(angleZ.get() + (-angleTilt.sin() * flat + angleTilt.cos() * up));
+			
+			// restoring tilt
+			double newRightSin = -angle.cos();
+			double newRightCos = angle.sin();
+			double dot = Math3D.dotProduct(rightUp[0], rightUp[1], rightUp[2], newRightCos, newRightSin, 0);
+			double newTilt = Math.acos(dot);
+			if (rightUp[2] < 0)
+				newTilt = -newTilt;
+			angleTilt.set(newTilt);
 		}
 	}
 	

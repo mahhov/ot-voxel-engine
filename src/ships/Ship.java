@@ -158,12 +158,14 @@ public class Ship {
 					yc = y + dx * rightUp[1] + dy * norm[1] + dz * rightUp[4];
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
-					boolean[] sides = new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1};
+					boolean[] side = new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1};
+					boolean[] innerSide = null;
 					if (yi == 4) { // forw blades
-						sides[Math3D.LEFT] = true;
-						sides[Math3D.RIGHT] = true;
+						innerSide = new boolean[] {side[0], side[1], side[2], side[3], side[4], side[5]};
+						side[Math3D.LEFT] = true;
+						side[Math3D.RIGHT] = true;
 					}
-					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, sides, this);
+					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, rightUp, side, innerSide, this);
 					world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
 		
@@ -242,30 +244,8 @@ public class Ship {
 		y += vy;
 		z += vz;
 		
-		double angleZCos = angleZ.cos();
-		if (angleZCos < Math3D.EPSILON && angleZCos > -Math3D.EPSILON)
-			if (angleZCos > 0)
-				angleZCos = Math3D.EPSILON;
-			else
-				angleZCos = -Math3D.EPSILON;
-		
-		// vAngleFlat
-		angle.set(angle.get() + angleTilt.cos() * vAngleFlat / angleZCos);
-		angleZ.set(angleZ.get() - angleTilt.sin() * vAngleFlat);
-		
-		// vAngleUp
-		angle.set(angle.get() + angleTilt.sin() * vAngleUp / angleZCos);
-		angleZ.set(angleZ.get() + angleTilt.cos() * vAngleUp);
-		
-		// restoring tilt
-		double newRightSin = -angle.cos();
-		double newRightCos = angle.sin();
-		double dot = Math3D.dotProduct(rightUp[0], rightUp[1], rightUp[2], newRightCos, newRightSin, 0);
-		double newTilt = Math.acos(dot);
-		if (rightUp[2] < 0)
-			newTilt = -newTilt;
-		angleTilt.set(newTilt);
-		
+		// vAngleFlat & vAngleUp
+		Math3D.Angle.rotate(angle, angleZ, angleTilt, rightUp, vAngleFlat, vAngleUp);
 		// vAngleTilt
 		angleTilt.set(angleTilt.get() + vAngleTilt);
 		

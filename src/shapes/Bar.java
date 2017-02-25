@@ -6,17 +6,23 @@ import ships.Ship;
 import java.awt.*;
 
 public class Bar extends Cube {
+	private Math3D.Angle angleInner, angleZInner, angleTiltInner;
 	private double innerSize;
+	private boolean[] innerSide;
 	
-	public Bar(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, double innerSize, boolean[] side, Color[] color, Ship ship) {
+	public Bar(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, Math3D.Angle angleInner, Math3D.Angle angleZInner, Math3D.Angle angleTiltInner, double size, double innerSize, boolean[] side, boolean[] innerSide, Color[] color, Ship ship) {
 		super(x, y, z, angle, angleZ, angleTilt, size, side, color, ship);
+		this.angleInner = angleInner == null ? angle : angleInner;
+		this.angleZInner = angleZInner == null ? angleZ : angleZInner;
+		this.angleTiltInner = angleTiltInner == null ? angleTilt : angleTiltInner;
 		this.innerSize = innerSize;
+		this.innerSide = innerSide;
 	}
 	
 	void initSurfaces() {
-		Surface[] clipSurface = initSurfacesGeom(size, size, size, side, false, false);
-		Surface[] backSurface = initSurfacesGeom(size, size, size, side, true, true);
-		Surface[] barSurface = initSurfacesGeom(innerSize, size, innerSize, new boolean[] {true, true, true, true, true, true}, false, false);
+		Surface[] clipSurface = initSurfacesGeom(angle, angleZ, angleTilt, size, size, size, side, false, false);
+		Surface[] backSurface = initSurfacesGeom(angle, angleZ, angleTilt, size, size, size, side, true, true);
+		Surface[] barSurface = initSurfacesGeom(angleInner, angleZInner, angleTiltInner, size, size, innerSize, innerSide, false, false);
 		for (int i = 0; i < barSurface.length; i++) {
 			if (barSurface[i] != null) {
 				barSurface[i].setColor(color[i]);

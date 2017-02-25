@@ -12,7 +12,7 @@ public class Cube extends Shape {
 	public static final Color PRIMARY_COLOR = Color.WHITE, SECONDARY_COLOR = Color.GREEN, TERNARY_COLOR = Color.RED;
 	
 	private double x, y, z;
-	private Math3D.Angle angle, angleZ, angleTilt;
+	Math3D.Angle angle, angleZ, angleTilt;
 	double size;
 	private boolean surfacesDirty;
 	Surface[] surface;
@@ -37,7 +37,7 @@ public class Cube extends Shape {
 		this.color = color != null ? color : new Color[] {PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR};
 	}
 	
-	Surface[] initSurfacesGeom(double normSize, double rightSize, double upSize, boolean[] side, boolean flipNormal, boolean flipSide) {
+	Surface[] initSurfacesGeom(Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double normSize, double rightSize, double upSize, boolean[] side, boolean flipNormal, boolean flipSide) {
 		Surface top = null, bottom = null, left = null, right = null, front = null, back = null;
 		
 		// axis  vectors
@@ -82,7 +82,7 @@ public class Cube extends Shape {
 	}
 	
 	void initSurfaces() {
-		surface = initSurfacesGeom(size, size, size, side, false, false);
+		surface = initSurfacesGeom(angle, angleZ, angleTilt, size, size, size, side, false, false);
 		for (int i = 0; i < surface.length; i++)
 			if (surface[i] != null) {
 				surface[i].setColor(color[i]);
