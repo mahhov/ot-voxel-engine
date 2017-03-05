@@ -6,6 +6,8 @@ public class FreeCamera extends Camera {
 	private static final double MOVE_SPEED = 1.2, ANGLE_SPEED = .04, MOUSE_DAMP_SPEED = 0.1;
 	
 	public void move(Controller c) {
+//		x = y = 8;
+//		z = 13;
 		int dx = 0, dy = 0, dz = 0;
 		if (c.isKeyDown(Controller.KEY_W))
 			dy += 1;

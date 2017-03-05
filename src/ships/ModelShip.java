@@ -67,30 +67,44 @@ public class ModelShip extends Ship {
 	}
 	
 	private void selectCube(Controller controller) {
-		int curx = (int) (controller.selectOrig[1] - this.x + .5), cury = (int) (controller.selectOrig[0] - this.y + .5), curz = (int) (controller.selectOrig[2] - this.z + .5);
+		double x = controller.selectOrig[1] - this.x, y = controller.selectOrig[0] - this.y, z = controller.selectOrig[2] - this.z;
+		int curx = (int) x, cury = (int) y, curz = (int) z;
 		int nextx = curx, nexty = cury, nextz = curz;
-		double x = curx, y = cury, z = curz;
 		double deltax, deltay, deltaz;
 		double movex, movey, movez, move;
 		double moved = 0, maxMoved = 75;
 		
+		System.out.println("begin");
 		while (moved < maxMoved && inBounds(nextx, nexty, nextz) && isEmpty(nextx, nexty, nextz)) {
+			System.out.println(x + " " + y + " " + z);
 			if (controller.selectDir[1] > 0)
-				deltax = Math3D.notZero(x - nextx);
+				deltax = Math3D.notZero(1 + nextx - x, 1);
 			else
-				deltax = Math3D.notZero(x - nextx - 1);
+				deltax = Math3D.notZero(nextx - x, -1);
 			if (controller.selectDir[0] > 0)
-				deltay = Math3D.notZero(y - nexty);
+				deltay = Math3D.notZero(1 + nexty - y, 1);
 			else
-				deltay = Math3D.notZero(nexty - y - 1);
+				deltay = Math3D.notZero(nexty - y, -1);
 			if (controller.selectDir[2] > 0)
-				deltaz = Math3D.notZero(z - nextz);
+				deltaz = Math3D.notZero(1 + nextz - z, 1);
 			else
-				deltaz = Math3D.notZero(nextz - z - 1);
+				deltaz = Math3D.notZero(nextz - z, -1);
 			
-			movex = deltax / controller.selectDir[1];
-			movey = deltay / controller.selectDir[0];
-			movez = deltaz / controller.selectDir[2];
+			if (Math3D.isZero(controller.selectDir[1]))
+				movex = Math3D.sqrt3;
+			else
+				movex = deltax / controller.selectDir[1];
+			if (Math3D.isZero(controller.selectDir[0]))
+				movey = Math3D.sqrt3;
+			else
+				movey = deltay / controller.selectDir[0];
+			if (Math3D.isZero(controller.selectDir[2]))
+				movez = Math3D.sqrt3;
+			else
+				movez = deltaz / controller.selectDir[2];
+			
+			if (movex <= 0 || movey <= 0 || movez <= 0)
+				System.out.println("move by <= 0");
 			
 			move = Math3D.min(movex, movey, movez);
 			moved += move;
@@ -106,6 +120,12 @@ public class ModelShip extends Ship {
 			nextx = (int) x;
 			nexty = (int) y;
 			nextz = (int) z;
+			if (x < 0)
+				nextx--;
+			if (y < 0)
+				nexty--;
+			if (z < 0)
+				nextz--;
 		}
 		
 		if (moved > maxMoved || !inBounds(curx, cury, curz))
