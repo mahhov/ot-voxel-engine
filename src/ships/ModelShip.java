@@ -67,7 +67,7 @@ public class ModelShip extends Ship {
 	}
 	
 	private void selectCube(Controller controller) {
-		int curx = (int) (controller.selectOrig[1] - this.y), cury = (int) (controller.selectOrig[0] - this.x), curz = (int) (controller.selectOrig[2] - this.z);
+		int curx = (int) (controller.selectOrig[1] - this.x + .5), cury = (int) (controller.selectOrig[0] - this.y + .5), curz = (int) (controller.selectOrig[2] - this.z + .5);
 		int nextx = curx, nexty = cury, nextz = curz;
 		double x = curx, y = cury, z = curz;
 		double deltax, deltay, deltaz;
@@ -108,11 +108,14 @@ public class ModelShip extends Ship {
 			nextz = (int) z;
 		}
 		
-		if (moved > maxMoved)
+		if (moved > maxMoved || !inBounds(curx, cury, curz))
 			selected = null;
 		else {
 			selected = new int[] {curx, cury, curz};
-			nextSelected = new int[] {nextx, nexty, nextz};
+			if (!inBounds(nextx, nexty, nextz))
+				nextSelected = null;
+			else
+				nextSelected = new int[] {nextx, nexty, nextz};
 		}
 	}
 	
@@ -132,13 +135,13 @@ public class ModelShip extends Ship {
 	}
 	
 	private void modify(Controller controller) {
-		if (!controller.isMousePressed() || selected == null)
+		if (!controller.isMousePressed())
 			return;
 		
 		if (moduleSelected == MODULE_EMPTY_MODULE) {
-			if (inBounds(nextSelected[0], nextSelected[1], nextSelected[2]))
-				part[nextSelected[1]][nextSelected[0]][nextSelected[2]] = new EmptyModule();
-		} else {
+			if (nextSelected != null)
+				part[nextSelected[0]][nextSelected[1]][nextSelected[2]] = new EmptyModule();
+		} else if (selected != null) {
 			Module module;
 			switch (moduleSelected) {
 				case MODULE_HULL:
