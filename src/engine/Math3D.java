@@ -203,6 +203,17 @@ public class Math3D {
 		return val3;
 	}
 	
+	public static double min(double val, double val2, double val3) {
+		double min;
+		if (val2 < val)
+			min = val2;
+		else
+			min = val;
+		if (min < val3)
+			return min;
+		return val3;
+	}
+	
 	public static int max(int val, int max) {
 		if (val < max)
 			return max;
@@ -213,6 +224,26 @@ public class Math3D {
 		if (val < max)
 			return max;
 		return val;
+	}
+	
+	public static int max(int val, int val2, int val3) {
+		int max;
+		if (val2 > val)
+			max = val2;
+		else
+			max = val;
+		if (max > val3)
+			return max;
+		return val3;
+	}
+	
+	public static double notZero(double value) {
+		if (value < Math3D.EPSILON && value > -Math3D.EPSILON)
+			if (value > 0)
+				return EPSILON;
+			else
+				return -EPSILON;
+		return value;
 	}
 	
 	private static double sinTable[];
@@ -346,12 +377,7 @@ public class Math3D {
 		
 		public static void rotate(Angle angle, Angle angleZ, Angle angleTilt, double[] rightUp, double flat, double up) {
 			// rotating
-			double angleZCos = angleZ.cos();
-			if (angleZCos < Math3D.EPSILON && angleZCos > -Math3D.EPSILON)
-				if (angleZCos > 0)
-					angleZCos = Math3D.EPSILON;
-				else
-					angleZCos = -Math3D.EPSILON;
+			double angleZCos = notZero(angleZ.cos());
 			
 			angle.set(angle.get() + (angleTilt.cos() * flat + angleTilt.sin() * up) / angleZCos);
 			angleZ.set(angleZ.get() + (-angleTilt.sin() * flat + angleTilt.cos() * up));

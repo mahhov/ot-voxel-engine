@@ -27,6 +27,10 @@ public class Chunk {
 		return count == 0;
 	}
 	
+	boolean isCellEmpty(int x, int y, int z) {
+		return isEmpty() || cell[x][y][z].isEmpty();
+	}
+	
 	void add(int x, int y, int z, Shape shape) {
 		cell[x][y][z].add(shape);
 	}

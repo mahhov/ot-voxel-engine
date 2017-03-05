@@ -10,7 +10,7 @@ public class Camera {
 	
 	public double x, y, z;
 	public Math3D.Angle angle, angleZ;
-	double[] normal;
+	public double[] normal;
 	int maxCull, maxCullSqrd;
 	
 	boolean dirtyNorm;
@@ -24,11 +24,11 @@ public class Camera {
 		
 		normal = new double[3];
 		
-		x = 50.5;
-		y = 50.5;
+		x = 0;
+		y = 0;
 		z = 25;
 		
-		angle = new Math3D.Angle(0);
+		angle = new Math3D.Angle(Math.PI / 4);
 		angleZ = new Math3D.Angle(0);
 		computeNorm();
 	}
@@ -132,5 +132,9 @@ public class Camera {
 		}
 		
 		return new int[] {(int) (left * maxCull + x), (int) (right * maxCull + x), (int) (front * maxCull + y), (int) (back * maxCull + y), (int) (bottom * maxCull + z), (int) (top * maxCull + z)};
+	}
+	
+	public double[] orig() {
+		return new double[] {x, y, z};
 	}
 }

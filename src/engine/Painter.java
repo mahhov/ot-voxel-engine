@@ -11,6 +11,7 @@ import static camera.Camera.MIN_LIGHT;
 
 public class Painter extends JFrame {
 	public static String[] debugString = new String[] {"", "", "", "", "", ""};
+	public static String[] outputString = new String[] {"", "", "", "", "", ""};
 	
 	private final int FRAME_SIZE, IMAGE_SIZE;
 	private static int borderSize = 0;
@@ -50,6 +51,8 @@ public class Painter extends JFrame {
 		brush.setColor(Color.WHITE);
 		for (int i = 0; i < debugString.length; i++)
 			brush.drawString(debugString[i], 25, 25 + 25 * i);
+		for (int i = 0; i < outputString.length; i++)
+			brush.drawString(outputString[i], 25, 650 + 25 * i);
 		graphics.drawImage(canvas, 0, borderSize, null);
 	}
 	
@@ -62,21 +65,26 @@ public class Painter extends JFrame {
 		}
 	}
 	
-	public void polygon(double[][] xy, double light, Color color) {
+	public void polygon(double[][] xy, double light, Color color, boolean frame) {
 		if (xy != null) {
 			surfaceCount++;
 			for (int i = 0; i < xy[0].length; i++)
 				if (xy[0][i] > -.5 && xy[0][i] < .5 && xy[1][i] < .5 && xy[1][i] > -.5) {
 					drawCount++;
 					int[][] xyScaled = Math3D.transform(xy, IMAGE_SIZE, IMAGE_SIZE / 2);
-					setColor(light, color);
-					brush.fillPolygon(xyScaled[0], xyScaled[1], xyScaled[0].length);
+					if (frame) {
+						brush.setColor(Color.cyan);
+						brush.drawPolygon(xyScaled[0], xyScaled[1], xyScaled[0].length);
+					} else {
+						setColor(light, color);
+						brush.fillPolygon(xyScaled[0], xyScaled[1], xyScaled[0].length);
+					}
 					return;
 				}
 		}
 	}
 	
-	public void clipPolygon(double[][] xy, double light, Color color, int clipState) {
+	public void clipPolygon(double[][] xy, double light, Color color, int clipState, boolean frame) {
 		if (clipState == Surface.CLIP_ADD) {
 			if (clip == null)
 				clip = new Area();
@@ -87,7 +95,7 @@ public class Painter extends JFrame {
 		} else {
 			if (clipState == Surface.CLIP_SET)
 				brush.setClip(clip);
-			polygon(xy, light, color);
+			polygon(xy, light, color, frame);
 			if (clipState == Surface.CLIP_RESET) {
 				clip = new Area();
 				brush.setClip(null);

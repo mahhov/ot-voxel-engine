@@ -11,6 +11,7 @@ public class Surface {
 	private double light;
 	public double tempDistanceLight;
 	public Color color;
+	public boolean frame;
 	
 	public int clipState;
 	public static final int CLIP_NONE = 0, CLIP_ADD = 1, CLIP_SET = 2, CLIP_RESET = 3;

@@ -4,7 +4,6 @@ package shapes;
 import ships.Ship;
 
 public class Shape {
-	
 	Ship ship;
 	private long drawCounter;
 	

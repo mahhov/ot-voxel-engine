@@ -22,7 +22,7 @@ public class Helium extends Module {
 	public void set(int dir, double[] location) {
 		this.location = location;
 		for (int i = 0; i < color.length; i++)
-			color[i] = Color.YELLOW;
+			color[i] = Color.CYAN;
 	}
 	
 	public void addForce(Math3D.Force force, boolean[] control) {

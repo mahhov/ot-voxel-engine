@@ -19,6 +19,8 @@ public class ForwBlade extends Module {
 	private Ship ship;
 	
 	public ForwBlade(Ship ship) {
+		for (int i = 0; i < block.length; i++)
+			block[i] = BLOCK_PARTIAL;
 		controlUp = new boolean[6];
 		controlDown = new boolean[6];
 		color = new Color[6];
@@ -69,7 +71,15 @@ public class ForwBlade extends Module {
 		return color;
 	}
 	
-	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double[] rightUp, boolean[] side, boolean[] innerSide, Ship ship) {
+	public Shape getShape(double xc, double yc, double zc, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double[] rightUp, int[] block, Ship ship) {
+		boolean[] side = new boolean[6], innerSide = new boolean[6];
+		for (int i = 0; i < side.length; i++) {
+			side[i] = block[i] != BLOCK_FULL;
+			innerSide[i] = block[i] == BLOCK_NONE;
+		}
+		innerSide[Math3D.TOP] = true;
+		innerSide[Math3D.BOTTOM] = true;
+		
 		Math3D.Angle angleInner = angle, angleZInner = angleZ, angleTiltInner = angleTilt;
 		if (state != STATE_INACTIVE) {
 			angleInner = new Math3D.Angle(angle.get());

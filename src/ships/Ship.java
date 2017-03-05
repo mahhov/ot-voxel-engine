@@ -3,15 +3,12 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import module.ForwBlade;
-import module.Hull;
 import module.Module;
-import module.Rotor;
 import shapes.Shape;
 import shapes.ShipTrigger;
 import world.World;
 
-public class Ship {
+public abstract class Ship {
 	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
 	
 	public boolean visible;
@@ -21,9 +18,10 @@ public class Ship {
 	public double[] norm, rightUp;
 	private double vx, vy, vz, vAngleFlat, vAngleUp, vAngleTilt;
 	
-	private double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
+	double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
 	private double inertiaFlat, inertiaUp, inertiaTilt;
-	private Module part[][][];
+	Module part[][][];
+	private int safeZone;
 	
 	public Ship(double x, double y, double z, double angle, double angleZ, double angleTilt, World world) {
 		this.x = x;
@@ -35,62 +33,15 @@ public class Ship {
 		computeAxis();
 		visible = false;
 		generateParts();
-		addToWorld(world);
-	}
-	
-	private void generateParts() {
-		// 5 hull
-		// 4 blade
-		// 3 hull
-		// 2 rotor - back
-		// 1 hull
-		// 0 rotor - front
-		
-		part = new Module[2][6][1];
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
-					if (y == 0 || y == 2)
-						part[x][y][z] = new Rotor();
-					else if (y == 4)
-						part[x][y][z] = new ForwBlade(this);
-					else
-						part[x][y][z] = new Hull();
-		
 		computeMass();
 		computeInertia();
-		
-		int x = 0, y = 4, z = 0;
-		part[x][y][z].set(Math3D.RIGHT, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.LEFT, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 3;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 2;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 0;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
-		
-		x = 0;
-		y = 5;
-		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
+		computeSafeZone();
+		setParts();
 	}
+	
+	abstract void generateParts();
+	
+	abstract void setParts();
 	
 	private void computeMass() {
 		double tmass;
@@ -131,19 +82,20 @@ public class Ship {
 		Painter.debugString[2] = "(norm) " + Math3D.doubles2Str(norm, 0) + "(right) " + Math3D.doubles2Str(rightUp, 0) + "(up) " + Math3D.doubles2Str(rightUp, 3);
 	}
 	
+	private void computeSafeZone() {
+		safeZone = Math3D.max(part.length, part[0].length, part[0][0].length) / 2 + 1;
+	}
+	
 	public double getVForward() {
 		return Math3D.dotProductUnormalized(norm, new double[] {vx, vy, vz});
 	}
 	
-	private void addToWorld(World world) {
-		// triggers
+	private void addTriggerToWorld(World world) {
 		ShipTrigger trigger = new ShipTrigger(this);
 		world.addShape((int) x, (int) y, (int) z, trigger);
-		
-		if (!visible)
-			return;
-		
-		// body
+	}
+	
+	void addToWorld(World world) {
 		Shape shape;
 		double xc, yc, zc;
 		double dx, dy, dz;
@@ -158,23 +110,21 @@ public class Ship {
 					yc = y + dx * rightUp[1] + dy * norm[1] + dz * rightUp[4];
 					zc = z + dx * rightUp[2] + dy * norm[2] + dz * rightUp[5];
 					
-					boolean[] side = new boolean[] {xi == 0, xi == part.length - 1, yi == 0, yi == part[xi].length - 1, zi == 0, zi == part[xi][yi].length - 1};
-					boolean[] innerSide = null;
-					if (yi == 4) { // forw blades
-						innerSide = new boolean[] {side[0], side[1], side[2], side[3], side[4], side[5]};
-						side[Math3D.LEFT] = true;
-						side[Math3D.RIGHT] = true;
-					}
-					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, rightUp, side, innerSide, this);
-					world.addShape((int) xc, (int) yc, (int) zc, shape);
+					int[] block = getBlock(xi, yi, zi);
+					
+					shape = part[xi][yi][zi].getShape(xc, yc, zc, angle, angleZ, angleTilt, rightUp, block, this);
+					if (shape != null)
+						world.addShape((int) xc, (int) yc, (int) zc, shape);
 				}
-		
-		visible = false;
 	}
 	
 	public void update(World world, Controller controller) {
 		move(world, controller);
-		addToWorld(world); // todo : only if moved
+		addTriggerToWorld(world);
+		if (visible) {
+			addToWorld(world); // todo : only if moved
+			visible = false;
+		}
 	}
 	
 	private void doControl(Controller controller) {
@@ -251,7 +201,6 @@ public class Ship {
 		
 		computeAxis();
 		
-		int safeZone = 6;
 		double[] xyz = Math3D.bound(x - safeZone, y - safeZone, z - safeZone, world.width - safeZone * 2, world.length - safeZone * 2, world.height - safeZone * 2); // todo : *better* safe zone bound all sides
 		x = xyz[0] + safeZone;
 		y = xyz[1] + safeZone;
@@ -269,6 +218,22 @@ public class Ship {
 		vAngleTilt += f.angleTilt * FORCE / inertiaTilt;
 	}
 	
+	int[] getBlock(int x, int y, int z) {
+		int[] block = new int[6];
+		if (x > 0)
+			block[Math3D.LEFT] = part[x - 1][y][z].block[Math3D.RIGHT];
+		if (x < part.length - 1)
+			block[Math3D.RIGHT] = part[x + 1][y][z].block[Math3D.LEFT];
+		if (y > 0)
+			block[Math3D.FRONT] = part[x][y - 1][z].block[Math3D.BACK];
+		if (y < part[0].length - 1)
+			block[Math3D.BACK] = part[x][y + 1][z].block[Math3D.FRONT];
+		if (z > 0)
+			block[Math3D.BOTTOM] = part[x][y][z - 1].block[Math3D.TOP];
+		if (z < part[0][0].length - 1)
+			block[Math3D.TOP] = part[x][y][z + 1].block[Math3D.BOTTOM];
+		return block;
+	}
 }
 
 // todo : angleZ invisible bug

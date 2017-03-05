@@ -43,9 +43,13 @@ public class Cell {
 			else
 				for (Surface s : surfaces)
 					if (s != null)
-						painter.clipPolygon(s.toCamera(c), s.tempDistanceLight, s.color, s.clipState);
+						painter.clipPolygon(s.toCamera(c), s.tempDistanceLight, s.color, s.clipState, s.frame);
 			lShape = lShape.next;
 		}
+	}
+	
+	public boolean isEmpty() {
+		return shapes == null;
 	}
 	
 	public class LinkedShapes {

@@ -1,30 +1,46 @@
 package engine;
 
+import camera.Camera;
 import camera.TrailingCamera;
+import ships.Ship;
+import ships.SmallShip;
 import world.World;
 
 class Engine {
-	
-	private TrailingCamera camera;
-	private Controller controller;
-	private Painter painter;
-	private World world;
+	Camera camera;
+	Controller controller;
+	Painter painter;
+	World world;
 	private boolean pause;
 	
-	private Engine() {
-		int frame = 200, image = 200;
+	Engine() {
+		int frame = 800, image = frame;
 		Math3D.loadTrig(1000);
-		camera = new TrailingCamera();
 		controller = new Controller(frame / 2, frame / 2);
 		painter = new Painter(frame, image, controller);
 		int eachChunkSize = 5;
 		int numChunks = 500 / eachChunkSize;
 		int chunkFill = 50 / eachChunkSize;
-		world = new World(numChunks, numChunks, numChunks, eachChunkSize, chunkFill);
-		camera.setFollowShip(world.cameraShip);
+		world = new World(numChunks, numChunks, numChunks, eachChunkSize);
+		fillWorld(chunkFill);
+		camera = createCamera();
 	}
 	
-	private void begin() {
+	void fillWorld(int chunkFill) {
+		world.fillWorldRand(chunkFill);
+		
+		Ship[] ship = new Ship[1];
+		ship[0] = new SmallShip(50, 50, 25, 0, 0, 0, world);
+		world.setShip(ship);
+	}
+	
+	Camera createCamera() {
+		TrailingCamera camera = new TrailingCamera();
+		camera.setFollowShip(world.cameraShip);
+		return camera;
+	}
+	
+	void begin() {
 		int frame = 0;
 		long beginTime = 0, endTime;
 		while (true) {
@@ -55,7 +71,7 @@ class Engine {
 			pause = !pause;
 	}
 	
-	private static void wait(int howLong) {
+	static void wait(int howLong) {
 		try {
 			Thread.sleep(howLong);
 		} catch (InterruptedException e) {

@@ -20,7 +20,7 @@ public class World {
 	private Projectile[] projectile;
 	private Particle[] particle;
 	
-	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize, int chunksFill) {
+	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize) {
 		width = chunkWidth * chunkSize;
 		height = chunkLength * chunkSize;
 		length = chunkHeight * chunkSize;
@@ -30,19 +30,11 @@ public class World {
 			for (int y = 0; y < chunkLength; y++)
 				for (int z = 0; z < chunkHeight; z++)
 					chunk[x][y][z] = new Chunk();
-		System.out.println("done creating chunks");
-		
-		fillWorldRand(chunksFill);
-		System.out.println("done loading world");
-		
-		ship = new Ship[1];
-		ship[0] = new Ship(50, 50, 25, 0, 0, 0, this);
-		cameraShip = ship[0];
 	}
 	
 	// FILLING
 	
-	private void fillWorldRand(int scale) {
+	public void fillWorldRand(int scale) {
 		for (int cx = 0; cx < 3 * scale; cx++)
 			for (int cy = 0; cy < 3 * scale; cy++)
 				for (int cz = 0; cz < scale; cz++) {
@@ -60,7 +52,7 @@ public class World {
 				}
 	}
 	
-	private void fillWorldGround(int scale) {
+	public void fillWorldGround(int scale) {
 		int border = scale * 10;
 		for (int x = 0; x < border; x++)
 			for (int y = 0; y < border; y++)
@@ -87,6 +79,11 @@ public class World {
 		int sz = z - cz * chunkSize;
 		chunk[cx][cy][cz].safeInit(chunkSize);
 		chunk[cx][cy][cz].add(sx, sy, sz, shape);
+	}
+	
+	public void setShip(Ship[] ship) {
+		this.ship = ship;
+		cameraShip = ship[0];
 	}
 	
 	// DRAWING
@@ -217,5 +214,14 @@ public class World {
 		y -= cy * chunkSize;
 		z -= cz * chunkSize;
 		return new int[] {cx, cy, cz, x, y, z};
+	}
+	
+	public boolean isCellEmpty(int x, int y, int z) {
+		int[] c = getChunkCoord(x, y, z);
+		return chunk[c[0]][c[1]][c[2]].isCellEmpty(c[3], c[4], c[5]);
+	}
+	
+	public boolean inBounds(double x, double y, double z) {
+		return x > 0 && y > 0 && z > 0 && x < width - 1 && y < length - 1 && z < height - 1;
 	}
 }
