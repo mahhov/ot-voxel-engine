@@ -8,6 +8,7 @@ import java.awt.*;
 import static engine.Math3D.TOP_VECTOR;
 
 public class Helium extends Module {
+	public static final int ID = 3;
 	
 	private static final double force = .0005;
 	private double[] location;

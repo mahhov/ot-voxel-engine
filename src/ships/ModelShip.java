@@ -8,12 +8,20 @@ import shapes.CubeFrame;
 import shapes.Shape;
 import world.World;
 
-public class ModelShip extends Ship {
+import java.io.IOException;
+import java.io.Serializable;
+
+public class ModelShip extends Ship implements Serializable {
+	private byte width, length, height;
+	private byte[][][] blueprint;
+	
 	private int[] selected, nextSelected;
 	private int moduleSelected;
+	private int directionSelected;
 	
 	private final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
 	private final static String[] MODULE_NAMES = new String[] {"EMPTY MODULE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
+	private final static String[] DIRECTION_NAMES = new String[] {"LEFT", "RIGHT", "FRONT", "BACK", "BOTTOM", "TOP"};
 	
 	public ModelShip(World world) {
 		super(0, 0, 0, 0, 0, 0, world);
@@ -21,10 +29,10 @@ public class ModelShip extends Ship {
 	}
 	
 	void generateParts() {
-		part = new Module[21][21][21];
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
+		part = new Module[width][length][height];
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
 					part[x][y][z] = new EmptyModule();
 		for (int x = 10; x < 11; x++)
 			for (int y = 10; y < 11; y++)
@@ -43,9 +51,9 @@ public class ModelShip extends Ship {
 		
 		Shape shape;
 		double xc, yc, zc;
-		for (int xi = 0; xi < part.length; xi++)
-			for (int yi = 0; yi < part[xi].length; yi++)
-				for (int zi = 0; zi < part[xi][yi].length; zi++) {
+		for (int xi = 0; xi < width; xi++)
+			for (int yi = 0; yi < length; yi++)
+				for (int zi = 0; zi < height; zi++) {
 					xc = x + yi + 0.5;
 					yc = y + xi + 0.5;
 					zc = z + zi + 0.5;
@@ -62,8 +70,10 @@ public class ModelShip extends Ship {
 	public void update(World world, Controller controller) {
 		selectCube(controller);
 		selectModule(controller);
+		selectDirection(controller);
 		modify(controller);
 		addToWorld(world);
+		textOutput();
 	}
 	
 	private void selectCube(Controller controller) {
@@ -74,9 +84,9 @@ public class ModelShip extends Ship {
 		double movex, movey, movez, move;
 		double moved = 0, maxMoved = 75;
 		
-		System.out.println("begin");
+		//		System.out.println("begin");
 		while (moved < maxMoved && inBounds(nextx, nexty, nextz) && isEmpty(nextx, nexty, nextz)) {
-			System.out.println(x + " " + y + " " + z);
+			//			System.out.println(x + " " + y + " " + z);
 			if (controller.selectDir[1] > 0)
 				deltax = Math3D.notZero(1 + nextx - x, 1);
 			else
@@ -106,7 +116,7 @@ public class ModelShip extends Ship {
 			if (movex <= 0 || movey <= 0 || movez <= 0)
 				System.out.println("move by <= 0");
 			
-			move = Math3D.min(movex, movey, movez);
+			move = Math3D.min(movex, movey, movez) + Math3D.EPSILON;
 			moved += move;
 			
 			x += controller.selectDir[1] * move;
@@ -150,15 +160,28 @@ public class ModelShip extends Ship {
 			moduleSelected = 3;
 		else if (controller.isKeyPressed(Controller.KEY_4))
 			moduleSelected = 4;
-		
-		Painter.outputString[0] = "seleced module: " + MODULE_NAMES[moduleSelected];
+	}
+	
+	private void selectDirection(Controller controller) {
+		if (controller.isKeyPressed(Controller.KEY_I))
+			directionSelected = Math3D.FRONT;
+		else if (controller.isKeyPressed(Controller.KEY_J))
+			directionSelected = Math3D.LEFT;
+		else if (controller.isKeyPressed(Controller.KEY_K))
+			directionSelected = Math3D.BACK;
+		else if (controller.isKeyPressed(Controller.KEY_L))
+			directionSelected = Math3D.RIGHT;
+		else if (controller.isKeyPressed(Controller.KEY_U))
+			directionSelected = Math3D.BOTTOM;
+		else if (controller.isKeyPressed(Controller.KEY_O))
+			directionSelected = Math3D.TOP;
 	}
 	
 	private void modify(Controller controller) {
 		if (!controller.isMousePressed())
 			return;
 		
-		if (moduleSelected == MODULE_EMPTY_MODULE) {
+		if (moduleSelected == EmptyModule.ID) {
 			if (nextSelected != null)
 				part[nextSelected[0]][nextSelected[1]][nextSelected[2]] = new EmptyModule();
 		} else if (selected != null) {
@@ -179,16 +202,41 @@ public class ModelShip extends Ship {
 				default:
 					module = new Hull();
 			}
-			module.set(Math3D.TOP, new double[] {selected[0], selected[1], selected[2]});
+			module.set(directionSelected, new double[] {selected[0], selected[1], selected[2]});
 			part[selected[0]][selected[1]][selected[2]] = module;
 		}
 	}
 	
+	private void textOutput() {
+		Painter.outputString[0] = "seleced module: " + MODULE_NAMES[moduleSelected];
+		Painter.outputString[1] = "seleced direction: " + DIRECTION_NAMES[directionSelected];
+	}
+	
 	private boolean inBounds(int x, int y, int z) {
-		return x >= 0 && y >= 0 && z >= 0 && x < part.length && y < part[0].length && z < part[0][0].length;
+		return x >= 0 && y >= 0 && z >= 0 && x < width && y < length && z < height;
 	}
 	
 	private boolean isEmpty(int x, int y, int z) {
 		return part[x][y][z].mass == 0;
+	}
+	
+	private void writeObject(java.io.ObjectOutputStream out)
+			throws IOException {
+		out.writeByte(width);
+		out.writeByte(length);
+		out.writeByte(height);
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
+					out.writeByte(blueprint[x][y][z].ID);
+	}
+	
+	private void readObject(java.io.ObjectInputStream in)
+			throws IOException, ClassNotFoundException {
+		width = in.readByte();
+		length = in.readByte();
+		height = in.readByte();
+		
+		
 	}
 }

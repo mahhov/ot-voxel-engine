@@ -69,7 +69,7 @@ public class Rotor extends Module {
 			if (i == opDir)
 				color[i] = Cube.SECONDARY_COLOR;
 			else
-				color[i] = Cube.PRIMARY_COLOR;
+				color[i] = Color.DARK_GRAY;
 	}
 	
 	public void addForce(Math3D.Force force, boolean[] control) {
