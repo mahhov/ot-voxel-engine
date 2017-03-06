@@ -67,7 +67,7 @@ public class World {
 	}
 	
 	private void addStaticCube(int x, int y, int z) {
-		addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5));
+		addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5, null));
 	}
 	
 	public void addShape(int x, int y, int z, Shape shape) {

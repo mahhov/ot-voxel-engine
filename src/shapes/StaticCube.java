@@ -6,16 +6,18 @@ public class StaticCube extends Shape {
 	private double x, y, z;
 	private Surface top, bottom, left, right, front, back;
 	
-	public StaticCube(double x, double y, double z) {
+	public StaticCube(double x, double y, double z, Color color) {
 		super(null);
 		this.x = x;
 		this.y = y;
 		this.z = z;
 		
-		initSurfaces();
+		if (color == null)
+			color = Color.LIGHT_GRAY;
+		initSurfaces(color);
 	}
 	
-	private void initSurfaces() {
+	private void initSurfaces(Color color) {
 		// dimensions
 		double size = 0.5;
 		double topZ = z + size;
@@ -44,12 +46,12 @@ public class StaticCube extends Shape {
 		back = new Surface(xs, backY, zs, false);
 		
 		// set color
-		top.setColor(Color.red);
-		bottom.setColor(Color.green);
-		back.setColor(Color.yellow);
-		front.setColor(Color.blue);
-		right.setColor(Color.gray);
-		left.setColor(Color.cyan);
+		top.setColor(color);
+		bottom.setColor(color);
+		back.setColor(color);
+		front.setColor(color);
+		right.setColor(color);
+		left.setColor(color);
 		
 		// set light
 		top.setLight(1);

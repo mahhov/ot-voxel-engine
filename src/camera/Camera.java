@@ -43,9 +43,9 @@ public class Camera {
 	}
 	
 	void moveTo(double toX, double toY, double toZ, double weight) {
-		x = x + (toX - x) * weight;
-		y = y + (toY - y) * weight;
-		z = z + (toZ - z) * weight;
+		x += (toX - x) * weight;
+		y += (toY - y) * weight;
+		z += (toZ - z) * weight;
 	}
 	
 	void rotate(double dangle, double dangleZ, double scale) {

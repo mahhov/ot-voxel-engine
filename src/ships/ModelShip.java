@@ -6,13 +6,17 @@ import engine.Painter;
 import module.*;
 import shapes.CubeFrame;
 import shapes.Shape;
+import shapes.StaticCube;
 import world.World;
 
+import java.awt.*;
 import java.io.*;
 
 public class ModelShip extends Ship implements Serializable {
 	private final static String SAVE_PATH = "modelShipScratch.ot";
 	private Blueprint blueprint;
+	
+	private final static int WORLD_EDGE = 5;
 	
 	private int[] selected, nextSelected;
 	private int moduleSelected;
@@ -23,8 +27,9 @@ public class ModelShip extends Ship implements Serializable {
 	private final static String[] DIRECTION_NAMES = new String[] {"LEFT", "RIGHT", "FRONT", "BACK", "BOTTOM", "TOP"};
 	
 	public ModelShip(World world) {
-		super(0, 0, 0, 0, 0, 0, world);
+		super(WORLD_EDGE, WORLD_EDGE, WORLD_EDGE, 0, 0, 0, world);
 		addToWorld(world);
+		initWorld(world);
 	}
 	
 	void generateParts() {
@@ -70,11 +75,23 @@ public class ModelShip extends Ship implements Serializable {
 		part[x][y][z] = module;
 	}
 	
+	void initWorld(World world) {
+		for (int xi = 0; xi < part.length + WORLD_EDGE * 2; xi++)
+			for (int yi = 0; yi < part[0].length + WORLD_EDGE * 2; yi++)
+				for (int zi = 0; zi < 1; zi++)
+					if (xi < WORLD_EDGE || xi > part.length + WORLD_EDGE || yi < WORLD_EDGE || yi > part[0].length + WORLD_EDGE)
+						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.GRAY));
+					else
+						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.LIGHT_GRAY));
+	}
+	
 	void addToWorld(World world) {
+		// selected frame
 		drawCounter++;
 		if (selected != null)
 			world.addShape((int) x + selected[1], (int) y + selected[0], (int) z + selected[2], new CubeFrame(x + selected[1] + .5, y + selected[0] + .5, z + selected[2] + .5, new Math3D.Angle(0), new Math3D.Angle(0), new Math3D.Angle(0), .5, this));
 		
+		// ship
 		Shape shape;
 		double xc, yc, zc;
 		for (int xi = 0; xi < part.length; xi++)

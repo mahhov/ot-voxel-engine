@@ -8,8 +8,6 @@ import ships.Ship;
 class EditorEngine extends Engine {
 	
 	void fillWorld(int chunkFill) {
-		world.fillWorldGround(chunkFill);
-		
 		Ship[] ship = new Ship[1];
 		ship[0] = new ModelShip( world);
 		world.setShip(ship);
@@ -29,6 +27,7 @@ class EditorEngine extends Engine {
 			world.update(controller);
 			world.drawChunks(painter, camera);
 			painter.repaint();
+			Painter.debugString[0] = "paint surfaceCount: " + painter.surfaceCount + " ; paint drawCount: " + painter.drawCount;
 			wait(30);
 		}
 	}

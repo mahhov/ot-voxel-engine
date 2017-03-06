@@ -1,11 +1,19 @@
 package camera;
 
 import engine.Controller;
+import engine.Math3D;
 
 public class FreeCamera extends Camera {
 	private static final double MOVE_SPEED = 1.2, ANGLE_SPEED = .04, MOUSE_DAMP_SPEED = 0.1;
 	
 	public void move(Controller c) {
+		if (c.isKeyDown(Controller.KEY_ENTER)) {
+			moveTo(0, 0, 25, 1);
+			angle = new Math3D.Angle(Math.PI / 4);
+			angleZ = new Math3D.Angle(0);
+			dirtyNorm = true;
+		}
+		
 		int dx = 0, dy = 0, dz = 0;
 		if (c.isKeyDown(Controller.KEY_W))
 			dy += 1;
