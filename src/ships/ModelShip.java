@@ -3,7 +3,6 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import module.*;
 import shapes.CubeFrame;
 import shapes.Shape;
 import shapes.StaticCube;
@@ -12,9 +11,10 @@ import world.World;
 import java.awt.*;
 import java.io.*;
 
+import static ships.Blueprint.*;
+
 public class ModelShip extends Ship implements Serializable {
 	private final static String SAVE_PATH = "modelShipScratch.ot";
-	private Blueprint blueprint;
 	private String saveStatus;
 	
 	private int[] selected, nextSelected;
@@ -22,67 +22,20 @@ public class ModelShip extends Ship implements Serializable {
 	private int directionSelected;
 	
 	private final static int WORLD_EDGE = 5;
-	public int width, length, height;
 	public int fullWidth, fullLength, fullHeight;
-	
-	private final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
-	private final static String[] MODULE_NAMES = new String[] {"REMOVE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
-	private final static String[] DIRECTION_NAMES = new String[] {"LEFT", "RIGHT", "FRONT", "BACK", "BOTTOM", "TOP"};
 	
 	public ModelShip(World world) {
 		super(WORLD_EDGE, WORLD_EDGE, WORLD_EDGE, 0, 0, 0, world);
+		fullWidth = width + WORLD_EDGE * 2;
+		fullLength = length + WORLD_EDGE * 2;
+		fullHeight = height + WORLD_EDGE * 2;
 		addToWorld(world);
 		initWorld(world);
 		saveStatus = "";
 	}
 	
-	void generateParts() {
-		if (blueprint == null)
-			blueprint = Blueprint.defaultBlueprint();
-		
-		width = blueprint.width;
-		length = blueprint.length;
-		height = blueprint.height;
-		fullWidth = width + WORLD_EDGE * 2;
-		fullLength = length + WORLD_EDGE * 2;
-		fullHeight = height + WORLD_EDGE * 2;
-		part = new Module[width][length][height];
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < length; y++)
-				for (int z = 0; z < height; z++)
-					updatePart(x, y, z);
-	}
-	
-	void setParts() {
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < length; y++)
-				for (int z = 0; z < height; z++)
-					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[3]);
-	}
-	
-	private void updatePart(int x, int y, int z) {
-		Module module;
-		switch (blueprint.blueprint[x][y][z][0]) {
-			case MODULE_EMPTY_MODULE:
-				module = new EmptyModule();
-				break;
-			case MODULE_HULL:
-				module = new Hull();
-				break;
-			case MODULE_ROTOR:
-				module = new Rotor();
-				break;
-			case MODULE_HELIUM:
-				module = new Helium(this);
-				break;
-			case MODULE_FORW_BLADE:
-				module = new ForwBlade(this);
-				break;
-			default:
-				module = new Hull();
-		}
-		module.set(blueprint.blueprint[x][y][z][1], new double[3]);
-		part[x][y][z] = module;
+	void generateBlueprint() {
+		blueprint = Blueprint.defaultBlueprint();
 	}
 	
 	void initWorld(World world) {
@@ -293,46 +246,6 @@ public class ModelShip extends Ship implements Serializable {
 		return part[x][y][z].mass == 0;
 	}
 	
-	private static class Blueprint implements Serializable {
-		private byte width, length, height;
-		private byte[][][][] blueprint;
-		
-		private static Blueprint defaultBlueprint() {
-			Blueprint bp = new Blueprint();
-			bp.width = 21;
-			bp.length = 21;
-			bp.height = 21;
-			bp.blueprint = new byte[bp.width][bp.length][bp.height][2];
-			bp.blueprint[10][10][10][0] = MODULE_HULL;
-			return bp;
-		}
-		
-		private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-			out.writeByte(width);
-			out.writeByte(length);
-			out.writeByte(height);
-			for (int x = 0; x < width; x++)
-				for (int y = 0; y < length; y++)
-					for (int z = 0; z < height; z++) {
-						out.writeByte(blueprint[x][y][z][0]);
-						out.writeByte(blueprint[x][y][z][1]);
-					}
-		}
-		
-		private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-			width = in.readByte();
-			length = in.readByte();
-			height = in.readByte();
-			blueprint = new byte[width][length][height][2];
-			for (int x = 0; x < width; x++)
-				for (int y = 0; y < length; y++)
-					for (int z = 0; z < height; z++) {
-						blueprint[x][y][z][0] = in.readByte();
-						blueprint[x][y][z][1] = in.readByte();
-					}
-		}
-	}
 }
 
-// todo: camera restrain to editing zone
 // todo: load sandbox ship from file

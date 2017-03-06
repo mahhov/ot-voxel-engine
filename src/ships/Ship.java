@@ -3,10 +3,12 @@ package ships;
 import engine.Controller;
 import engine.Math3D;
 import engine.Painter;
-import module.Module;
+import module.*;
 import shapes.Shape;
 import shapes.ShipTrigger;
 import world.World;
+
+import static ships.Blueprint.*;
 
 public abstract class Ship {
 	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
@@ -20,7 +22,9 @@ public abstract class Ship {
 	
 	double mass, massX, massY, massZ; // in relative axis system, offset from corner to mass center
 	private double inertiaFlat, inertiaUp, inertiaTilt;
+	Blueprint blueprint;
 	Module part[][][];
+	public int width, length, height;
 	private int safeZone;
 	
 	public Ship(double x, double y, double z, double angle, double angleZ, double angleTilt, World world) {
@@ -32,6 +36,7 @@ public abstract class Ship {
 		this.angleTilt = new Math3D.Angle(angleTilt);
 		computeAxis();
 		visible = false;
+		generateBlueprint();
 		generateParts();
 		computeMass();
 		computeInertia();
@@ -39,9 +44,52 @@ public abstract class Ship {
 		setParts();
 	}
 	
-	abstract void generateParts();
+	void generateBlueprint() {
+		blueprint = Blueprint.defaultBlueprint();
+	}
 	
-	abstract void setParts();
+	void generateParts() {
+		width = blueprint.width;
+		length = blueprint.length;
+		height = blueprint.height;
+		part = new Module[width][length][height];
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
+					updatePart(x, y, z);
+	}
+	
+	void updatePart(int x, int y, int z) {
+		Module module;
+		switch (blueprint.blueprint[x][y][z][0]) {
+			case MODULE_EMPTY_MODULE:
+				module = new EmptyModule();
+				break;
+			case MODULE_HULL:
+				module = new Hull();
+				break;
+			case MODULE_ROTOR:
+				module = new Rotor();
+				break;
+			case MODULE_HELIUM:
+				module = new Helium(this);
+				break;
+			case MODULE_FORW_BLADE:
+				module = new ForwBlade(this);
+				break;
+			default:
+				module = new Hull();
+		}
+		module.set(blueprint.blueprint[x][y][z][1], new double[3]);
+		part[x][y][z] = module;
+	}
+	
+	void setParts() {
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
+					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[3]);
+	}
 	
 	private void computeMass() {
 		double tmass;
