@@ -122,7 +122,7 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	private void selectCube(Controller controller) {
-		double x = controller.selectOrig[1] - this.x, y = controller.selectOrig[0] - this.y, z = controller.selectOrig[2] - this.z;
+		double x = controller.viewOrig[1] - this.x, y = controller.viewOrig[0] - this.y, z = controller.viewOrig[2] - this.z;
 		int curx = (int) x, cury = (int) y, curz = (int) z;
 		int nextx = curx, nexty = cury, nextz = curz;
 		double deltax, deltay, deltaz;
@@ -132,31 +132,31 @@ public class ModelShip extends Ship implements Serializable {
 		//		System.out.println("begin");
 		while (moved < maxMoved && inBounds(nextx, nexty, nextz) && isEmpty(nextx, nexty, nextz)) {
 			//			System.out.println(x + " " + y + " " + z);
-			if (controller.selectDir[1] > 0)
+			if (controller.viewDir[1] > 0)
 				deltax = Math3D.notZero(1 + nextx - x, 1);
 			else
 				deltax = Math3D.notZero(nextx - x, -1);
-			if (controller.selectDir[0] > 0)
+			if (controller.viewDir[0] > 0)
 				deltay = Math3D.notZero(1 + nexty - y, 1);
 			else
 				deltay = Math3D.notZero(nexty - y, -1);
-			if (controller.selectDir[2] > 0)
+			if (controller.viewDir[2] > 0)
 				deltaz = Math3D.notZero(1 + nextz - z, 1);
 			else
 				deltaz = Math3D.notZero(nextz - z, -1);
 			
-			if (Math3D.isZero(controller.selectDir[1]))
+			if (Math3D.isZero(controller.viewDir[1]))
 				movex = Math3D.sqrt3;
 			else
-				movex = deltax / controller.selectDir[1];
-			if (Math3D.isZero(controller.selectDir[0]))
+				movex = deltax / controller.viewDir[1];
+			if (Math3D.isZero(controller.viewDir[0]))
 				movey = Math3D.sqrt3;
 			else
-				movey = deltay / controller.selectDir[0];
-			if (Math3D.isZero(controller.selectDir[2]))
+				movey = deltay / controller.viewDir[0];
+			if (Math3D.isZero(controller.viewDir[2]))
 				movez = Math3D.sqrt3;
 			else
-				movez = deltaz / controller.selectDir[2];
+				movez = deltaz / controller.viewDir[2];
 			
 			if (movex <= 0 || movey <= 0 || movez <= 0)
 				System.out.println("move by <= 0");
@@ -164,9 +164,9 @@ public class ModelShip extends Ship implements Serializable {
 			move = Math3D.min(movex, movey, movez) + Math3D.EPSILON;
 			moved += move;
 			
-			x += controller.selectDir[1] * move;
-			y += controller.selectDir[0] * move;
-			z += controller.selectDir[2] * move;
+			x += controller.viewDir[1] * move;
+			y += controller.viewDir[0] * move;
+			z += controller.viewDir[2] * move;
 			
 			curx = nextx;
 			cury = nexty;

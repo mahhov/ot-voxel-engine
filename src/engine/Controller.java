@@ -18,7 +18,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	int mouseX, mouseY;
 	int mouseState, rightMouseState;
 	
-	public double[] selectOrig, selectDir;
+	public double[] viewOrig, viewDir;
 	
 	private Robot robot;
 	
@@ -61,8 +61,8 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		this.centerMouseX = centerMouseX;
 		this.centerMouseY = centerMouseY;
 		
-		selectOrig = new double[3];
-		selectDir = new double[3];
+		viewOrig = new double[3];
+		viewDir = new double[3];
 		
 		try {
 			robot = new Robot();
@@ -179,8 +179,8 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		}
 	}
 	
-	void setSelect(double[] orig, double[] dir) {
-		selectOrig = orig;
-		selectDir = dir;
+	void setView(double[] orig, double[] dir) {
+		viewOrig = orig;
+		viewDir = dir;
 	}
 }

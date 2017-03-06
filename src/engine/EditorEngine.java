@@ -23,7 +23,7 @@ class EditorEngine extends Engine {
 			painter.clear();
 			camera.move(controller);
 			camera.update(world.width, world.length, world.height);
-			controller.setSelect(camera.orig(), camera.normal);
+			controller.setView(camera.orig(), camera.normal);
 			world.update(controller);
 			world.drawChunks(painter, camera);
 			painter.repaint();
