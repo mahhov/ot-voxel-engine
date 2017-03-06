@@ -15,6 +15,7 @@ import java.io.*;
 public class ModelShip extends Ship implements Serializable {
 	private final static String SAVE_PATH = "modelShipScratch.ot";
 	private Blueprint blueprint;
+	private String saveStatus;
 	
 	private final static int WORLD_EDGE = 5;
 	
@@ -23,7 +24,7 @@ public class ModelShip extends Ship implements Serializable {
 	private int directionSelected;
 	
 	private final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
-	private final static String[] MODULE_NAMES = new String[] {"EMPTY MODULE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
+	private final static String[] MODULE_NAMES = new String[] {"REMOVE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
 	private final static String[] DIRECTION_NAMES = new String[] {"LEFT", "RIGHT", "FRONT", "BACK", "BOTTOM", "TOP"};
 	
 	public ModelShip(World world) {
@@ -225,14 +226,19 @@ public class ModelShip extends Ship implements Serializable {
 		if (!controller.isMousePressed())
 			return;
 		
-		if (moduleSelected == MODULE_EMPTY_MODULE) {
-			if (nextSelected != null)
-				part[nextSelected[0]][nextSelected[1]][nextSelected[2]] = new EmptyModule();
-		} else if (selected != null) {
-			blueprint.blueprint[selected[0]][selected[1]][selected[2]][0] = (byte) moduleSelected;
-			blueprint.blueprint[selected[0]][selected[1]][selected[2]][1] = (byte) directionSelected;
-			updatePart(selected[0], selected[1], selected[2]);
+		int[] xyz;
+		if (moduleSelected == MODULE_EMPTY_MODULE)
+			xyz = nextSelected;
+		else
+			xyz = selected;
+		
+		if (xyz != null) {
+			blueprint.blueprint[xyz[0]][xyz[1]][xyz[2]][0] = (byte) moduleSelected;
+			blueprint.blueprint[xyz[0]][xyz[1]][xyz[2]][1] = (byte) directionSelected;
+			updatePart(xyz[0], xyz[1], xyz[2]);
+			saveStatus = "unsaved changes - press '/' to save, press '\' to load";
 		}
+		
 	}
 	
 	private void saveLoad(Controller controller) {
@@ -242,9 +248,9 @@ public class ModelShip extends Ship implements Serializable {
 				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 				objectOut.writeObject(blueprint);
 				objectOut.close();
-				System.out.println("saved model ship");
+				saveStatus = "saved model ship to " + SAVE_PATH;
 			} catch (Exception ex) {
-				System.out.println("error saving model ship to " + SAVE_PATH);
+				saveStatus = "error saving model ship to " + SAVE_PATH;
 				ex.printStackTrace();
 			}
 		
@@ -256,10 +262,10 @@ public class ModelShip extends Ship implements Serializable {
 				this.blueprint = blueprint;
 				generateParts();
 				setParts();
-				System.out.println("loaded model ship from " + SAVE_PATH);
+				saveStatus = "loaded model ship from " + SAVE_PATH;
 				objectIn.close();
 			} catch (Exception ex) {
-				System.out.println("error loading model ship");
+				saveStatus = "error loading model ship from " + SAVE_PATH;
 				ex.printStackTrace();
 			}
 	}
@@ -267,6 +273,7 @@ public class ModelShip extends Ship implements Serializable {
 	private void textOutput() {
 		Painter.outputString[0] = "seleced module: " + MODULE_NAMES[moduleSelected];
 		Painter.outputString[1] = "seleced direction: " + DIRECTION_NAMES[directionSelected];
+		Painter.outputString[2] = saveStatus;
 	}
 	
 	private boolean inBounds(int x, int y, int z) {
