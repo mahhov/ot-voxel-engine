@@ -10,6 +10,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	public static final int KEY_ESC = 10, KEY_SPACE = 11, KEY_SHIFT = 12, KEY_ENTER = 13, KEY_P = 14;
 	public static final int KEY_1 = 15, KEY_2 = 16, KEY_3 = 17, KEY_4 = 18, KEY_5 = 19, KEY_6 = 20, KEY_7 = 21, KEY_8 = 22, KEY_9 = 23, KEY_0 = 24;
 	public static final int KEY_I = 25, KEY_J = 26, KEY_K = 27, KEY_L = 28, KEY_U = 29, KEY_O = 30;
+	public static final int KEY_SLASH = 31, KEY_BACK_SLASH = 32;
 	
 	Key[] keys;
 	
@@ -22,7 +23,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	private Robot robot;
 	
 	Controller(int centerMouseX, int centerMouseY) {
-		keys = new Key[31];
+		keys = new Key[33];
 		keys[KEY_W] = new Key(87);
 		keys[KEY_A] = new Key(65);
 		keys[KEY_S] = new Key(83);
@@ -54,6 +55,8 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		keys[KEY_L] = new Key(76);
 		keys[KEY_U] = new Key(85);
 		keys[KEY_O] = new Key(79);
+		keys[KEY_SLASH] = new Key(47);
+		keys[KEY_BACK_SLASH] = new Key(92);
 		
 		this.centerMouseX = centerMouseX;
 		this.centerMouseY = centerMouseY;

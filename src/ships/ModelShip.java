@@ -8,12 +8,11 @@ import shapes.CubeFrame;
 import shapes.Shape;
 import world.World;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 
 public class ModelShip extends Ship implements Serializable {
-	private byte width, length, height;
-	private byte[][][] blueprint;
+	private final static String SAVE_PATH = "modelShipScratch.ot";
+	private Blueprint blueprint;
 	
 	private int[] selected, nextSelected;
 	private int moduleSelected;
@@ -29,19 +28,46 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	void generateParts() {
-		part = new Module[width][length][height];
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < length; y++)
-				for (int z = 0; z < height; z++)
-					part[x][y][z] = new EmptyModule();
-		for (int x = 10; x < 11; x++)
-			for (int y = 10; y < 11; y++)
-				for (int z = 10; z < 11; z++)
-					part[x][y][z] = new Hull();
+		if (blueprint == null)
+			blueprint = Blueprint.defaultBlueprint();
+		
+		part = new Module[blueprint.width][blueprint.length][blueprint.height];
+		for (int x = 0; x < part.length; x++)
+			for (int y = 0; y < part[x].length; y++)
+				for (int z = 0; z < part[x][y].length; z++)
+					updatePart(x, y, z);
 	}
 	
 	void setParts() {
-		
+		for (int x = 0; x < part.length; x++)
+			for (int y = 0; y < part[x].length; y++)
+				for (int z = 0; z < part[x][y].length; z++)
+					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[3]);
+	}
+	
+	private void updatePart(int x, int y, int z) {
+		Module module;
+		switch (blueprint.blueprint[x][y][z][0]) {
+			case MODULE_EMPTY_MODULE:
+				module = new EmptyModule();
+				break;
+			case MODULE_HULL:
+				module = new Hull();
+				break;
+			case MODULE_ROTOR:
+				module = new Rotor();
+				break;
+			case MODULE_HELIUM:
+				module = new Helium(this);
+				break;
+			case MODULE_FORW_BLADE:
+				module = new ForwBlade(this);
+				break;
+			default:
+				module = new Hull();
+		}
+		module.set(blueprint.blueprint[x][y][z][1], new double[3]);
+		part[x][y][z] = module;
 	}
 	
 	void addToWorld(World world) {
@@ -51,9 +77,9 @@ public class ModelShip extends Ship implements Serializable {
 		
 		Shape shape;
 		double xc, yc, zc;
-		for (int xi = 0; xi < width; xi++)
-			for (int yi = 0; yi < length; yi++)
-				for (int zi = 0; zi < height; zi++) {
+		for (int xi = 0; xi < part.length; xi++)
+			for (int yi = 0; yi < part[xi].length; yi++)
+				for (int zi = 0; zi < part[xi][yi].length; zi++) {
 					xc = x + yi + 0.5;
 					yc = y + xi + 0.5;
 					zc = z + zi + 0.5;
@@ -72,6 +98,7 @@ public class ModelShip extends Ship implements Serializable {
 		selectModule(controller);
 		selectDirection(controller);
 		modify(controller);
+		saveLoad(controller);
 		addToWorld(world);
 		textOutput();
 	}
@@ -181,30 +208,43 @@ public class ModelShip extends Ship implements Serializable {
 		if (!controller.isMousePressed())
 			return;
 		
-		if (moduleSelected == EmptyModule.ID) {
+		if (moduleSelected == MODULE_EMPTY_MODULE) {
 			if (nextSelected != null)
 				part[nextSelected[0]][nextSelected[1]][nextSelected[2]] = new EmptyModule();
 		} else if (selected != null) {
-			Module module;
-			switch (moduleSelected) {
-				case MODULE_HULL:
-					module = new Hull();
-					break;
-				case MODULE_ROTOR:
-					module = new Rotor();
-					break;
-				case MODULE_HELIUM:
-					module = new Helium(this);
-					break;
-				case MODULE_FORW_BLADE:
-					module = new ForwBlade(this);
-					break;
-				default:
-					module = new Hull();
-			}
-			module.set(directionSelected, new double[] {selected[0], selected[1], selected[2]});
-			part[selected[0]][selected[1]][selected[2]] = module;
+			blueprint.blueprint[selected[0]][selected[1]][selected[2]][0] = (byte) moduleSelected;
+			blueprint.blueprint[selected[0]][selected[1]][selected[2]][1] = (byte) directionSelected;
+			updatePart(selected[0], selected[1], selected[2]);
 		}
+	}
+	
+	private void saveLoad(Controller controller) {
+		if (controller.isKeyPressed(Controller.KEY_SLASH))  // save
+			try {
+				FileOutputStream fileOut = new FileOutputStream(SAVE_PATH);
+				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+				objectOut.writeObject(blueprint);
+				objectOut.close();
+				System.out.println("saved model ship");
+			} catch (Exception ex) {
+				System.out.println("error saving model ship to " + SAVE_PATH);
+				ex.printStackTrace();
+			}
+		
+		else if (controller.isKeyPressed(Controller.KEY_BACK_SLASH)) // load
+			try {
+				FileInputStream fileIn = new FileInputStream(SAVE_PATH);
+				ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+				Blueprint blueprint = (Blueprint) objectIn.readObject();
+				this.blueprint = blueprint;
+				generateParts();
+				setParts();
+				System.out.println("loaded model ship from " + SAVE_PATH);
+				objectIn.close();
+			} catch (Exception ex) {
+				System.out.println("error loading model ship");
+				ex.printStackTrace();
+			}
 	}
 	
 	private void textOutput() {
@@ -213,30 +253,50 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	private boolean inBounds(int x, int y, int z) {
-		return x >= 0 && y >= 0 && z >= 0 && x < width && y < length && z < height;
+		return x >= 0 && y >= 0 && z >= 0 && x < part.length && y < part[0].length && z < part[0][0].length;
 	}
 	
 	private boolean isEmpty(int x, int y, int z) {
 		return part[x][y][z].mass == 0;
 	}
 	
-	private void writeObject(java.io.ObjectOutputStream out)
-			throws IOException {
-		out.writeByte(width);
-		out.writeByte(length);
-		out.writeByte(height);
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < length; y++)
-				for (int z = 0; z < height; z++)
-					out.writeByte(blueprint[x][y][z].ID);
-	}
-	
-	private void readObject(java.io.ObjectInputStream in)
-			throws IOException, ClassNotFoundException {
-		width = in.readByte();
-		length = in.readByte();
-		height = in.readByte();
+	private static class Blueprint implements Serializable {
+		private byte width, length, height;
+		private byte[][][][] blueprint;
 		
+		private static Blueprint defaultBlueprint() {
+			Blueprint bp = new Blueprint();
+			bp.width = 21;
+			bp.length = 21;
+			bp.height = 21;
+			bp.blueprint = new byte[bp.width][bp.length][bp.height][2];
+			bp.blueprint[10][10][10][0] = MODULE_HULL;
+			return bp;
+		}
 		
+		private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+			out.writeByte(width);
+			out.writeByte(length);
+			out.writeByte(height);
+			for (int x = 0; x < width; x++)
+				for (int y = 0; y < length; y++)
+					for (int z = 0; z < height; z++) {
+						out.writeByte(blueprint[x][y][z][0]);
+						out.writeByte(blueprint[x][y][z][1]);
+					}
+		}
+		
+		private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+			width = in.readByte();
+			length = in.readByte();
+			height = in.readByte();
+			blueprint = new byte[width][length][height][2];
+			for (int x = 0; x < width; x++)
+				for (int y = 0; y < length; y++)
+					for (int z = 0; z < height; z++) {
+						blueprint[x][y][z][0] = in.readByte();
+						blueprint[x][y][z][1] = in.readByte();
+					}
+		}
 	}
 }
