@@ -6,11 +6,11 @@ import ships.ModelShip;
 import ships.Ship;
 
 class EditorEngine extends Engine {
+	ModelShip modelShip;
 	
 	void fillWorld(int chunkFill) {
-		Ship[] ship = new Ship[1];
-		ship[0] = new ModelShip( world);
-		world.setShip(ship);
+		modelShip = new ModelShip(world);
+		world.setShip(new Ship[] {modelShip});
 	}
 	
 	Camera createCamera() {
@@ -22,7 +22,7 @@ class EditorEngine extends Engine {
 		while (true) {
 			painter.clear();
 			camera.move(controller);
-			camera.update(world.width, world.length, world.height);
+			camera.update(modelShip.fullWidth, modelShip.fullLength, modelShip.fullHeight);
 			controller.setView(camera.orig(), camera.normal);
 			world.update(controller);
 			world.drawChunks(painter, camera);

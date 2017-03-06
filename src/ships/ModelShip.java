@@ -17,11 +17,13 @@ public class ModelShip extends Ship implements Serializable {
 	private Blueprint blueprint;
 	private String saveStatus;
 	
-	private final static int WORLD_EDGE = 5;
-	
 	private int[] selected, nextSelected;
 	private int moduleSelected;
 	private int directionSelected;
+	
+	private final static int WORLD_EDGE = 5;
+	public int width, length, height;
+	public int fullWidth, fullLength, fullHeight;
 	
 	private final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
 	private final static String[] MODULE_NAMES = new String[] {"REMOVE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
@@ -38,17 +40,23 @@ public class ModelShip extends Ship implements Serializable {
 		if (blueprint == null)
 			blueprint = Blueprint.defaultBlueprint();
 		
-		part = new Module[blueprint.width][blueprint.length][blueprint.height];
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
+		width = blueprint.width;
+		length = blueprint.length;
+		height = blueprint.height;
+		fullWidth = width + WORLD_EDGE * 2;
+		fullLength = length + WORLD_EDGE * 2;
+		fullHeight = height + WORLD_EDGE * 2;
+		part = new Module[width][length][height];
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
 					updatePart(x, y, z);
 	}
 	
 	void setParts() {
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < length; y++)
+				for (int z = 0; z < height; z++)
 					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[3]);
 	}
 	
@@ -78,10 +86,10 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	void initWorld(World world) {
-		for (int xi = 0; xi < part.length + WORLD_EDGE * 2; xi++)
-			for (int yi = 0; yi < part[0].length + WORLD_EDGE * 2; yi++)
+		for (int xi = 0; xi < fullWidth; xi++)
+			for (int yi = 0; yi < fullLength; yi++)
 				for (int zi = 0; zi < 1; zi++)
-					if (xi < WORLD_EDGE || xi > part.length + WORLD_EDGE || yi < WORLD_EDGE || yi > part[0].length + WORLD_EDGE)
+					if (xi < WORLD_EDGE || xi > width + WORLD_EDGE || yi < WORLD_EDGE || yi > length + WORLD_EDGE)
 						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.GRAY));
 					else
 						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.LIGHT_GRAY));
@@ -96,9 +104,9 @@ public class ModelShip extends Ship implements Serializable {
 		// ship
 		Shape shape;
 		double xc, yc, zc;
-		for (int xi = 0; xi < part.length; xi++)
-			for (int yi = 0; yi < part[xi].length; yi++)
-				for (int zi = 0; zi < part[xi][yi].length; zi++) {
+		for (int xi = 0; xi < width; xi++)
+			for (int yi = 0; yi < length; yi++)
+				for (int zi = 0; zi < height; zi++) {
 					xc = x + yi + 0.5;
 					yc = y + xi + 0.5;
 					zc = z + zi + 0.5;
@@ -278,7 +286,7 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	private boolean inBounds(int x, int y, int z) {
-		return x >= 0 && y >= 0 && z >= 0 && x < part.length && y < part[0].length && z < part[0][0].length;
+		return x >= 0 && y >= 0 && z >= 0 && x < width && y < length && z < height;
 	}
 	
 	private boolean isEmpty(int x, int y, int z) {
