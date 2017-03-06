@@ -9,7 +9,7 @@ import shapes.StaticCube;
 import world.World;
 
 import java.awt.*;
-import java.io.*;
+import java.io.Serializable;
 
 import static ships.Blueprint.*;
 
@@ -204,32 +204,22 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	private void saveLoad(Controller controller) {
-		if (controller.isKeyPressed(Controller.KEY_SLASH))  // save
-			try {
-				FileOutputStream fileOut = new FileOutputStream(SAVE_PATH);
-				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
-				objectOut.writeObject(blueprint);
-				objectOut.close();
+		if (controller.isKeyPressed(Controller.KEY_SLASH)) // save
+			if (blueprint.save(SAVE_PATH))
 				saveStatus = "saved model ship to " + SAVE_PATH;
-			} catch (Exception ex) {
+			else
 				saveStatus = "error saving model ship to " + SAVE_PATH;
-				ex.printStackTrace();
-			}
 		
-		else if (controller.isKeyPressed(Controller.KEY_BACK_SLASH)) // load
-			try {
-				FileInputStream fileIn = new FileInputStream(SAVE_PATH);
-				ObjectInputStream objectIn = new ObjectInputStream(fileIn);
-				Blueprint blueprint = (Blueprint) objectIn.readObject();
+		else if (controller.isKeyPressed(Controller.KEY_BACK_SLASH)) { // load
+			Blueprint blueprint = Blueprint.load(SAVE_PATH);
+			if (blueprint != null) {
 				this.blueprint = blueprint;
 				generateParts();
 				setParts();
 				saveStatus = "loaded model ship from " + SAVE_PATH;
-				objectIn.close();
-			} catch (Exception ex) {
+			} else
 				saveStatus = "error loading model ship from " + SAVE_PATH;
-				ex.printStackTrace();
-			}
+		}
 	}
 	
 	private void textOutput() {

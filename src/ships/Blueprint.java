@@ -1,7 +1,6 @@
 package ships;
 
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 
 public class Blueprint implements Serializable {
 	final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
@@ -44,5 +43,31 @@ public class Blueprint implements Serializable {
 					blueprint[x][y][z][0] = in.readByte();
 					blueprint[x][y][z][1] = in.readByte();
 				}
+	}
+	
+	boolean save(String path) {
+		try {
+			FileOutputStream fileOut = new FileOutputStream(path);
+			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+			objectOut.writeObject(this);
+			objectOut.close();
+			return true;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	static Blueprint load(String path) {
+		try {
+			FileInputStream fileIn = new FileInputStream(path);
+			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+			Blueprint blueprint = (Blueprint) objectIn.readObject();
+			objectIn.close();
+			return blueprint;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 }
