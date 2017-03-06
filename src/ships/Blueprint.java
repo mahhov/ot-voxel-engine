@@ -10,6 +10,16 @@ public class Blueprint implements Serializable {
 	byte width, length, height;
 	byte[][][][] blueprint;
 	
+	Blueprint() {
+	}
+	
+	Blueprint(int width, int length, int height) {
+		this.width = (byte) width;
+		this.length = (byte) length;
+		this.height = (byte) height;
+		blueprint = new byte[width][length][height][2];
+	}
+	
 	static Blueprint defaultBlueprint() {
 		Blueprint bp = new Blueprint();
 		bp.width = 21;

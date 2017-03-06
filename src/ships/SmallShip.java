@@ -1,11 +1,6 @@
 package ships;
 
 import engine.Math3D;
-import module.ForwBlade;
-import module.Hull;
-import module.Module;
-import module.Rotor;
-import shapes.Shape;
 import world.World;
 
 public class SmallShip extends Ship {
@@ -13,7 +8,7 @@ public class SmallShip extends Ship {
 		super(x, y, z, angle, angleZ, angleTilt, world);
 	}
 	
-	void generateParts() {
+	void generateBlueprint() {
 		// 5 hull
 		// 4 blade
 		// 3 hull
@@ -21,49 +16,18 @@ public class SmallShip extends Ship {
 		// 1 hull
 		// 0 rotor - front
 		
-		part = new Module[2][6][1];
-		for (int x = 0; x < part.length; x++)
-			for (int y = 0; y < part[x].length; y++)
-				for (int z = 0; z < part[x][y].length; z++)
-					if (y == 0 || y == 2)
-						part[x][y][z] = new Rotor();
-					else if (y == 4)
-						part[x][y][z] = new ForwBlade(this);
+		blueprint = new Blueprint(2, 6, 1);
+		blueprint.width = 2;
+		blueprint.length = 6;
+		for (int x = 0; x < blueprint.width; x++)
+			for (int y = 0; y < blueprint.length; y++)
+				for (int z = 0; z < blueprint.height; z++)
+					if (y == 0 || y == 2) {
+						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_ROTOR;
+						blueprint.blueprint[x][y][z][1] = Math3D.FRONT;
+					} else if (y == 4)
+						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_FORW_BLADE;
 					else
-						part[x][y][z] = new Hull();
-		
-	}
-	
-	void setParts() {
-		int x = 0, y = 4, z = 0;
-		part[x][y][z].set(Math3D.RIGHT, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.LEFT, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 3;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 2;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BACK, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.BOTTOM, new double[] {x - massX, y - massY, z - massZ});
-		x = 0;
-		y = 0;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.FRONT, new double[] {x - massX, y - massY, z - massZ});
-		
-		x = 0;
-		y = 5;
-		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
-		x = 1;
-		part[x][y][z].set(Math3D.NONE, new double[] {x - massX, y - massY, z - massZ});
+						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_HULL;
 	}
 }
