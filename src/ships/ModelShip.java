@@ -31,6 +31,7 @@ public class ModelShip extends Ship implements Serializable {
 		super(WORLD_EDGE, WORLD_EDGE, WORLD_EDGE, 0, 0, 0, world);
 		addToWorld(world);
 		initWorld(world);
+		saveStatus = "";
 	}
 	
 	void generateParts() {
