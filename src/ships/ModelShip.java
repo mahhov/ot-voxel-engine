@@ -324,3 +324,6 @@ public class ModelShip extends Ship implements Serializable {
 		}
 	}
 }
+
+// todo: camera restrain to editing zone
+// todo: load sandbox ship from file

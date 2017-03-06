@@ -8,7 +8,7 @@ public class TrailingCamera extends Camera {
 	private final static double MIN_TRAIL = 5, MAX_TRAIL = 60;
 	private final static double TRAIL_SPEED = 2.5, ANGLE_SPEED = .1, MOTION_AVG = .2, MOUSE_DAMP_SPEED = .01;
 	private double trailDistance;
-	private Math3D.Angle trailAngle, trailAngleZ;
+	private Math3D.Angle trailAngle, trailAngleZ; // todo: camera tilt
 	Ship followShip;
 	private boolean free;
 	
