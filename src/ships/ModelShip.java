@@ -197,7 +197,8 @@ public class ModelShip extends Ship implements Serializable {
 		if (xyz != null) {
 			blueprint.blueprint[xyz[0]][xyz[1]][xyz[2]][0] = (byte) moduleSelected;
 			blueprint.blueprint[xyz[0]][xyz[1]][xyz[2]][1] = (byte) directionSelected;
-			updatePart(xyz[0], xyz[1], xyz[2]);
+			generatePart(xyz[0], xyz[1], xyz[2]);
+			part[xyz[0]][xyz[1]][xyz[2]].set(directionSelected, new double[3]);
 			saveStatus = "unsaved changes - press '/' to save, press '\' to load";
 		}
 		

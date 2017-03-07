@@ -56,10 +56,10 @@ public abstract class Ship {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < length; y++)
 				for (int z = 0; z < height; z++)
-					updatePart(x, y, z);
+					generatePart(x, y, z);
 	}
 	
-	void updatePart(int x, int y, int z) {
+	void generatePart(int x, int y, int z) {
 		Module module;
 		switch (blueprint.blueprint[x][y][z][0]) {
 			case MODULE_EMPTY_MODULE:
@@ -80,7 +80,6 @@ public abstract class Ship {
 			default:
 				module = new Hull();
 		}
-		module.set(blueprint.blueprint[x][y][z][1], new double[3]);
 		part[x][y][z] = module;
 	}
 	
@@ -88,7 +87,7 @@ public abstract class Ship {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < length; y++)
 				for (int z = 0; z < height; z++)
-					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[3]);
+					part[x][y][z].set(blueprint.blueprint[x][y][z][1], new double[] {x - massX, y - massY, z - massZ});
 	}
 	
 	private void computeMass() {

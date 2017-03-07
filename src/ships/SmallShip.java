@@ -22,9 +22,12 @@ public class SmallShip extends Ship {
 		for (int x = 0; x < blueprint.width; x++)
 			for (int y = 0; y < blueprint.length; y++)
 				for (int z = 0; z < blueprint.height; z++)
-					if (y == 0 || y == 2) {
+					if (y == 0) {
 						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_ROTOR;
 						blueprint.blueprint[x][y][z][1] = Math3D.FRONT;
+					} else if (y == 2) {
+						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_ROTOR;
+						blueprint.blueprint[x][y][z][1] = Math3D.BACK;
 					} else if (y == 4)
 						blueprint.blueprint[x][y][z][0] = Blueprint.MODULE_FORW_BLADE;
 					else
