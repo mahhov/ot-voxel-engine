@@ -11,6 +11,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	public static final int KEY_1 = 15, KEY_2 = 16, KEY_3 = 17, KEY_4 = 18, KEY_5 = 19, KEY_6 = 20, KEY_7 = 21, KEY_8 = 22, KEY_9 = 23, KEY_0 = 24;
 	public static final int KEY_I = 25, KEY_J = 26, KEY_K = 27, KEY_L = 28, KEY_U = 29, KEY_O = 30;
 	public static final int KEY_SLASH = 31, KEY_BACK_SLASH = 32;
+	public static final int KEY_TAB = 33;
 	
 	Key[] keys;
 	
@@ -57,6 +58,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		keys[KEY_O] = new Key(79);
 		keys[KEY_SLASH] = new Key(47);
 		keys[KEY_BACK_SLASH] = new Key(92);
+		keys[KEY_TAB] = new Key(157);
 		
 		this.centerMouseX = centerMouseX;
 		this.centerMouseY = centerMouseY;

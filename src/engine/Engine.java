@@ -2,6 +2,7 @@ package engine;
 
 import camera.Camera;
 import camera.TrailingCamera;
+import ships.FileShip;
 import ships.Ship;
 import ships.SmallShip;
 import world.World;
@@ -30,7 +31,7 @@ class Engine {
 		world.fillWorldRand(chunkFill);
 		
 		Ship[] ship = new Ship[1];
-		ship[0] = new SmallShip(50, 50, 25, 0, 0, 0, world);
+		ship[0] = new FileShip(50, 50, 25, 0, 0, 0, world);
 		world.setShip(ship);
 	}
 	
