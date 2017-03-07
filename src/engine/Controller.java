@@ -24,7 +24,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	private Robot robot;
 	
 	Controller(int centerMouseX, int centerMouseY) {
-		keys = new Key[33];
+		keys = new Key[34];
 		keys[KEY_W] = new Key(87);
 		keys[KEY_A] = new Key(65);
 		keys[KEY_S] = new Key(83);
