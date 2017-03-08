@@ -38,8 +38,13 @@ public class ForwBlade extends Module {
 			controlDown[Math3D.RIGHT] = true;
 		}
 		
-		controlUp[Math3D.TOP] = true;
-		controlDown[Math3D.BOTTOM] = true;
+		if (location[1] > 0 ) {
+			controlUp[Math3D.TOP] = true;
+			controlDown[Math3D.BOTTOM] = true;
+		}else if (location[1] < 0 ) {
+			controlUp[Math3D.BOTTOM] = true;
+			controlDown[Math3D.TOP] = true;
+		}
 		
 		for (int i = 0; i < color.length; i++)
 			color[i] = Color.YELLOW;
