@@ -4,7 +4,6 @@ import camera.Camera;
 import camera.TrailingCamera;
 import ships.FileShip;
 import ships.Ship;
-import ships.SmallShip;
 import world.World;
 
 class Engine {
@@ -12,6 +11,7 @@ class Engine {
 	Controller controller;
 	Painter painter;
 	World world;
+	Ship ship;
 	private boolean pause;
 	
 	Engine() {
@@ -19,32 +19,40 @@ class Engine {
 		Math3D.loadTrig(1000);
 		controller = new Controller(frame / 2, frame / 2);
 		painter = new Painter(frame, image, controller);
-		int eachChunkSize = 5;
-		int numChunks = 500 / eachChunkSize;
-		int chunkFill = 50 / eachChunkSize;
-		world = new World(numChunks, numChunks, numChunks, eachChunkSize);
-		fillWorld(chunkFill);
 		camera = createCamera();
 	}
 	
-	void fillWorld(int chunkFill) {
-		world.fillWorldRand(chunkFill);
-		
-		Ship[] ship = new Ship[1];
-		ship[0] = new FileShip(50, 50, 25, 0, 0, 0, world);
-		world.setShip(ship);
+	Engine(Controller controller, Painter painter) {
+		this.controller = controller;
+		this.painter = painter;
+		camera = createCamera();
+	}
+	
+	Ship createShip() {
+		return new FileShip(50, 50, 25, 0, 0, 0, world);
 	}
 	
 	Camera createCamera() {
 		TrailingCamera camera = new TrailingCamera();
-		camera.setFollowShip(world.cameraShip);
 		return camera;
 	}
 	
+	private void createWorld() {
+		int eachChunkSize = 5;
+		int numChunks = 500 / eachChunkSize;
+		int chunkFill = 50 / eachChunkSize;
+		world = new World(numChunks, numChunks, numChunks, eachChunkSize);
+		world.fillWorldRand(chunkFill);
+		ship = createShip();
+		((TrailingCamera) camera).setFollowShip(ship);
+		world.setShip(new Ship[] {ship});
+	}
+	
 	void begin() {
+		createWorld();
 		int frame = 0;
 		long beginTime = 0, endTime;
-		while (true) {
+		while (checkContinue()) {
 			while (pause) {
 				checkPause();
 				wait(30);
@@ -70,6 +78,10 @@ class Engine {
 	private void checkPause() {
 		if (controller.isKeyPressed(Controller.KEY_P))
 			pause = !pause;
+	}
+	
+	boolean checkContinue() {
+		return !controller.isKeyPressed(Controller.KEY_M);
 	}
 	
 	static void wait(int howLong) {

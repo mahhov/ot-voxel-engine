@@ -2,15 +2,26 @@ package engine;
 
 import camera.Camera;
 import camera.FreeCamera;
+import ships.FileShip;
 import ships.ModelShip;
 import ships.Ship;
+import world.World;
 
 class EditorEngine extends Engine {
 	ModelShip modelShip;
 	
-	void fillWorld(int chunkFill) {
-		modelShip = new ModelShip(world);
-		world.setShip(new Ship[] {modelShip});
+	EditorEngine() {
+		super();
+		createWorld();
+	}
+	
+	EditorEngine(Controller controller, Painter painter) {
+		super(controller, painter);
+		createWorld();
+	}
+	
+	ModelShip createShip() {
+		return new ModelShip(world);
 	}
 	
 	Camera createCamera() {
@@ -18,8 +29,14 @@ class EditorEngine extends Engine {
 		return camera;
 	}
 	
+	private void createWorld() {
+		world = new World(1, 1, 1, 100);
+		modelShip = createShip();
+		world.setShip(new Ship[] {modelShip});
+	}
+	
 	void begin() {
-		while (true) {
+		while (checkContinue()) {
 			painter.clear();
 			camera.move(controller);
 			camera.update(modelShip.fullWidth, modelShip.fullLength, modelShip.fullHeight);

@@ -16,7 +16,6 @@ public class World {
 	private Chunk[][][] chunk;
 	
 	private Ship[] ship;
-	public Ship cameraShip;
 	private Projectile[] projectile;
 	private Particle[] particle;
 	
@@ -83,7 +82,6 @@ public class World {
 	
 	public void setShip(Ship[] ship) {
 		this.ship = ship;
-		cameraShip = ship[0];
 	}
 	
 	// DRAWING
