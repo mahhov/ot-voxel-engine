@@ -1,7 +1,7 @@
 package world;
 
 import camera.Camera;
-import engine.Controller;
+import control.Controller;
 import engine.Math3D;
 import engine.Painter;
 import particles.Particle;

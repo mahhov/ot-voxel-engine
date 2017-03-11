@@ -1,5 +1,6 @@
 package engine;
 
+import control.Controller;
 import shapes.Surface;
 
 import javax.swing.*;

@@ -1,6 +1,6 @@
 package camera;
 
-import engine.Controller;
+import control.Controller;
 import engine.Math3D;
 import ships.Ship;
 

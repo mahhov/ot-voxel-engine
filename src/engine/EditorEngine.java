@@ -2,7 +2,7 @@ package engine;
 
 import camera.Camera;
 import camera.FreeCamera;
-import ships.FileShip;
+import control.Controller;
 import ships.ModelShip;
 import ships.Ship;
 import world.World;

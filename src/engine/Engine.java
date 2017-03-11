@@ -2,6 +2,7 @@ package engine;
 
 import camera.Camera;
 import camera.TrailingCamera;
+import control.Controller;
 import ships.FileShip;
 import ships.Ship;
 import world.World;
@@ -17,7 +18,7 @@ class Engine {
 	Engine() {
 		int frame = 800, image = frame;
 		Math3D.loadTrig(1000);
-		controller = new Controller(frame / 2, frame / 2);
+		controller = new Controller(frame, frame);
 		painter = new Painter(frame, image, controller);
 		camera = createCamera();
 	}

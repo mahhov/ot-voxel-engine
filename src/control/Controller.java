@@ -1,4 +1,4 @@
-package engine;
+package control;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -15,15 +15,15 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	
 	Key[] keys;
 	
-	private final int centerMouseX, centerMouseY;
-	int mouseX, mouseY;
+	private final int width, height, centerMouseX, centerMouseY;
+	int mouseX, mouseY, mouseMoveX, mouseMoveY;
 	int mouseState, rightMouseState;
 	
 	public double[] viewOrig, viewDir;
 	
 	private Robot robot;
 	
-	Controller(int centerMouseX, int centerMouseY) {
+	public Controller(int width, int height) {
 		keys = new Key[34];
 		keys[KEY_W] = new Key(87);
 		keys[KEY_A] = new Key(65);
@@ -60,8 +60,10 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		keys[KEY_BACK_SLASH] = new Key(92);
 		keys[KEY_M] = new Key(77);
 		
-		this.centerMouseX = centerMouseX;
-		this.centerMouseY = centerMouseY;
+		this.width = width;
+		this.height = width;
+		this.centerMouseX = width / 2;
+		this.centerMouseY = height / 2;
 		
 		viewOrig = new double[3];
 		viewDir = new double[3];
@@ -112,11 +114,11 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	}
 	
 	public void mouseMoved(MouseEvent e) {
-		int x = e.getX();
-		int y = e.getY();
-		mouseX += x - centerMouseX;
-		mouseY += y - centerMouseY;
-		robot.mouseMove(centerMouseX - x + e.getXOnScreen(), centerMouseY - y + e.getYOnScreen());
+		mouseX = e.getX();
+		mouseY = e.getY();
+		mouseMoveX += mouseX - centerMouseX;
+		mouseMoveY += mouseY - centerMouseY;
+		robot.mouseMove(centerMouseX - mouseX + e.getXOnScreen(), centerMouseY - mouseY + e.getYOnScreen());
 	}
 	
 	private int setKeyState(int keyCode, int state) {
@@ -148,10 +150,14 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 	}
 	
 	public int[] getMouseMovement() {
-		int[] r = new int[] {mouseX, mouseY};
-		mouseX = 0;
-		mouseY = 0;
+		int[] r = new int[] {mouseMoveX, mouseMoveY};
+		mouseMoveX = 0;
+		mouseMoveY = 0;
 		return r;
+	}
+	
+	public double[] getMouseLocation() {
+		return new double[] {1. * mouseX / width, 1. * mouseY / height};
 	}
 	
 	private int getMouseState() {
@@ -181,7 +187,7 @@ public class Controller implements KeyListener, MouseListener, MouseMotionListen
 		}
 	}
 	
-	void setView(double[] orig, double[] dir) {
+	public void setView(double[] orig, double[] dir) {
 		viewOrig = orig;
 		viewDir = dir;
 	}

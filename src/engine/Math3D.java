@@ -457,4 +457,11 @@ public class Math3D {
 			str += (int) (d[i] * 1000) / 1000.0 + " ";
 		return str;
 	}
+	
+	public static String doubles2Str(double[] d) {
+		String str = "";
+		for (double dd : d)
+			str += (int) (dd * 1000) / 1000.0 + " ";
+		return str;
+	}
 }

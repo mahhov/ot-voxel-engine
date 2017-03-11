@@ -1,6 +1,6 @@
 package camera;
 
-import engine.Controller;
+import control.Controller;
 import engine.Math3D;
 
 public class FreeCamera extends Camera {
