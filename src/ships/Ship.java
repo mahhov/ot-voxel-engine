@@ -1,6 +1,6 @@
 package ships;
 
-import engine.Controller;
+import control.Controller;
 import engine.Math3D;
 import engine.Painter;
 import module.*;
