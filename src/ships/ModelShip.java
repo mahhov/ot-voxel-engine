@@ -32,6 +32,7 @@ public class ModelShip extends Ship implements Serializable {
 		addToWorld(world);
 		initWorld(world);
 		saveStatus = "";
+		directionSelected = Math3D.FRONT;
 	}
 	
 	void generateBlueprint() {
