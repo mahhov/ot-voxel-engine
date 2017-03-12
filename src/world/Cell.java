@@ -2,64 +2,43 @@ package world;
 
 import camera.Camera;
 import engine.Painter;
+import list.LList;
 import shapes.Shape;
 import shapes.Surface;
 
 public class Cell {
 	Chunk chunk;
-	private LinkedShapes shapes;
+	private LList<Shape> shapes;
 	
 	Cell(Chunk chunk) {
 		this.chunk = chunk;
+		shapes = new LList<>(null, null, null);
 	}
 	
 	public void add(Shape shape) {
 		chunk.count++;
-		if (shapes == null) {
-			shapes = new LinkedShapes(null, null, shape);
-			return;
-		}
-		shapes = new LinkedShapes(shapes, null, shape);
-		shapes.next.prev = shapes;
+		shapes = shapes.add(shape);
 	}
 	
-	public void remove(LinkedShapes lShape) {
+	public void remove(LList lShape) {
 		chunk.count--;
-		if (lShape.prev != null)
-			lShape.prev.next = lShape.next;
-		if (lShape.next != null)
-			lShape.next.prev = lShape.prev;
-		if (shapes == lShape)
-			shapes = shapes.next;
+		shapes = shapes.remove(lShape);
 	}
 	
 	public void drawAll(Painter painter, Camera c, int xSide, int ySide, int zSide) {
-		LinkedShapes lShape = shapes;
 		Surface surfaces[];
-		while (lShape != null) {
-			surfaces = lShape.shape.draw(xSide, ySide, zSide);
+		for (LList<Shape> lShape : shapes) {
+			surfaces = lShape.node.draw(xSide, ySide, zSide);
 			if (surfaces == null)
 				remove(lShape);
 			else
 				for (Surface s : surfaces)
 					if (s != null)
 						painter.clipPolygon(s.toCamera(c), s.tempDistanceLight, s.color, s.clipState, s.frame);
-			lShape = lShape.next;
 		}
 	}
 	
 	public boolean isEmpty() {
 		return shapes == null;
-	}
-	
-	public class LinkedShapes {
-		private LinkedShapes next, prev;
-		private Shape shape;
-		
-		private LinkedShapes(LinkedShapes next, LinkedShapes prev, Shape shape) {
-			this.next = next;
-			this.prev = prev;
-			this.shape = shape;
-		}
 	}
 }
