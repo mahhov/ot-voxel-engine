@@ -22,7 +22,7 @@ public abstract class Module {
 	public void set(int dir, double[] location) {
 	}
 	
-	public void addForce(Math3D.Force force, boolean[] control) {
+	public void react(Math3D.Force force, boolean[] control) {
 	}
 	
 	public Color[] getColors() {

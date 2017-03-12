@@ -2,9 +2,10 @@ package ships;
 
 import java.io.*;
 
+
 public class Blueprint implements Serializable {
-	final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4;
-	final static String[] MODULE_NAMES = new String[] {"REMOVE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE"};
+	final static int MODULE_EMPTY_MODULE = 0, MODULE_HULL = 1, MODULE_ROTOR = 2, MODULE_HELIUM = 3, MODULE_FORW_BLADE = 4, MODULE_GUN = 5;
+	final static String[] MODULE_NAMES = new String[] {"REMOVE", "HULL", "ROTOR", "HELIUM", "FORWARD BLADE", "GUN"};
 	final static String[] DIRECTION_NAMES = new String[] {"LEFT", "RIGHT", "FRONT", "BACK", "BOTTOM", "TOP"};
 	
 	byte width, length, height;

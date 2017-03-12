@@ -92,9 +92,7 @@ public class ModelShip extends Ship implements Serializable {
 		double movex, movey, movez, move;
 		double moved = 0, maxMoved = 75;
 		
-		//		System.out.println("begin");
 		while (moved < maxMoved && inBounds(nextx, nexty, nextz) && isEmpty(nextx, nexty, nextz)) {
-			//			System.out.println(x + " " + y + " " + z);
 			if (controller.viewDir[1] > 0)
 				deltax = Math3D.notZero(1 + nextx - x, 1);
 			else
@@ -120,9 +118,6 @@ public class ModelShip extends Ship implements Serializable {
 				movez = Math3D.sqrt3;
 			else
 				movez = deltaz / controller.viewDir[2];
-			
-			if (movex <= 0 || movey <= 0 || movez <= 0)
-				System.out.println("move by <= 0");
 			
 			move = Math3D.min(movex, movey, movez) + Math3D.EPSILON;
 			moved += move;
@@ -168,6 +163,8 @@ public class ModelShip extends Ship implements Serializable {
 			moduleSelected = 3;
 		else if (controller.isKeyPressed(Controller.KEY_4))
 			moduleSelected = 4;
+		else if (controller.isKeyPressed(Controller.KEY_5))
+			moduleSelected = 5;
 	}
 	
 	private void selectDirection(Controller controller) {

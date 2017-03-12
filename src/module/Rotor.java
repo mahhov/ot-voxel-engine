@@ -72,7 +72,7 @@ public class Rotor extends Module {
 				color[i] = Color.DARK_GRAY;
 	}
 	
-	public void addForce(Math3D.Force force, boolean[] control) {
+	public void react(Math3D.Force force, boolean[] control) {
 		active = false;
 		for (int i = 0; i < this.control.length; i++)
 			if (this.control[i] && control[i]) {

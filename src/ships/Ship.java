@@ -77,6 +77,9 @@ public abstract class Ship {
 			case MODULE_FORW_BLADE:
 				module = new ForwBlade(this);
 				break;
+			case MODULE_GUN:
+				module = new Gun();
+				break;
 			default:
 				module = new Hull();
 		}
@@ -190,14 +193,14 @@ public abstract class Ship {
 		if (controller.isKeyDown(Controller.KEY_SHIFT))
 			control[Math3D.BOTTOM] = true;
 		
-		// force
+		// react
 		Math3D.Force force = new Math3D.Force();
 		for (Module[][] ppp : part)
 			for (Module[] pp : ppp)
 				for (Module p : pp)
-					p.addForce(force, control);
+					p.react(force, control); // todo: support aim direction + aim click
 		
-		// apply
+		// apply force
 		applyForce(force);
 	}
 	

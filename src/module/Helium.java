@@ -8,8 +8,6 @@ import java.awt.*;
 import static engine.Math3D.TOP_VECTOR;
 
 public class Helium extends Module {
-	public static final int ID = 3;
-	
 	private static final double force = .0005;
 	private double[] location;
 	private Color[] color;
@@ -26,7 +24,7 @@ public class Helium extends Module {
 			color[i] = Color.CYAN;
 	}
 	
-	public void addForce(Math3D.Force force, boolean[] control) {
+	public void react(Math3D.Force force, boolean[] control) {
 		double[] dir = new double[3];
 		
 		double[] absDir = TOP_VECTOR;
