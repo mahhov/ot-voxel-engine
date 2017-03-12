@@ -51,7 +51,6 @@ public class ModelShip extends Ship implements Serializable {
 	
 	void addToWorld(World world) {
 		// selected frame
-		drawCounter++;
 		if (selected != null)
 			world.addShape((int) x + selected[1], (int) y + selected[0], (int) z + selected[2], new CubeFrame(x + selected[1] + .5, y + selected[0] + .5, z + selected[2] + .5, new Math3D.Angle(0), new Math3D.Angle(0), new Math3D.Angle(0), .5, this));
 		
@@ -75,6 +74,7 @@ public class ModelShip extends Ship implements Serializable {
 	}
 	
 	public void update(World world, Controller controller) {
+		drawCounter++;
 		selectCube(controller);
 		selectModule(controller);
 		selectDirection(controller);

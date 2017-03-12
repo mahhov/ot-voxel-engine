@@ -5,16 +5,17 @@ import engine.Math3D;
 import engine.Painter;
 import module.*;
 import shapes.Shape;
+import shapes.ShapeParent;
 import shapes.ShipTrigger;
 import world.World;
 
 import static ships.Blueprint.*;
 
-public abstract class Ship {
+public abstract class Ship implements ShapeParent {
 	private final double FRICTION = .96, FORCE = 10, ANGLE_FORCE = .75, GRAVITY = -.003;
 	
 	public boolean visible;
-	public long drawCounter;
+	long drawCounter;
 	public double x, y, z; // mass center
 	public Math3D.Angle angle, angleZ, angleTilt;
 	public double[] norm, rightUp;
@@ -78,7 +79,7 @@ public abstract class Ship {
 				module = new ForwBlade(this);
 				break;
 			case MODULE_GUN:
-				module = new Gun();
+				module = new Gun(this);
 				break;
 			default:
 				module = new Hull();
@@ -169,6 +170,7 @@ public abstract class Ship {
 	}
 	
 	public void update(World world, Controller controller) {
+		drawCounter++; // todo : only if moved
 		move(world, controller);
 		addTriggerToWorld(world);
 		if (visible) {
@@ -230,7 +232,6 @@ public abstract class Ship {
 	}
 	
 	private void move(World world, Controller controller) {
-		drawCounter++; // todo : only if moved
 		doControl(controller);
 		
 		vx *= FRICTION;
@@ -283,6 +284,10 @@ public abstract class Ship {
 		if (z < part[0][0].length - 1)
 			block[Math3D.TOP] = part[x][y][z + 1].block[Math3D.BOTTOM];
 		return block;
+	}
+	
+	public long getDrawCounter() {
+		return drawCounter;
 	}
 }
 

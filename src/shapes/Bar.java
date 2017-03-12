@@ -1,7 +1,6 @@
 package shapes;
 
 import engine.Math3D;
-import ships.Ship;
 
 import java.awt.*;
 
@@ -10,8 +9,8 @@ public class Bar extends Cube {
 	private double innerSize;
 	private boolean[] innerSide;
 	
-	public Bar(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, Math3D.Angle angleInner, Math3D.Angle angleZInner, Math3D.Angle angleTiltInner, double size, double innerSize, boolean[] side, boolean[] innerSide, Color[] color, Ship ship) {
-		super(x, y, z, angle, angleZ, angleTilt, size, side, color, ship);
+	public Bar(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, Math3D.Angle angleInner, Math3D.Angle angleZInner, Math3D.Angle angleTiltInner, double size, double innerSize, boolean[] side, boolean[] innerSide, Color[] color, ShapeParent shapeParent) {
+		super(x, y, z, angle, angleZ, angleTilt, size, side, color, shapeParent);
 		this.angleInner = angleInner == null ? angle : angleInner;
 		this.angleZInner = angleZInner == null ? angleZ : angleZInner;
 		this.angleTiltInner = angleTiltInner == null ? angleTilt : angleTiltInner;

@@ -19,12 +19,12 @@ public class Cube extends Shape {
 	boolean[] side;
 	Color[] color;
 	
-	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, Ship ship) {
-		this(x, y, z, angle, angleZ, angleTilt, size, null, null, ship);
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, ShapeParent shapeParent) {
+		this(x, y, z, angle, angleZ, angleTilt, size, null, null, shapeParent);
 	}
 	
-	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] side, Color[] color, Ship ship) {
-		super(ship);
+	public Cube(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double size, boolean[] side, Color[] color, ShapeParent shapeParent) {
+		super(shapeParent);
 		this.x = x;
 		this.y = y;
 		this.z = z;

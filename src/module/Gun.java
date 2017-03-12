@@ -6,16 +6,16 @@ import ships.Ship;
 import java.awt.*;
 
 public class Gun extends Module {
-	private double[] direction;
+	private static final int LOAD_TIME = 100;
 	private int load;
-	private final int loadTime;
+	private double[] direction;
 	private double[] location;
 	private Color[] color;
 	Ship ship;
 	
-	public Gun() {
-		this.loadTime = 100;
+	public Gun(Ship ship) {
 		color = new Color[6];
+		this.ship = ship;
 	}
 	
 	public void set(int dir, double[] location) {
@@ -28,7 +28,8 @@ public class Gun extends Module {
 		if (load > 0)
 			load--;
 		if (load == 0) {
-			load = loadTime;
+			load = LOAD_TIME;
+			System.out.println("fire!!!");
 			// todo: fire
 		}
 	}
