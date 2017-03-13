@@ -3,6 +3,7 @@ package engine;
 import camera.Camera;
 import camera.FreeCamera;
 import control.Controller;
+import list.LList;
 import ships.ModelShip;
 import ships.Ship;
 import world.World;
@@ -32,7 +33,7 @@ class EditorEngine extends Engine {
 	private void createWorld() {
 		world = new World(1, 1, 1, 100);
 		modelShip = createShip();
-		world.setShip(new Ship[] {modelShip});
+		world.setShip(new LList<>(null, null, modelShip));
 	}
 	
 	void begin() {

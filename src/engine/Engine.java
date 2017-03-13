@@ -3,6 +3,7 @@ package engine;
 import camera.Camera;
 import camera.TrailingCamera;
 import control.Controller;
+import list.LList;
 import ships.FileShip;
 import ships.Ship;
 import world.World;
@@ -46,7 +47,7 @@ class Engine {
 		world.fillWorldRand(chunkFill);
 		ship = createShip();
 		((TrailingCamera) camera).setFollowShip(ship);
-		world.setShip(new Ship[] {ship});
+		world.setShip(new LList<>(null, null, ship));
 	}
 	
 	void begin() {

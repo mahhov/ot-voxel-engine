@@ -4,6 +4,7 @@ import camera.Camera;
 import control.Controller;
 import engine.Math3D;
 import engine.Painter;
+import list.LList;
 import particles.Particle;
 import projectiles.Projectile;
 import shapes.Cube;
@@ -15,8 +16,8 @@ public class World {
 	public final int width, length, height, chunkSize;
 	private Chunk[][][] chunk;
 	
-	private Ship[] ship;
-	private Projectile[] projectile;
+	private LList<Ship> ship;
+	private LList<Projectile> projectile;
 	private Particle[] particle;
 	
 	public World(int chunkWidth, int chunkLength, int chunkHeight, int chunkSize) {
@@ -80,7 +81,7 @@ public class World {
 		chunk[cx][cy][cz].add(sx, sy, sz, shape);
 	}
 	
-	public void setShip(Ship[] ship) {
+	public void setShip(LList<Ship> ship) {
 		this.ship = ship;
 	}
 	
@@ -198,8 +199,8 @@ public class World {
 	// UPDATE
 	
 	public void update(Controller controller) {
-		for (Ship s : ship)
-			s.update(this, controller);
+		for (LList<Ship> s : ship)
+			s.node.update(this, controller);
 	}
 	
 	// UITL
