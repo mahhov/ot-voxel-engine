@@ -7,14 +7,13 @@ import engine.Painter;
 import list.LList;
 import particles.Particle;
 import projectiles.Projectile;
-import shapes.Cube;
 import shapes.Shape;
 import shapes.StaticCube;
 import ships.Ship;
 
 public class World {
 	public final int width, length, height, chunkSize;
-	private Chunk[][][] chunk;
+	Chunk[][][] chunk;
 	
 	private LList<Ship> ship;
 	private LList<Projectile> projectile;
@@ -34,41 +33,7 @@ public class World {
 		projectile = new LList<>();
 	}
 	
-	// FILLING
-	
-	public void fillWorldRand(int scale) {
-		for (int cx = 0; cx < 3 * scale; cx++)
-			for (int cy = 0; cy < 3 * scale; cy++)
-				for (int cz = 0; cz < scale; cz++) {
-					chunk[cx][cy][cz].init(chunkSize);
-					for (int x = 0; x < chunkSize; x++)
-						for (int y = 0; y < chunkSize; y++)
-							for (int z = 0; z < chunkSize; z++)
-								if (Math.random() > 0.9995 || (Math.random() > 0.95 && ((x == 0 && cx == 0) || (y == 0 && cy == 0) || (z == 0 && cz == 0)))) {
-									Math3D.Angle angle = new Math3D.Angle(Math.random() * Math.PI * 2);
-									Math3D.Angle angleZ = new Math3D.Angle(Math.random() * Math.PI * 2);
-									Math3D.Angle angleTilt = new Math3D.Angle(Math.random() * Math.PI * 2);
-									double size = Math.random() * 2 + .25;
-									chunk[cx][cy][cz].add(x, y, z, new Cube(cx * chunkSize + x + 0.5, cy * chunkSize + y + 0.5, cz * chunkSize + z + 0.5, angle, angleZ, angleTilt, size, null));
-								}
-				}
-	}
-	
-	public void fillWorldGround(int scale) {
-		int border = scale * 10;
-		for (int x = 0; x < border; x++)
-			for (int y = 0; y < border; y++)
-				addStaticCube(x, y, 0);
-		for (int z = 1; z < 2; z++)
-			for (int x = 0; x < border; x++) {
-				addStaticCube(x, 0, z);
-				addStaticCube(x, border - 1, z);
-				addStaticCube(0, x, z);
-				addStaticCube(border - 1, x, z);
-			}
-	}
-	
-	private void addStaticCube(int x, int y, int z) {
+	void addStaticCube(int x, int y, int z) {
 		addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5, null));
 	}
 	

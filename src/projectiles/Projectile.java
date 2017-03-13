@@ -65,3 +65,5 @@ public class Projectile implements ShapeParent {
 	}
 	
 }
+
+// todo: world collision & modification

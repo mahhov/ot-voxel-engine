@@ -69,3 +69,5 @@ public class StaticCube extends Shape {
 		return new Surface[] {top, bottom, left, right, front, back};
 	}
 }
+
+// todo: make more efficeint in hiding surfaces until world modified to make them visible

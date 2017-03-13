@@ -3,10 +3,10 @@ package engine;
 import camera.Camera;
 import camera.TrailingCamera;
 import control.Controller;
-import list.LList;
 import ships.FileShip;
 import ships.Ship;
 import world.World;
+import world.WorldCreator;
 
 class Engine {
 	Camera camera;
@@ -40,11 +40,14 @@ class Engine {
 	}
 	
 	private void createWorld() {
+		int worldSize = 500;
 		int eachChunkSize = 5;
-		int numChunks = 500 / eachChunkSize;
-		int chunkFill = 50 / eachChunkSize;
-		world = new World(numChunks, numChunks, numChunks, eachChunkSize);
-		world.fillWorldRand(chunkFill);
+		int numChunks = worldSize / eachChunkSize;
+		int fillSize = 100;
+		WorldCreator wc = new WorldCreator(numChunks, numChunks, numChunks, eachChunkSize);
+		wc.fillWorldRand(eachChunkSize, fillSize, fillSize, fillSize, 0.0005);
+		wc.fillWorldGround(fillSize, fillSize, 1);
+		world = wc.world;
 		ship = createShip();
 		((TrailingCamera) camera).setFollowShip(ship);
 		world.addShip(ship);
