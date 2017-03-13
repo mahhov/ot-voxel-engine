@@ -44,9 +44,9 @@ public class ModelShip extends Ship implements Serializable {
 			for (int yi = 0; yi < fullLength; yi++)
 				for (int zi = 0; zi < 1; zi++)
 					if (xi < WORLD_EDGE || xi > width + WORLD_EDGE || yi < WORLD_EDGE || yi > length + WORLD_EDGE)
-						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.GRAY));
+						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.GRAY, null));
 					else
-						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.LIGHT_GRAY));
+						world.addShape(xi, yi, zi, new StaticCube(xi + .5, yi + .5, zi + .5, Color.LIGHT_GRAY, null));
 	}
 	
 	void addToWorld(World world) {

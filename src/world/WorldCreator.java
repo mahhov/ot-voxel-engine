@@ -27,6 +27,6 @@ public class WorldCreator {
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < length; y++)
 				for (int z = 0; z < height; z++)
-					world.addStaticCube(x, y, z);
+					world.addStaticCube(x, y, z, null);
 	}
 }

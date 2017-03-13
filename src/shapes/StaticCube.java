@@ -1,12 +1,14 @@
 package shapes;
 
+import engine.Math3D;
+
 import java.awt.*;
 
 public class StaticCube extends Shape {
 	private double x, y, z;
 	private Surface top, bottom, left, right, front, back;
 	
-	public StaticCube(double x, double y, double z, Color color) {
+	public StaticCube(double x, double y, double z, Color color, boolean side[]) {
 		super(null);
 		this.x = x;
 		this.y = y;
@@ -14,10 +16,16 @@ public class StaticCube extends Shape {
 		
 		if (color == null)
 			color = Color.LIGHT_GRAY;
-		initSurfaces(color);
+		if (side == null || true) {
+			side = new boolean[6];
+			for (int i = 0; i < side.length; i++)
+				side[i] = true;
+		}
+		
+		initSurfaces(color, side);
 	}
 	
-	private void initSurfaces(Color color) {
+	private void initSurfaces(Color color, boolean[] side) {
 		// dimensions
 		double size = 0.5;
 		double topZ = z + size;
@@ -33,40 +41,49 @@ public class StaticCube extends Shape {
 		double[] zs = new double[] {bottomZ, topZ, topZ, bottomZ};
 		
 		// from back/left -> back/right -> front/right -> front/left
-		top = new Surface(xs, ys, topZ, true);
-		bottom = new Surface(xs, ys, bottomZ, false);
+		if (side[Math3D.TOP]) {
+			top = new Surface(xs, ys, topZ, true);
+			top.setColor(color);
+			top.setLight(1);
+		}
+		if (side[Math3D.BOTTOM]) {
+			bottom = new Surface(xs, ys, bottomZ, false);
+			bottom.setColor(color);
+			bottom.setLight(1);
+		}
 		
 		// from bottom/back -> top/back -> top/front -> bottom/front
-		left = new Surface(leftX, ys, zs, true);
-		right = new Surface(rightX, ys, zs, false);
+		if (side[Math3D.LEFT]) {
+			left = new Surface(leftX, ys, zs, true);
+			left.setColor(color);
+			left.setLight(1);
+		}
+		if (side[Math3D.RIGHT]) {
+			right = new Surface(rightX, ys, zs, false);
+			right.setColor(color);
+			right.setLight(1);
+		}
 		
 		xs = new double[] {leftX, leftX, rightX, rightX};
 		// from left/bottom -> left/top -> right/top -> right/bottom
-		front = new Surface(xs, frontY, zs, true);
-		back = new Surface(xs, backY, zs, false);
-		
-		// set color
-		top.setColor(color);
-		bottom.setColor(color);
-		back.setColor(color);
-		front.setColor(color);
-		right.setColor(color);
-		left.setColor(color);
-		
-		// set light
-		top.setLight(1);
-		bottom.setLight(1);
-		back.setLight(1);
-		front.setLight(1);
-		right.setLight(1);
-		left.setLight(1);
+		if (side[Math3D.FRONT]) {
+			front = new Surface(xs, frontY, zs, true);
+			front.setColor(color);
+			front.setLight(1);
+		}
+		if (side[Math3D.BACK]) {
+			back = new Surface(xs, backY, zs, false);
+			back.setColor(color);
+			back.setLight(1);
+		}
 	}
 	
 	Surface[] getSurfaces(int xSide, int ySide, int zSide) {
-		//		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
-		//		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
-		//		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);
-		return new Surface[] {top, bottom, left, right, front, back};
+		Surface xSurface = xSide == Math3D.LEFT ? left : (xSide == Math3D.RIGHT ? right : null);
+		Surface ySurface = ySide == Math3D.FRONT ? front : (ySide == Math3D.BACK ? back : null);
+		Surface zSurface = zSide == Math3D.BOTTOM ? bottom : (zSide == Math3D.TOP ? top : null);
+		return new Surface[] {xSurface, ySurface, zSurface};
+		//			return new Surface[] {top, bottom, left, right, front, back};
 	}
 }
 
