@@ -47,7 +47,7 @@ class Engine {
 		world.fillWorldRand(chunkFill);
 		ship = createShip();
 		((TrailingCamera) camera).setFollowShip(ship);
-		world.setShip(new LList<>(null, null, ship));
+		world.addShip(ship);
 	}
 	
 	void begin() {

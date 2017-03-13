@@ -6,7 +6,10 @@ public class LList<T> implements Iterable<LList<T>> {
 	private LList next, prev;
 	public T node;
 	
-	public LList(LList next, LList prev, T node) {
+	public LList() {
+	}
+	
+	private LList(LList next, LList prev, T node) {
 		this.next = next;
 		this.prev = prev;
 		this.node = node;

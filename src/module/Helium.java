@@ -2,6 +2,7 @@ package module;
 
 import engine.Math3D;
 import ships.Ship;
+import world.World;
 
 import java.awt.*;
 
@@ -24,7 +25,7 @@ public class Helium extends Module {
 			color[i] = Color.CYAN;
 	}
 	
-	public void react(Math3D.Force force, boolean[] control) {
+	public void react(World world, Math3D.Force force, boolean[] control) {
 		double[] dir = new double[3];
 		
 		double[] absDir = TOP_VECTOR;

@@ -79,7 +79,7 @@ public abstract class Ship implements ShapeParent {
 				module = new ForwBlade(this);
 				break;
 			case MODULE_GUN:
-				module = new Gun(this);
+				module = new Blaster(this);
 				break;
 			default:
 				module = new Hull();
@@ -171,7 +171,8 @@ public abstract class Ship implements ShapeParent {
 	
 	public void update(World world, Controller controller) {
 		drawCounter++; // todo : only if moved
-		move(world, controller);
+		doControl(world, controller);
+		move(world);
 		addTriggerToWorld(world);
 		if (visible) {
 			addToWorld(world); // todo : only if moved
@@ -179,7 +180,7 @@ public abstract class Ship implements ShapeParent {
 		}
 	}
 	
-	private void doControl(Controller controller) {
+	private void doControl(World world, Controller controller) { // todo: rename
 		// controls
 		boolean[] control = new boolean[6];
 		if (controller.isKeyDown(Controller.KEY_W))
@@ -200,7 +201,7 @@ public abstract class Ship implements ShapeParent {
 		for (Module[][] ppp : part)
 			for (Module[] pp : ppp)
 				for (Module p : pp)
-					p.react(force, control); // todo: support aim direction + aim click
+					p.react(world, force, control); // todo: support aim direction + aim click
 		
 		// apply force
 		applyForce(force);
@@ -231,9 +232,7 @@ public abstract class Ship implements ShapeParent {
 			vAngleFlat -= ANGLE_FORCE;
 	}
 	
-	private void move(World world, Controller controller) {
-		doControl(controller);
-		
+	private void move(World world) {
 		vx *= FRICTION;
 		vy *= FRICTION;
 		vz = (vz + GRAVITY) * FRICTION;

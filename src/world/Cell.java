@@ -12,7 +12,7 @@ public class Cell {
 	
 	Cell(Chunk chunk) {
 		this.chunk = chunk;
-		shapes = new LList<>(null, null, null);
+		shapes = new LList<>();
 	}
 	
 	public void add(Shape shape) {

@@ -2,6 +2,7 @@ package module;
 
 import engine.Math3D;
 import shapes.Cube;
+import world.World;
 
 import java.awt.*;
 
@@ -72,7 +73,7 @@ public class Rotor extends Module {
 				color[i] = Color.DARK_GRAY;
 	}
 	
-	public void react(Math3D.Force force, boolean[] control) {
+	public void react(World world, Math3D.Force force, boolean[] control) {
 		active = false;
 		for (int i = 0; i < this.control.length; i++)
 			if (this.control[i] && control[i]) {

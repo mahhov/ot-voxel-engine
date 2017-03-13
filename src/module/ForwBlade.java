@@ -4,6 +4,7 @@ import engine.Math3D;
 import shapes.Bar;
 import shapes.Shape;
 import ships.Ship;
+import world.World;
 
 import java.awt.*;
 
@@ -50,7 +51,7 @@ public class ForwBlade extends Module {
 			color[i] = Color.YELLOW;
 	}
 	
-	public void react(Math3D.Force force, boolean[] control) {
+	public void react(World world, Math3D.Force force, boolean[] control) {
 		state = STATE_INACTIVE;
 		for (int i = 0; i < this.controlUp.length; i++)
 			if (control[i])

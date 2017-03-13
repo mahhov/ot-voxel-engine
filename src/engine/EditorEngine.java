@@ -33,7 +33,7 @@ class EditorEngine extends Engine {
 	private void createWorld() {
 		world = new World(1, 1, 1, 100);
 		modelShip = createShip();
-		world.setShip(new LList<>(null, null, modelShip));
+		world.addShip(modelShip);
 	}
 	
 	void begin() {

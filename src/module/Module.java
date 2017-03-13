@@ -4,6 +4,7 @@ import engine.Math3D;
 import shapes.Cube;
 import shapes.Shape;
 import ships.Ship;
+import world.World;
 
 import java.awt.*;
 
@@ -22,7 +23,7 @@ public abstract class Module {
 	public void set(int dir, double[] location) {
 	}
 	
-	public void react(Math3D.Force force, boolean[] control) {
+	public void react(World world, Math3D.Force force, boolean[] control) {
 	}
 	
 	public Color[] getColors() {

@@ -1,11 +1,13 @@
 package module;
 
 import engine.Math3D;
+import projectiles.Projectile;
 import ships.Ship;
+import world.World;
 
 import java.awt.*;
 
-public class Gun extends Module {
+public class Blaster extends Module {
 	private static final int LOAD_TIME = 100;
 	private int load;
 	private double[] direction;
@@ -13,7 +15,7 @@ public class Gun extends Module {
 	private Color[] color;
 	Ship ship;
 	
-	public Gun(Ship ship) {
+	public Blaster(Ship ship) {
 		color = new Color[6];
 		this.ship = ship;
 	}
@@ -24,13 +26,12 @@ public class Gun extends Module {
 			color[i] = Color.PINK;
 	}
 	
-	public void react(Math3D.Force force, boolean[] control) {
+	public void react(World world, Math3D.Force force, boolean[] control) {
 		if (load > 0)
 			load--;
 		if (load == 0) {
 			load = LOAD_TIME;
-			System.out.println("fire!!!");
-			// todo: fire
+			world.addProjectile(new Projectile(ship.x, ship.y, ship.z, ship.angle, ship.angleZ, ship.angleTilt, ship.norm[0], ship.norm[1], ship.norm[2]));
 		}
 	}
 	
@@ -38,6 +39,5 @@ public class Gun extends Module {
 		return color;
 	}
 }
-
 
 // todo : visual indicator of load and aim direciton

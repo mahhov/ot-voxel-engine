@@ -15,13 +15,13 @@ public class Projectile implements ShapeParent {
 	private double[] norm, rightUp;
 	private double vx, vy, vz;
 	
-	public Projectile(double x, double y, double z, double angle, double angleZ, double angleTilt, double vx, double vy, double vz) {
+	public Projectile(double x, double y, double z, Math3D.Angle angle, Math3D.Angle angleZ, Math3D.Angle angleTilt, double vx, double vy, double vz) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.angle = new Math3D.Angle(angle);
-		this.angleZ = new Math3D.Angle(angleZ);
-		this.angleTilt = new Math3D.Angle(angleTilt);
+		this.angle = angle;
+		this.angleZ = angleZ;
+		this.angleTilt = angleTilt;
 		this.vx = vx;
 		this.vy = vy;
 		this.vz = vz;
@@ -38,14 +38,14 @@ public class Projectile implements ShapeParent {
 		world.addShape((int) x, (int) y, (int) z, new CubeFrame(x, y, z, angle, angleZ, angleTilt, .1, this));
 	}
 	
-	public void update(World world, Controller controller) {
+	public void update(World world) {
 		drawCounter++;
-		move(world, controller);
+		move(world);
 		// todo: check collide
 		addToWorld(world);
 	}
 	
-	private void move(World world, Controller controller) {
+	private void move(World world) {
 		vx *= FRICTION;
 		vy *= FRICTION;
 		vz = (vz + GRAVITY) * FRICTION;

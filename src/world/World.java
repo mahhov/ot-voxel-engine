@@ -30,6 +30,8 @@ public class World {
 			for (int y = 0; y < chunkLength; y++)
 				for (int z = 0; z < chunkHeight; z++)
 					chunk[x][y][z] = new Chunk();
+		ship = new LList<>();
+		projectile = new LList<>();
 	}
 	
 	// FILLING
@@ -81,8 +83,12 @@ public class World {
 		chunk[cx][cy][cz].add(sx, sy, sz, shape);
 	}
 	
-	public void setShip(LList<Ship> ship) {
-		this.ship = ship;
+	public void addShip(Ship ship) {
+		this.ship = this.ship.add(ship);
+	}
+	
+	public void addProjectile(Projectile projectile) {
+		this.projectile = this.projectile.add(projectile);
 	}
 	
 	// DRAWING
@@ -201,6 +207,8 @@ public class World {
 	public void update(Controller controller) {
 		for (LList<Ship> s : ship)
 			s.node.update(this, controller);
+		for (LList<Projectile> p : projectile)
+			p.node.update(this);
 	}
 	
 	// UITL
