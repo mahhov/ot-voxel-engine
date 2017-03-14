@@ -1,6 +1,7 @@
 package engine;
 
 import camera.Camera;
+import camera.FreeCamera;
 import camera.TrailingCamera;
 import control.Controller;
 import ships.FileShip;
@@ -42,9 +43,8 @@ class Engine {
 		int worldSize = 750;
 		int eachChunkSize = 25;
 		int numChunks = worldSize / eachChunkSize;
-		int fillSize = 100;
 		WorldCreator wc = new WorldCreator(numChunks, numChunks, numChunks, eachChunkSize);
-		wc.heightMap(65, 50);
+		wc.heightMap(65, 25);
 		world = wc.world;
 		ship = createShip(32, 32, 100);
 		((TrailingCamera) camera).setFollowShip(ship);
