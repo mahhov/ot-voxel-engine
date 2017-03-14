@@ -66,18 +66,24 @@ public class WorldCreator {
 				}
 		}
 		
-		//		boolean[] topSide = new boolean[6];
-		//		topSide[Math3D.TOP] = true;
-		
+		boolean[] side;
 		for (int x = 0; x < size; x++)
 			for (int y = 0; y < size; y++)
-				for (int z = 0; z < heightMap[x][y] * height; z++)
-					world.addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5, null, null, .5));
-	}
-	
-	
-	public static int rand(int height) {
-		return (int) (Math.random() * height);
+				for (int z = 0; z < heightMap[x][y] * height; z++) {
+					side = new boolean[] {true, true, true, true, true, true};
+					if (x > 0 && heightMap[x - 1][y] * height > z)
+						side[Math3D.LEFT] = false;
+					if (x < size - 1 && heightMap[x + 1][y] * height > z)
+						side[Math3D.RIGHT] = false;
+					if (y > 0 && heightMap[x][y - 1] * height > z)
+						side[Math3D.FRONT] = false;
+					if (y < size - 1 && heightMap[x][y + 1] * height > z)
+						side[Math3D.BACK] = false;
+					if (z + 1 < heightMap[x][y] * height)
+						side[Math3D.TOP] = false;
+					side[Math3D.BOTTOM] = false;
+					world.addShape(x * 5 + 2, y * 5 + 2, z * 5 + 2, new StaticCube(x * 5 + 2.5, y * 5 + 2.5, z * 5 + 2.5, null, side, 2.5));
+				}
 	}
 	
 	public static int addOrSubtract() {

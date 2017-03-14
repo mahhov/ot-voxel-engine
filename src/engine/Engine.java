@@ -36,19 +36,19 @@ class Engine {
 	}
 	
 	Camera createCamera() {
-		return new TrailingCamera();
-//		return new FreeCamera();
+//		return new TrailingCamera();
+		return new FreeCamera();
 	}
 	
 	private void createWorld() {
-		int worldSize = 500;
+		int worldSize = 1000;
 		int eachChunkSize = 5;
 		int numChunks = worldSize / eachChunkSize;
 		int fillSize = 100;
 		WorldCreator wc = new WorldCreator(numChunks, numChunks, numChunks, eachChunkSize);
 //		wc.randDebris(eachChunkSize, fillSize, fillSize, fillSize, 0.0005);
 //		wc.flatFloor(fillSize, fillSize, 1);
-		wc.heightMap(65, 10);
+		wc.heightMap(129, 50);
 		world = wc.world;
 		ship = createShip();
 //		((TrailingCamera) camera).setFollowShip(ship);
