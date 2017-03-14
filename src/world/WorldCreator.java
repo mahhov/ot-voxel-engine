@@ -37,6 +37,8 @@ public class WorldCreator {
 	
 	// size should be 2^n+1, for any int n; e.g. 5, 65, 257
 	public void heightMap(int size, int height) {
+		System.out.println("begin");
+		
 		// credit to M. Jessup http://stackoverflow.com/questions/2755750/diamond-square-algorithm
 		
 		double[][] heightMap = new double[size][size];
@@ -66,8 +68,11 @@ public class WorldCreator {
 				}
 		}
 		
+		System.out.println("part 2");
+		
 		boolean[] side;
-		for (int x = 0; x < size; x++)
+		for (int x = 0; x < size; x++) {
+			System.out.println("x " + x);
 			for (int y = 0; y < size; y++)
 				for (int z = 0; z < heightMap[x][y] * height; z++) {
 					side = new boolean[] {true, true, true, true, true, true};
@@ -84,6 +89,9 @@ public class WorldCreator {
 					side[Math3D.BOTTOM] = false;
 					world.addShape(x * 5 + 2, y * 5 + 2, z * 5 + 2, new StaticCube(x * 5 + 2.5, y * 5 + 2.5, z * 5 + 2.5, null, side, 2.5));
 				}
+		}
+		
+		System.out.println("end");
 	}
 	
 	public static int addOrSubtract() {

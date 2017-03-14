@@ -3,9 +3,7 @@ package engine;
 import camera.Camera;
 import camera.FreeCamera;
 import control.Controller;
-import list.LList;
 import ships.ModelShip;
-import ships.Ship;
 import world.World;
 
 class EditorEngine extends Engine {
@@ -21,7 +19,7 @@ class EditorEngine extends Engine {
 		createWorld();
 	}
 	
-	ModelShip createShip() {
+	ModelShip createShip(int x, int y, int z) {
 		return new ModelShip(world);
 	}
 	
@@ -32,7 +30,7 @@ class EditorEngine extends Engine {
 	
 	private void createWorld() {
 		world = new World(1, 1, 1, 100);
-		modelShip = createShip();
+		modelShip = createShip(0, 0, 0);
 		world.addShip(modelShip);
 	}
 	

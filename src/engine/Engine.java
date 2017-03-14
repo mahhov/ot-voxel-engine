@@ -30,8 +30,8 @@ class Engine {
 		camera = createCamera();
 	}
 	
-	Ship createShip() {
-		return new FileShip(50, 50, 25, 0, 0, 0, world);
+	Ship createShip(int x, int y, int z) {
+		return new FileShip(x, y, z, 0, 0, 0, world);
 	}
 	
 	Camera createCamera() {
@@ -39,14 +39,14 @@ class Engine {
 	}
 	
 	private void createWorld() {
-		int worldSize = 1000;
-		int eachChunkSize = 5;
+		int worldSize = 750;
+		int eachChunkSize = 25;
 		int numChunks = worldSize / eachChunkSize;
 		int fillSize = 100;
 		WorldCreator wc = new WorldCreator(numChunks, numChunks, numChunks, eachChunkSize);
-		wc.heightMap(129, 50);
+		wc.heightMap(65, 50);
 		world = wc.world;
-		ship = createShip();
+		ship = createShip(32, 32, 100);
 		((TrailingCamera) camera).setFollowShip(ship);
 		world.addShip(ship);
 	}
