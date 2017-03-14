@@ -464,4 +464,8 @@ public class Math3D {
 			str += (int) (dd * 1000) / 1000.0 + " ";
 		return str;
 	}
+	
+	public static int rand(int max) {
+		return (int) (Math.random() * max);
+	}
 }
