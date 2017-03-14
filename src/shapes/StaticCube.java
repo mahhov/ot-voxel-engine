@@ -9,6 +9,10 @@ public class StaticCube extends Shape {
 	private Surface top, bottom, left, right, front, back;
 	
 	public StaticCube(double x, double y, double z, Color color, boolean side[]) {
+		this(x, y, z, color, side, .5);
+	}
+	
+	public StaticCube(double x, double y, double z, Color color, boolean side[], double size) {
 		super(null);
 		this.x = x;
 		this.y = y;
@@ -22,12 +26,11 @@ public class StaticCube extends Shape {
 				side[i] = true;
 		}
 		
-		initSurfaces(color, side);
+		initSurfaces(color, side, size);
 	}
 	
-	private void initSurfaces(Color color, boolean[] side) {
+	private void initSurfaces(Color color, boolean[] side, double size) {
 		// dimensions
-		double size = 0.5;
 		double topZ = z + size;
 		double bottomZ = z - size;
 		double leftX = x - size;

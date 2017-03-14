@@ -2,6 +2,7 @@ package world;
 
 import engine.Math3D;
 import shapes.Cube;
+import shapes.StaticCube;
 
 public class WorldCreator {
 	public World world;
@@ -26,9 +27,9 @@ public class WorldCreator {
 	public void fillWorldGround(int width, int length, int height) {
 		boolean[] topSide = new boolean[6];
 		topSide[Math3D.TOP] = true;
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < length; y++)
-				for (int z = 0; z < height; z++)
-					world.addStaticCube(x, y, z, topSide);
+		for (int x = 0; x < width; x += 5)
+			for (int y = 0; y < length; y += 5)
+				for (int z = 0; z < height; z += 5)
+					world.addShape(x, y, z, new StaticCube(x + 0.5, y + 0.5, z + 0.5, null, topSide, 5));
 	}
 }
