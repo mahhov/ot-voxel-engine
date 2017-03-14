@@ -16,7 +16,7 @@ public class StaticCube extends Shape {
 		
 		if (color == null)
 			color = Color.LIGHT_GRAY;
-		if (side == null || true) {
+		if (side == null) {
 			side = new boolean[6];
 			for (int i = 0; i < side.length; i++)
 				side[i] = true;

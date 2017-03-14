@@ -24,9 +24,11 @@ public class WorldCreator {
 	}
 	
 	public void fillWorldGround(int width, int length, int height) {
+		boolean[] topSide = new boolean[6];
+		topSide[Math3D.TOP] = true;
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < length; y++)
 				for (int z = 0; z < height; z++)
-					world.addStaticCube(x, y, z, null);
+					world.addStaticCube(x, y, z, topSide);
 	}
 }
