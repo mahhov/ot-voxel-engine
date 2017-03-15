@@ -1,5 +1,5 @@
-package list;
-
-public interface Findable extends ListItem {
-	boolean identical(Object id);
-}
+//package list;
+//
+//public interface Findable extends ListItem {
+//	boolean identical(Object id);
+//}

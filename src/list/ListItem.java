@@ -1,4 +1,4 @@
-package list;
-
-public abstract interface ListItem {
-}
+//package list;
+//
+//public abstract interface ListItem {
+//}
