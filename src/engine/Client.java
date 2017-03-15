@@ -9,7 +9,7 @@ public class Client {
 	Controller controller;
 	
 	Client() {
-		int frame = 400, image = frame;
+		int frame = 800, image = frame;
 		Math3D.loadTrig(1000);
 		controller = new Controller(frame, frame);
 		painter = new Painter(frame, image, controller);
