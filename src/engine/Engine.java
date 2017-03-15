@@ -41,7 +41,7 @@ class Engine {
 	
 	private void createWorld() {
 		int worldSize = 750;
-		int eachChunkSize = 25;
+		int eachChunkSize = 5;
 		int numChunks = worldSize / eachChunkSize;
 		WorldCreator wc = new WorldCreator(numChunks, numChunks, numChunks, eachChunkSize);
 		wc.heightMap(65, 25);

@@ -40,8 +40,7 @@ public class WorldCreator {
 		// credit to M. Jessup http://stackoverflow.com/questions/2755750/diamond-square-algorithm
 		
 		double[][] heightMap = new double[size][size];
-		heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] =
-				heightMap[size - 1][size - 1] = .5;
+		heightMap[0][0] = heightMap[0][size - 1] = heightMap[size - 1][0] = heightMap[size - 1][size - 1] = .5;
 		
 		double h = .5;
 		Random r = new Random();
@@ -66,6 +65,8 @@ public class WorldCreator {
 				}
 		}
 		
+		int count = 0;
+		int scale = 5;
 		boolean[] side;
 		for (int x = 0; x < size; x++)
 			for (int y = 0; y < size; y++)
@@ -82,8 +83,13 @@ public class WorldCreator {
 					if (z + 1 < heightMap[x][y] * height)
 						side[Math3D.TOP] = false;
 					side[Math3D.BOTTOM] = false;
-					world.addShape(x * 5 + 2, y * 5 + 2, z * 5 + 2, new StaticCube(x * 5 + 2.5, y * 5 + 2.5, z * 5 + 2.5, null, side, 2.5));
+					if (side[0] || side[1] || side[2] || side[3] || side[4] || side[5]) {
+						count++;
+						world.addShape(x * scale + scale / 2, y * scale + scale / 2, z * scale + scale / 2, new StaticCube(x * scale + scale / 2., y * scale + scale / 2., z * scale + scale / 2., null, side, scale / 2.));
+					}
 				}
+		
+		System.out.println("height map count " + count);
 	}
 	
 	public static int addOrSubtract() {
