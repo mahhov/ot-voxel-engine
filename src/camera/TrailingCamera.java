@@ -13,7 +13,7 @@ public class TrailingCamera extends Camera {
 	private boolean free;
 	
 	public TrailingCamera() {
-		trailDistance = MIN_TRAIL + (MAX_TRAIL - MIN_TRAIL) * .1;
+		trailDistance = MIN_TRAIL + (MAX_TRAIL - MIN_TRAIL) * .5;
 		trailAngle = new Math3D.Angle(0);
 		trailAngleZ = new Math3D.Angle(0);
 		free = true;

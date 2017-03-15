@@ -11,7 +11,7 @@ import java.awt.*;
 import static engine.Math3D.TOP_VECTOR;
 
 public class ForwBlade extends Module {
-	private static final double force = .02;
+	private static final double FORCE = .002;
 	private double[] location;
 	private boolean[] controlUp, controlDown;
 	private static final int STATE_INACTIVE = 0, STATE_UP = 1, STATE_DOWN = 2;
@@ -39,10 +39,10 @@ public class ForwBlade extends Module {
 			controlDown[Math3D.RIGHT] = true;
 		}
 		
-		if (location[1] > 0 ) {
+		if (location[1] > 0) {
 			controlUp[Math3D.TOP] = true;
 			controlDown[Math3D.BOTTOM] = true;
-		}else if (location[1] < 0 ) {
+		} else if (location[1] < 0) {
 			controlUp[Math3D.BOTTOM] = true;
 			controlDown[Math3D.TOP] = true;
 		}
@@ -64,7 +64,7 @@ public class ForwBlade extends Module {
 				}
 		
 		double forwVelocity = ship.getVForward();
-		double f = this.force * forwVelocity * forwVelocity;
+		double f = FORCE * forwVelocity * forwVelocity;
 		if (forwVelocity < 0)
 			f = -f;
 		if (state == STATE_UP)
