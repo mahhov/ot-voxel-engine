@@ -11,6 +11,7 @@ import world.World;
 import java.awt.*;
 import java.io.Serializable;
 
+import static engine.Math3D.notZero;
 import static ships.Blueprint.*;
 
 public class ModelShip extends Ship implements Serializable {
@@ -94,17 +95,17 @@ public class ModelShip extends Ship implements Serializable {
 		
 		while (moved < maxMoved && inBounds(nextx, nexty, nextz) && isEmpty(nextx, nexty, nextz)) {
 			if (controller.viewDir[1] > 0)
-				deltax = Math3D.notZero(1 + nextx - x, 1);
+				deltax = notZero(1 + nextx - x, 1);
 			else
-				deltax = Math3D.notZero(nextx - x, -1);
+				deltax = notZero(nextx - x, -1);
 			if (controller.viewDir[0] > 0)
-				deltay = Math3D.notZero(1 + nexty - y, 1);
+				deltay = notZero(1 + nexty - y, 1);
 			else
-				deltay = Math3D.notZero(nexty - y, -1);
+				deltay = notZero(nexty - y, -1);
 			if (controller.viewDir[2] > 0)
-				deltaz = Math3D.notZero(1 + nextz - z, 1);
+				deltaz = notZero(1 + nextz - z, 1);
 			else
-				deltaz = Math3D.notZero(nextz - z, -1);
+				deltaz = notZero(nextz - z, -1);
 			
 			if (Math3D.isZero(controller.viewDir[1]))
 				movex = Math3D.sqrt3;
